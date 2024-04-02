@@ -1,91 +1,45 @@
-import styles from "@/app/page.module.css";
-import Image from "next/image";
+import { Header } from "@/components/header/Header";
+import { QuizList } from "@/components/main/QuizList";
+import styled from "styled-components";
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  min-height: 100vh; // Viewport Height
+  width: 100vw; // Viewport Width
+  min-width: 100vw;
+  background-color: white;
+  color: black;
+`
+const Wrapper = styled.div`
+  width: 100%;
+  height: 1000px;
+  max-width: 1440px;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 24px;
+`
+
+const Description = styled.div`
+  margin-top: 100px;
+  margin-bottom: 155px;
+  grid-column: 1/5;
+  font-size: 100px;
+  font-weight: bolder;
+`
 
 const MainContainer = () => {
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href='https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-            target='_blank'
-            rel='noopener noreferrer'>
-            By{" "}
-            <Image
-              src='/vercel.svg'
-              alt='Vercel Logo'
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src='/next.svg'
-          alt='Next.js Logo'
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href='https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-          className={styles.card}
-          target='_blank'
-          rel='noopener noreferrer'>
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href='https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-          className={styles.card}
-          target='_blank'
-          rel='noopener noreferrer'>
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href='https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-          className={styles.card}
-          target='_blank'
-          rel='noopener noreferrer'>
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href='https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-          className={styles.card}
-          target='_blank'
-          rel='noopener noreferrer'>
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <Container>
+      <Wrapper>
+        <Header></Header>
+        <Description>퀴즈 리스트</Description>
+        {/* 퀴즈 리스트 컨트롤러 */}
+        <QuizList></QuizList>
+      </Wrapper>
+    </Container>
   );
 };
 
