@@ -4,7 +4,7 @@ import styled from "styled-components"
 
 
 interface Props{
-  key:number
+  id:number
   title:string,
   content:string
 }
@@ -40,12 +40,12 @@ const Context = styled(Title)`
 
 `
 
-export const QuizCard = ({key,title,content}:Props) => {
+export const QuizCard = ({id,title,content}:Props) => {
 
   const router = useRouter()
 
   return(
-    <Layout onClick={()=>router.push(`/detail/${key}`)}>
+    <Layout onClick={()=>router.push(`/detail/${id}`)}>
       <Quizimg>흑백 사진</Quizimg>
       <Title>{title}</Title>
       <Context>{content}</Context>

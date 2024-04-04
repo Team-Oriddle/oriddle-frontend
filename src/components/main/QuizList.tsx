@@ -63,7 +63,7 @@ export const QuizList = () => {
       </QuizListController>
       <QuizLayout>
         {quizLists.map((quiz) =>(
-          <QuizCard key={quiz.quizId} title={quiz.title} content={quiz.description}></QuizCard>
+          <QuizCard key={quiz.quizId} id={quiz.quizId} title={quiz.title} content={quiz.description}></QuizCard>
         ))}
       </QuizLayout>
     </Layout>
