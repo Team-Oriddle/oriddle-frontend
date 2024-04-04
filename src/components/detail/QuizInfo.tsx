@@ -2,7 +2,7 @@ import styled from "styled-components"
 import DefalutButton from "../common/DefalutButton"
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 
 const Layout = styled.div`
@@ -42,7 +42,7 @@ interface Props{
 }
 
 export const QuizInfo = ({quizId}:Props) =>{
-  const ment = '게임 시작' 
+  const ment = '방 만들기' 
   const id = quizId
 
   const [title, setTitle] = useState('');
@@ -66,6 +66,28 @@ export const QuizInfo = ({quizId}:Props) =>{
     fetchQuizDetail(id)
   })
 
+
+  const router = useRouter()
+
+  const CreateRoom = async (id:any) => {
+    const response = await axios.post('http://localhost:8080/api/v1/quiz-room', {
+      quizId: id,
+      title: '임의방제목',
+      maxParticipant: 3,
+    }, {
+      withCredentials: true // 이 부분을 추가합니다.
+    });
+    
+    if(response.data.code == "QR0001"){
+      router.push(`/attend/${response.data.data.quizRoomId}`)
+    }
+  }
+
+  const handelClickButton = () =>{
+    CreateRoom(id)
+    router.push(`/attend/${id}`)
+  }
+
   return (
     <Layout>  
       <QuizImg>썸네일 이미지</QuizImg>
@@ -73,8 +95,7 @@ export const QuizInfo = ({quizId}:Props) =>{
         <QuizDetail>
           {title}
           {description}
-          <DefalutButton color="보라" txt={ment}></DefalutButton>
-          
+          <DefalutButton color="보라" txt={ment} onClick={handelClickButton} ></DefalutButton>
         </QuizDetail>
       </QuizDetailLayout>
     </Layout>
