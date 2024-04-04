@@ -1,7 +1,10 @@
+import { Router} from "next/router"
+import { useRouter } from "next/navigation"
 import styled from "styled-components"
 
 
 interface Props{
+  key:number
   title:string,
   content:string
 }
@@ -37,9 +40,12 @@ const Context = styled(Title)`
 
 `
 
-export const QuizCard = ({title,content}:Props) => {
+export const QuizCard = ({key,title,content}:Props) => {
+
+  const router = useRouter()
+
   return(
-    <Layout>
+    <Layout onClick={()=>router.push(`/detail/${key}`)}>
       <Quizimg>흑백 사진</Quizimg>
       <Title>{title}</Title>
       <Context>{content}</Context>

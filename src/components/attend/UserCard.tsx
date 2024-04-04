@@ -14,7 +14,7 @@ const CharacterLayout = styled.div`
   background-color: purple;
 `
 
-export const UserCard = ({usernickname}:string) => {
+export const UserCard = ({usernickname}:{usernickname:string}) => {
   return(
     <Layout>
       <CharacterLayout>
