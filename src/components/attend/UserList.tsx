@@ -24,61 +24,11 @@ interface User{
   role:string
 }
 
-export const UserList = () => {
-  const userList:User[] = [
-    {
-      "userId": 1,
-      "position": 1,
-      "nickname": "닉네임1",
-      "role" : "HOST"
-    },
-    {
-      "userId": 2,
-      "position": 2,
-      "nickname": "닉네임1",
-      "role" : "HOST"
-    },
-    {
-      "userId": 3,
-      "position": 3,
-      "nickname": "닉네임1",
-      "role" : "HOST"
-    },
-    {
-      "userId": 4,
-      "position": 4,
-      "nickname": "닉네임1",
-      "role" : "HOST"
-    },
-    {
-      "userId": 5,
-      "position": 5,
-      "nickname": "닉네임1",
-      "role" : "HOST"
-    },
-    {
-      "userId": 6,
-      "position": 6,
-      "nickname": "닉네임1",
-      "role" : "HOST"
-    },
-    {
-      "userId": 7,
-      "position": 7,
-      "nickname": "닉네임1",
-      "role" : "HOST"
-    },
-    {
-      "userId": 8,
-      "position": 8,
-      "nickname": "닉네임1",
-      "role" : "HOST"
-    },
-  ]
+export const UserList = ({UserList}:User[]) => {
   
   return(
     <Layout>
-      {userList.map((user)=> (
+      {UserList.map((user)=> (
         <UserCard key={user.position} usernickname={user.nickname}></UserCard>
       ))}
     </Layout>
