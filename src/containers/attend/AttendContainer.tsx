@@ -50,9 +50,8 @@ const AttendContainer = ({roomId}:Props) => {
   const [quizData, setQuizData] = useState([]);
   const [chatSocket, setChatSocket] = useState(null);
 
-  const quizRoomId = roomId; // Assuming `id` is the quiz room ID from the route parameter
+  const quizRoomId = roomId; 
 
-  // const alignedUserData = useMemo(() => userData.sort((a, b) => a.position - b.position), [userData]);
 
   useEffect(() => {
     //로직 변경됨 기존에는 로그인시 로그인하고 있어도 에러를 안잡았는데 이번에는 잡음
@@ -96,7 +95,7 @@ const AttendContainer = ({roomId}:Props) => {
           quizRoomId, 
           navigate,
           userData, 
-          setUserData // Assuming ChatSocket adapted for React and uses setUserData for updating participant list
+          setUserData
         );
         setChatSocket(newChatSocket);
       } catch (error) {
