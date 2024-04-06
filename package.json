@@ -9,12 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.0.0",
     "axios": "^1.6.8",
     "next": "13.5.6",
     "react": "^18",
     "react-dom": "^18",
     "styled-components": "^6.1.8",
-    "styled-reset": "^4.5.2"
+    "styled-reset": "^4.5.2",
+    "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
     "@types/node": "^20",

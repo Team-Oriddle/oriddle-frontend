@@ -23,7 +23,7 @@ const ButtonLayout = styled.div`
   font-weight: bold;
 `
 
-const DefalutButton = ({color,txt}:ButtonProps) =>{
+const DefalutButton = ({onClick,color,txt}:ButtonProps) =>{
   let bgColor: string;
   let textColor: string;
 
@@ -40,7 +40,7 @@ const DefalutButton = ({color,txt}:ButtonProps) =>{
   }
 
   return(
-    <ButtonLayout bgColor={bgColor} txtColor={textColor}>
+    <ButtonLayout bgColor={bgColor} txtColor={textColor} onClick={onClick}>
       {txt}
     </ButtonLayout>
   )

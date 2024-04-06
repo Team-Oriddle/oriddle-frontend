@@ -20,15 +20,19 @@ const Wrapper = styled.div`
   grid-template-columns: repeat(12, 1fr);
   column-gap: 24px;
 `
+interface Props{
+  quizId :number
+}
 
+const DetailContainer = ({quizId}:Props) => {
 
-const DetailContainer: React.FC = () => {
+  const param = quizId 
 
   return (
     <Container>
       <Wrapper>
           <Header></Header>
-          <QuizInfo></QuizInfo>
+          <QuizInfo quizId={param} ></QuizInfo>
       </Wrapper>
     </Container>
   );
