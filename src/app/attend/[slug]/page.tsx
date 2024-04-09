@@ -8,7 +8,7 @@ type Props = {
 }
 
 const AttendPage = ({ params }:Props) => {
-  return <AttendContainer roomId = {params.slug}/>;
+  return <AttendContainer  quizId = {params.slug}/>;
 };
 
 export default AttendPage;

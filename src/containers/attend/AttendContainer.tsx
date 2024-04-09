@@ -10,6 +10,8 @@ import StompJs from '@stomp/stompjs';
 import axios from "axios";
 import ChatSocket from "@/socket/Chatsocket";
 import { useRouter } from "next/navigation";
+import getQuizRoomData from "@/entities/quizroom/api/getQuizRoomData";
+import { initializeSocket } from "@/entities/socket/socket";
 
 
 const Container = styled.div`
@@ -46,12 +48,11 @@ interface Props{
 
 const AttendContainer = ({roomId}:Props) => {
   const navigate = useRouter();
-  const [userData, setUserData] = useState([]);
-  const [quizData, setQuizData] = useState([]);
+  const [userData, setUserData] = useState([]); 
+  const [quizData, setQuizData] = useState([]); // fetchData에서 추가로 지정가능
   const [chatSocket, setChatSocket] = useState(null);
 
   const quizRoomId = roomId; 
-
 
   useEffect(() => {
     //로직 변경됨 기존에는 로그인시 로그인하고 있어도 에러를 안잡았는데 이번에는 잡음
@@ -67,7 +68,6 @@ const AttendContainer = ({roomId}:Props) => {
             }
           }
         );
-        getQuizData(quizRoomId);
         console.log(response);
       } catch (error) {
         if (error.message === 'Request failed with status code 401') {
@@ -77,33 +77,50 @@ const AttendContainer = ({roomId}:Props) => {
         }
         console.log(error);
       }
-    };
 
-    const getQuizData = async (quizRoomId:number) => {
-      console.log('시작')
+      fetchData(quizRoomId)
+    };
+    
+        //fetchData 함수에서 모든 API호출 관리
+    const fetchData = async (quizRoomId:number) => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}`, {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        console.log(response)
-        setUserData(response.data.data.participants);
-        setQuizData(response.data.data);
-        const newChatSocket = new ChatSocket(
-          quizRoomId, 
-          navigate,
-          userData, 
-          setUserData
-        );
-        setChatSocket(newChatSocket);
+        const quizData = await getQuizRoomData(quizRoomId);
+        console.log(quizData)
+        setUserData(quizData.data.data.participants)
+        initializeSocket('ws://localhost:8080/ws')//소켓 연결
       } catch (error) {
-        console.error(error);
+        console.log(error)
       }
     };
 
-    joinGame(quizRoomId);
+
+    // const getQuizData = async (quizRoomId:number) => {
+    //   console.log('시작')
+    //   try {
+    //     const response = await axios.get(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}`, {
+    //       withCredentials: true,
+    //       headers: {
+    //         'Content-Type': 'application/json'
+    //       }
+    //     });
+    //     console.log(response)
+    //     setUserData(response.data.data.participants);
+    //     setQuizData(response.data.data);
+    //     const newChatSocket = new ChatSocket(
+    //       quizRoomId, 
+    //       navigate,
+    //       userData, 
+    //       setUserData
+    //     );
+    //     setChatSocket(newChatSocket);
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // };
+
+    joinGame(7);
+
+
   }, [quizRoomId, navigate, userData]);
   //관리 해야할 정보
   //1. 유저 정보
@@ -123,7 +140,7 @@ const AttendContainer = ({roomId}:Props) => {
   //   brokerURL : "ws://localhost:8080/ws",
   //   beforeConnect() {
   //       console.log("beforeConnect")
-  //   },
+  //   }, 
   //   connectHeaders:{
   //     //null
   //   },
