@@ -75,7 +75,9 @@ export const QuizList = () => {
               key={quiz.quizId}
               id={quiz.quizId}
               title={quiz.title}
-              content={quiz.description}></QuizCard>
+              content={quiz.description}
+              imageUrl={quiz.imageUrl}
+            />
           ))
         ) : (
           <p>리스트가 없습니다.</p>
