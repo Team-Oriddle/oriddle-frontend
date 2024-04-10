@@ -1,5 +1,6 @@
 import { Header } from "@/components/header/Header";
 import { QuizList } from "@/components/main/QuizList";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -13,21 +14,17 @@ const Container = styled.div`
   background-color: white;
   color: black;
 `;
+
+// 임시로 1000px로 지정되어있던 높이를 100%로 변경
 const Wrapper = styled.div`
   width: 100%;
-  height: 1000px;
+  height: 100%;
   max-width: 1440px;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto 1fr; // Header는 필요한 만큼의 공간을 차지하고, 나머지 공간은 QuizList가 차지합니다.
   column-gap: 24px;
-`;
-
-const Description = styled.div`
-  margin-top: 100px;
-  margin-bottom: 155px;
-  grid-column: 1/5;
-  font-size: 100px;
-  font-weight: bolder;
+  row-gap: 24px; // row 사이의 간격을 설정합니다.
 `;
 
 const MainContainer = () => {
@@ -35,11 +32,10 @@ const MainContainer = () => {
     <Container>
       <Wrapper>
         <Header />
-        <Description>퀴즈 리스트</Description>
         {/* 퀴즈 리스트 컨트롤러 */}
         {/* TODO: 데이터를 불러오는 중에는 추가적인 처리 할 것 */}
-        {/* 데이터가 있다면 리스트를 띄워주기, 불러오는 중일 때, 데이터가 없을 때 처리하기 */}
-        <QuizList></QuizList>
+        {/* TODO: 추가적으로 초기 상태에서 호출할 때 params를 넘겨서 ex)filter 인기순 설정 등 할 지 논의해볼 것 */}
+        <QuizList />
       </Wrapper>
     </Container>
   );

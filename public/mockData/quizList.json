@@ -1,0 +1,20 @@
+{
+  "code": "QZ0002",
+  "message": "퀴즈 페이지 조회 성공",
+  "data": {
+    "quizzes": [
+      {
+        "quizId": 1,
+        "title": "테스트 퀴즈1",
+        "imageUrl": "기본 이미지1",
+        "description": "테스트 퀴즈1입니다."
+      },
+      {
+        "quizId": 2,
+        "title": "테스트 퀴즈2",
+        "imageUrl": "기본 이미지2",
+        "description": "테스트 퀴즈2입니다."
+      }
+    ]
+  }
+}
