@@ -53,7 +53,7 @@ export const Header = () => {
   };
 
   const routeToLogin = () => {
-    alert("Login으로 이동합니다.");
+    router.push("/login");
   };
 
   return (
