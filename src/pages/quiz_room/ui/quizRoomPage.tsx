@@ -91,6 +91,7 @@ export const QuizRoomPage = ({roomId}:Props) => {
   useEffect(()=>{
     const getSocket = (quizRoomId:number) => {
       const subscriptions = [
+        //strictMode가 켜져 있는 경우 제대로 작동하지 않음
         { topic: `/topic/quiz-room/${quizRoomId}/join`, callback:(message:any) =>{
           let newUser = {...message, isHost:false}
           setUserData([...userData,newUser])
@@ -98,6 +99,7 @@ export const QuizRoomPage = ({roomId}:Props) => {
             return a.position-b.position
           })
         }},
+        //strictMode가 켜져 있는 경우 제대로 작동하지 않음
         { topic: `/topic/quiz-room/${quizRoomId}/leave`, callback:(message:any) =>{
           const findIndex = message.userId;
           const copyUserData = userData
@@ -108,7 +110,7 @@ export const QuizRoomPage = ({roomId}:Props) => {
           setUserData(copyUserData);
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/start`, callback:(message:any) =>{
-          router.push(`/game/${quizRoomId}`)
+          router.push(`/quiz/game/${quizRoomId}`)
         }},
       ]
       initializeSocket('ws://localhost:8080/ws', subscriptions)
