@@ -96,13 +96,15 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
   useEffect(()=>{
     //TODO: API 호출부 변경
     getQuizRoomData(QuizGameId).then((result)=>{
+      console.log('통신중')
       result.participants.forEach(participant =>{
         participant.score = 0;
       })
       setUserData(result.participants)
+      console.log("데이터 받기")
+      setIsLoading(false)
     })
     //새로운 소켓 연결 해야함
-    setIsLoading(false)
   },[QuizGameId])
 
 
@@ -131,10 +133,11 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
           setQuestionData(message)
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/answer`, callback:(message) =>{
+          console.log(userData)
+          console.log(message)
           setAnswerData(message)
           let copyUserData = userData
           let foundIndex = -1;
-          
           userData.forEach((participant, index)=>{
             if(participant.userId === message.userId){
               foundIndex = index
@@ -166,7 +169,7 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
       ]
       initializeSocket('ws://localhost:8080/ws', subscriptions)//소켓 연결
     }
-
+    console.log(userData)
     getSocket(QuizGameId)
 
   },[isLoading])
