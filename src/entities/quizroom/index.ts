@@ -1,0 +1,1 @@
+export { getQuizRoomData } from "./api/getQuizRoomData";

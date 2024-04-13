@@ -1,14 +1,14 @@
 "use client";
 import { QuizRoomPage } from "@/pages/quiz_room";
 
-type Props = {
+type QuizRoomProps = {
   params: {
     slug: number;
   }
 }
 
-const AttendPage = ({ params }:Props) => {
-  return <QuizRoomPage  roomId = {params.slug}/>;
+const AttendPage = ({ params }:QuizRoomProps) => {
+  return <QuizRoomPage  QuizroomId = {params.slug}/>;
 };
 
 export default AttendPage;

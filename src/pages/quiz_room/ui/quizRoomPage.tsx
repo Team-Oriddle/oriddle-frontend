@@ -3,9 +3,9 @@ import { ChatList } from "@/components/attend/ChatLIst";
 import { EditRoomInfo } from "@/components/attend/EditRoomInfo";
 import { UserList } from "@/components/attend/UserList";
 import { Header } from "@/components/header/Header";
-import getQuizRoomData from "@/entities/quizroom/api/getQuizRoomData";
+import { getQuizRoomData } from "@/entities/quizroom";
 import { initializeSocket } from "@/entities/socket/socket";
-import { StartGame } from "@/features/StartGame/ui/StartGame";
+import { StartGameButton } from "@/features/StartGameButton";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -38,8 +38,8 @@ const HostControllerLayout = styled.div`
   justify-content: space-between;
 `;
 
-type Props = {
-  roomId :number
+type QuizRoomProps = {
+  QuizroomId :number
 }
 
 interface UserData{
@@ -49,7 +49,8 @@ interface UserData{
   isHost:Boolean
 }
 
-export const QuizRoomPage = ({roomId}:Props) => {
+//TODO: isLoading처리
+export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
   const router = useRouter();
   const [userData, setUserData] = useState<UserData[]>([]); 
   //TODO: 추후에 채팅기능 추가되면 채팅 기능 관련 기능도 추가
@@ -59,6 +60,7 @@ export const QuizRoomPage = ({roomId}:Props) => {
   const [isConnect,  setIsConnect] = useState<Boolean>(true);
 
   useEffect(() => {
+    //TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
     const joinGame = async (quizRoomId:number) => {
       try {
         const response = await fetch(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/join`, {
@@ -69,7 +71,7 @@ export const QuizRoomPage = ({roomId}:Props) => {
           }
         });
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(`error! status: ${response.status}`);
         }
       } catch (error:any) {
         if (error.message === 'HTTP error! status: 401') {
@@ -81,12 +83,12 @@ export const QuizRoomPage = ({roomId}:Props) => {
       }
     };
     
-    joinGame(roomId);
-    getQuizRoomData(roomId).then((result)=>{ 
+    joinGame(QuizroomId);
+    getQuizRoomData(QuizroomId).then((result)=>{ 
       setQuizData(result)
       setUserData(result.participants)
     });
-  }, [roomId]);
+  }, [QuizroomId]);
 
   useEffect(()=>{
     const getSocket = (quizRoomId:number) => {
@@ -131,7 +133,7 @@ export const QuizRoomPage = ({roomId}:Props) => {
         </UserControllerLayout>
         <HostControllerLayout>
           <EditRoomInfo></EditRoomInfo>
-          <StartGame roomId={roomId}></StartGame>
+          <StartGameButton roomId={QuizroomId}></StartGameButton>
         </HostControllerLayout>
       </Wrapper>
     </Container>
