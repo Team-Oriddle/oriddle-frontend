@@ -1,6 +1,5 @@
 "use client";
-import AttendContainer from "@/containers/attend/AttendContainer";
-import QuizRoomPage from "@/pages/quiz_room/ui/quizRoomPage";
+import { QuizRoomPage } from "@/pages/quiz_room";
 
 type Props = {
   params: {

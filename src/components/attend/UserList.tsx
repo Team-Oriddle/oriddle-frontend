@@ -25,7 +25,6 @@ interface User{
 }
 
 export const UserList = ({UserList}:User[]) => {
-  
   return(
     <Layout>
       {UserList.map((user)=> (
