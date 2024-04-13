@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from "styled-components";
 
 const Layout = styled.div`
   grid-column: 5/9;
@@ -13,14 +13,33 @@ const Layout = styled.div`
   font-weight: 500;
   margin: 20px;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+`;
 
-`
+const Image = styled.img`
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+`;
 
-export const QuizSource = () => {
-  
-  return(
+const Video = styled.iframe`
+  width: 100%;
+  height: 100%;
+`;
+
+export const QuizSource = ({ url, sourceType }) => {
+  return (
     <Layout>
-      Source
+      {sourceType === "IMAGE" && <Image src={url} alt="Source Image" />}
+      {sourceType === "SOUND" && (
+        <Video
+          src={`https://www.youtube.com/embed/tkzYyEp4zB4&t=27s`}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      )}
     </Layout>
-  )
-}
+  );
+};
+
+//코드 수정

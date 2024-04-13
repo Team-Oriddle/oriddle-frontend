@@ -17,6 +17,11 @@ const Layout = styled.div`
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
 `
 
+
+type UserListProps = {
+  UserList: User[]
+}
+
 interface User{
   userId:number,
   position:number,
@@ -24,11 +29,10 @@ interface User{
   role:string
 }
 
-export const UserList = ({UserList}:User[]) => {
-  
+export const UserList = ({UserList}:UserListProps) => {
   return(
     <Layout>
-      {UserList.map((user)=> (
+      {UserList.map((user:User)=> (
         <UserCard key={user.position} usernickname={user.nickname}></UserCard>
       ))}
     </Layout>

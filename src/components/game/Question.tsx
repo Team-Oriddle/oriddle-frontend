@@ -15,11 +15,17 @@ const Layout = styled.div`
 
 `
 
-export const Question = () => {
-  
+export const Question = ({description,number,type,score}) => {
+  let typeByKorean ='기타'
+  if(type === 'SHORT_ANSWER'){
+    typeByKorean = "객관식"
+  }else{
+    typeByKorean = "주관식"
+  }
+
   return(
     <Layout>
-      [15/30] 다음 국기는 어느나라의 국기일까요? (객관식, 3점)
+      [{number}/30] {description} ({typeByKorean}, {score}점)
     </Layout>
   )
 }
