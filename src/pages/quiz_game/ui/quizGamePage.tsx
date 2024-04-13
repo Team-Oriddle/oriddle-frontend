@@ -62,7 +62,7 @@ interface AnswerType{
   score?:number,
 }
 
-//TODO: isLoading처리
+
 export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
   const navigate = useRouter();
 
@@ -140,6 +140,8 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
               foundIndex = index
             }
           })
+          console.log(userData)
+          console.log(copyUserData[foundIndex].userId)
           if(foundIndex !== -1){
             copyUserData[foundIndex].score += message.score;
             setAnswerUser(copyUserData[foundIndex].nickname)

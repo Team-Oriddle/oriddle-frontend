@@ -47,11 +47,14 @@ export const SendMessage = ({quizGameId}:SendMessageProps) =>{
   };
 
   const handelSendClick = () =>{
+    console.log(quizGameId+'로 전달 진행')
     if (input.trim() !== '') {
       sendMessage(`/app/quiz-room/${quizGameId}/chat`, { answer: input });
       sendMessage(`/app/quiz-room/${quizGameId}/check-answer`, { answer: input });
       setInput('');
     }
+    console.log('전달 완료')
+
   }
 
   return(
@@ -62,7 +65,7 @@ export const SendMessage = ({quizGameId}:SendMessageProps) =>{
         onChange={handleInputChange}
       >
       </ChattingInput>
-      <Button onClick={handelSendClick}></Button>
+      <Button onClick={handelSendClick}>전송</Button>
     </Layout>
   )
 }
