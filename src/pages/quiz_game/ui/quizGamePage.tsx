@@ -1,4 +1,3 @@
-import { ChatInput } from "@/components/game/ChatInput";
 import { UserChat } from "@/components/game/UserChat";
 import { Question } from "@/components/game/Question";
 import { QuizSource } from "@/components/game/QuizSource";
@@ -6,10 +5,10 @@ import { Header } from "@/components/header/Header";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import getQuizRoomData from "@/entities/quizroom/api/getQuizRoomData";
 import { initializeSocket } from "@/entities/socket/socket";
 import Modal from "@/components/game/Modal";
 import { SendMessage } from "@/features/SendMessage/ui/sendMessage";
+import { getQuizRoomData } from "@/entities/quizroom";
 
 const Container = styled.div`
   display: flex;
@@ -30,8 +29,8 @@ const Wrapper = styled.div`
   column-gap: 24px;
 `
 
-type Props = {
-  quizId :number
+type QuizGameProps = {
+  QuizGameId :number
 }
 
 interface QuestionDataType{
@@ -63,8 +62,8 @@ interface AnswerType{
   score?:number,
 }
 
-
-const QuizGamePage = ({quizId}:Props) => {
+//TODO: isLoading처리
+export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
   const navigate = useRouter();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -77,7 +76,7 @@ const QuizGamePage = ({quizId}:Props) => {
     timeLimit: -1,
     type: "",
   });
-  const [countdown, setCountdown] = useState(5);
+  //TODO: 추후에 채팅기능 추가시 활용
   const [chatLog, setChatLog] = useState<ChatType[]>([]);
   const [userData, setUserData] = useState<UserData[]>([]);
   const [answerData, setAnswerData] = useState<AnswerType>({
@@ -96,8 +95,7 @@ const QuizGamePage = ({quizId}:Props) => {
 
   useEffect(()=>{
     //TODO: API 호출부 변경
-    getQuizRoomData(quizId).then((result)=>{
-      console.log(result)
+    getQuizRoomData(QuizGameId).then((result)=>{
       result.participants.forEach(participant =>{
         participant.score = 0;
       })
@@ -105,7 +103,7 @@ const QuizGamePage = ({quizId}:Props) => {
     })
     //새로운 소켓 연결 해야함
     setIsLoading(false)
-  },[quizId])
+  },[QuizGameId])
 
 
   useEffect(()=>{
@@ -130,46 +128,44 @@ const QuizGamePage = ({quizId}:Props) => {
         }},
         //strictMode가 켜져 있는 경우 제대로 작동하지 않음
         { topic: `/topic/quiz-room/${quizRoomId}/question`, callback:(message) =>{
-          console.log(message)
           setQuestionData(message)
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/answer`, callback:(message) =>{
-          console.log(message)
           setAnswerData(message)
           let copyUserData = userData
           let foundIndex = -1;
+          
           userData.forEach((participant, index)=>{
             if(participant.userId === message.userId){
               foundIndex = index
             }
           })
-          //사용자 닉네임 리턴 해줘야함
           if(foundIndex !== -1){
             copyUserData[foundIndex].score += message.score;
             setAnswerUser(copyUserData[foundIndex].nickname)
           }else{
             console.log('사용자가 존재하지 않습니다!')
           }
+          setUserData(copyUserData)
           toggleAnswerModal()
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/finish`, callback:(message) =>{
           console.log(message)
-          //종료된 경우 결과 페이지로 이동
+          //TODO: 결과 페이지로 이동
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/time-out`, callback:(message) =>{
-          console.log(message)
           setAnswerData(message)
           toggleFinishModal()
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/chat`, callback:(message) =>{
           console.log(message)
-          //채팅 메시지 관리
+          //TODO: 채팅 메시지 관리
         }},
       ]
       initializeSocket('ws://localhost:8080/ws', subscriptions)//소켓 연결
     }
 
-    getSocket(8)
+    getSocket(QuizGameId)
 
   },[isLoading])
   ///처리해야할 데이터
@@ -184,7 +180,7 @@ const QuizGamePage = ({quizId}:Props) => {
           <Question description={questionData.description} number={questionData.number} type={questionData.type} score={questionData.score} ></Question>
           <QuizSource url={questionData.score} sourceType={questionData.sourceType}></QuizSource>
           <UserChat UserList={userData} ></UserChat>
-          <SendMessage quizRoomId={quizId}></SendMessage>
+          <SendMessage quizGameId={QuizGameId}></SendMessage>
           <Modal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
             <div>정답:{answerData.answer}</div>
             <div>{answerUser} 님이 정답을 맞추셨습니다</div>
@@ -197,5 +193,3 @@ const QuizGamePage = ({quizId}:Props) => {
     </Container>
   );
 };
-
-export default QuizGamePage;
