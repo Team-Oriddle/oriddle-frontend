@@ -53,7 +53,7 @@ export const QuizCard = ({ id, title, content, imageUrl }: QuizCardProps) => {
   const router = useRouter();
 
   return (
-    <Layout onClick={() => router.push(`/detail/${id}`)}>
+    <Layout onClick={() => router.push(`/quiz/info/${id}`)}>
       <QuizImageWrapper>
         <Image
           src={imageUrl}
