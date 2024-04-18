@@ -158,7 +158,7 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/chat`, callback:(message) =>{
           console.log(message)
-          //TODO: 채팅 메시지 관리
+          //TODO: 백엔드 채팅이 끝나면 채팅 관련 코드 추가
         }},
       ]
       initializeSocket('ws://localhost:8080/ws', subscriptions)//소켓 연결

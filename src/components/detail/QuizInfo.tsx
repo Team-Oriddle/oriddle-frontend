@@ -4,7 +4,9 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import { useRouter, useSearchParams } from "next/navigation"
 import { CreateQuizRoom } from "@/features/CreateQuizRoom/ui/CreateQuizRoom"
+import Image from "next/image"
 
+// TODO: 모달 열렸을시 스크롤 이벤트 막기
 
 const Layout = styled.div`
   margin-top: 250px;
@@ -94,8 +96,8 @@ const InfoModal = styled.div`
   border-radius: 20px;
   background-color: white;
   margin: 5px;
-  background-image: url('https://test-oriddle-bucket.s3.ap-northeast-2.amazonaws.com/basic_image.webp');
-  //TODO: 추가적으로 수정
+  background-image: url(${(props) => props.imgSource});
+  background-size: cover;
 `
 
 const BlackLayout = styled.div`
@@ -116,6 +118,7 @@ const TitleText = styled.div`
   font-size: 25px;
 `
 const ContentText = styled.div`
+  opacity: 100%;
   font-size: 20px;
   font-weight: 400;
   overflow: scroll;
@@ -127,16 +130,15 @@ const HashTagText = styled.div`
 `
 
 
-interface Props{
+type Props = {
   quizId :number
 }
 
 export const QuizInfo = ({quizId}:Props) =>{
-  const ment = '방 만들기' 
-  const id = quizId
 
   const [title, setTitle] = useState('title');
   const [description, setDescription] = useState('context');
+  const [img, setImg] = useState('');
 
   const [modalOpen, setModalOpen] = useState<boolean>(false)
   //추후에 구조 분해 할당 활용한 코드로 수정
@@ -148,37 +150,27 @@ export const QuizInfo = ({quizId}:Props) =>{
         console.log(response)
         setTitle(response.data.data.title)
         setDescription(response.data.data.description)
+        setImg(response.data.data.imageUrl)
         
       } catch (error) {
         console.error('Error fetching quiz info:', error);
       }
     }
 
-    fetchQuizDetail(id)
+    fetchQuizDetail(quizId)
   })
 
 
-  // const CreateRoom = async (id:any) => {
-  //   const response = await axios.post('http://localhost:8080/api/v1/quiz-room', {
-  //     quizId: id,
-  //     title: '임의방제목',
-  //     maxParticipant: 3,
-  //   }, {
-  //     withCredentials: true
-  //   });
-    
-  //   if(response.data.code == "QR0001"){
-  //     router.push(`/attend/${response.data.data.quizRoomId}`)
-  //   }
-  // }
-
-  // const handelClickButton = () =>{
-  //   //모달 생성
-  // }
-
   return (
     <Layout>  
-      <QuizImg>썸네일 이미지</QuizImg>
+      <QuizImg>
+        <Image
+          src={img}
+          alt="썸네일"
+          layout="fill"
+          objectFit="cover"
+        />
+      </QuizImg>
       <QuizDetailLayout>
         <QuizDetail>
           <QuizTitle>{title}</QuizTitle>
@@ -189,14 +181,14 @@ export const QuizInfo = ({quizId}:Props) =>{
       {modalOpen ?
           <ModalBackdrop onClick={()=>setModalOpen(false)}>
             <ModalLayout onClick={(e) => e.stopPropagation()}>
-              <InfoModal>
-                <BlackLayout>
-                  <TitleText>{title}</TitleText>
-                  <ContentText>{description}</ContentText>
-                  <HashTagText>#해쉬태그</HashTagText>
-                </BlackLayout>
+              <InfoModal imgSource={img}>
+                  <BlackLayout>
+                    <TitleText>{title}</TitleText>
+                    <ContentText>{description}</ContentText>
+                    <HashTagText>#해쉬태그</HashTagText>
+                  </BlackLayout>
               </InfoModal>
-              <CreateQuizRoom></CreateQuizRoom>
+              <CreateQuizRoom quizId={quizId} handleModal={()=>setModalOpen(false)}></CreateQuizRoom>
             </ModalLayout>
           </ModalBackdrop>
           // 모달이 열려있다면

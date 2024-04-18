@@ -1,5 +1,3 @@
-import axios from "axios"
-import { error } from "console"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import styled from "styled-components"
@@ -70,10 +68,15 @@ const CreateButton = styled.div`
   background-color: #643DD2;
 `
 
+type Props = {
+  quizId :number,
+  handleModal:Function
+}
 
-export const CreateQuizRoom = () =>{
+
+export const CreateQuizRoom = ({quizId,handleModal}:Props) =>{
   const navigate = useRouter();
-  const [ userNumber, setUserNumber ] = useState<number>(2);
+  const [ userNumber, setUserNumber ] = useState<number>(4);
   const [ roundTime, setRoundTime  ] = useState<number>(10);
   const [ quizRoomTitle, setQuizRoomTitle ] = useState<string>('')
 
@@ -83,12 +86,6 @@ export const CreateQuizRoom = () =>{
 
   const handleRoundSlider = (e:any) =>{
     setRoundTime(e.target.value)
-  }
-
-  const PostQuRoom =async (QuizId:any) => {
-    const response  = await axios.post(`http://localhost:8080/api/v1/quiz-room`,{
-
-    })
   }
 
   const PostQuizRoom = async (QuizId:any) =>{
@@ -105,6 +102,7 @@ export const CreateQuizRoom = () =>{
       })
     }).then((response)=>{
       console.log(response)
+      //TODO: 페이지 이동 코드 작성
     }
     ).catch((error)=>{
       console.log(error)
@@ -114,7 +112,8 @@ export const CreateQuizRoom = () =>{
   return(
     <Layout>
       <Wrapper>
-        <ModalClose>X</ModalClose>
+        <ModalClose onClick={handleModal}>X</ModalClose>
+        {/* TODO: 모달 닫을 수 있게 수정해아함 */}
         <TextInput onChange={(e)=>setQuizRoomTitle(e.target.value)} placeholder="제목을 입력해주세요"></TextInput>
         {/* TODO: 입력 제한*/}
         <TextInput type="password" placeholder="비밀번호"></TextInput>
@@ -143,7 +142,7 @@ export const CreateQuizRoom = () =>{
           <input type="range" min="30" max="200" onChange={handleRoundSlider}>
           </input>
         </RoundInput>
-        <CreateButton onClick={()=>PostQuizRoom(8)}>방 만들기</CreateButton>
+        <CreateButton onClick={()=>PostQuizRoom(quizId)}>방 만들기</CreateButton>
       </Wrapper>
     </Layout>
   )

@@ -70,7 +70,7 @@ const UserEvaluateQuizLayout = styled.div`
   align-items: center;
 `
 
-interface Props{
+type Props = {
   quizId :number
 }
 
@@ -80,36 +80,35 @@ const QuizInfoPage = ({quizId}:Props) => {
     {
       id:0,
       user:"굳건한오리123",
-      comment:"댓글 내용입니다 지금은 임의로 작성했는데",
+      comment:"댓글 내용입니다 지금은 임의로 작성했는데 추후에 수정할 예정입니다",
     },
     {
       id:1,
       user:"굳건한오리123",
-      comment:"댓글 내용입니다 지금은 임의로 작성했는데",
+      comment:"댓글 내용입니다 지금은 임의로 작성했는데 추후에 수정할 예정입니다",
     }
   ]
-
-  const param = quizId 
 
   return (
     <Container>
       <Wrapper>
         <Header></Header>
-        <QuizInfo quizId={param} ></QuizInfo>
+        {/* //TODO:퀴즈 생성 모달 클릭시 헤더 CSS 변경이 있어야함 */}
+        <QuizInfo quizId={quizId} ></QuizInfo>
         <UserEvaluateQuizLayout>
           <UserEvaluateButtonLayout>
             <DefalutButton color="" txt="추천 561" ></DefalutButton>
             <DefalutButton color="보라" txt="신고"></DefalutButton>
           </UserEvaluateButtonLayout>
         </UserEvaluateQuizLayout>
+        {/* TODO: 댓글은 댓글 관련된 협의 종료된 이후 진행 */}
         <CreateComment></CreateComment>
         {commentList.map((comment)=>(
           <CommentLayout key={comment.id}>
             <UserIcon></UserIcon>
-            <TextInputLayout></TextInputLayout>
+            <TextInputLayout>{comment.comment}</TextInputLayout>
           </CommentLayout>
         ))}
-        {/* 모달 배경 생성 */}
       </Wrapper>
     </Container>
   );

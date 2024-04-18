@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation"
 import styled from "styled-components"
 
 const Layout = styled.div`
@@ -19,6 +20,8 @@ type StartGameProps = {
 
 export const StartGameButton = ({roomId}:StartGameProps) => {
   //TODO: API로 로직을 빼내야 하는지 추후에 고민
+
+  const navigate = useRouter();
   const PressStartGameButton = async(roomId:number) =>{
     try{
       const response = await fetch(`http://localhost:8080/api/v1/quiz-room/${roomId}/start`,{

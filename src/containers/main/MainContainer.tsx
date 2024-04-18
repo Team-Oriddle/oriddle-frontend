@@ -1,6 +1,5 @@
 import { Header } from "@/components/header/Header";
 import { QuizList } from "@/components/main/QuizList";
-import { useEffect } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
