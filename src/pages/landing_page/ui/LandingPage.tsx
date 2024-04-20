@@ -17,10 +17,10 @@ export const LandingPage = () => {
       {/* 카테고리 기능 블록 */}
       <CategoryBlock />
 
-      {/* TODO: 퀴즈게임 블록 */}
+      {/* 퀴즈게임 블록 */}
       <QuizGameBlock />
 
-      {/* TODO: 퀴즈 결과 블록 */}
+      {/* 퀴즈 결과 블록 */}
       <QuizResultBlock />
     </Container>
   );
@@ -32,6 +32,7 @@ const Container = styled.div`
   justify-content: start;
   align-items: center;
   background-color: #f5ecdf;
+  /* TODO: 배경 이미지 최적화 방법 찾기 */
   background-image: url("/landing/landing_background.png");
   background-repeat: no-repeat;
   background-position: center;
