@@ -1,9 +1,9 @@
 "use client";
 
-import LandingContainer from "@/pages/landing/LandingContainer";
+import { LandingPage } from "@/pages/landing_page";
 
-const LandingPage = () => {
-  return <LandingContainer />;
+const LandingAppPage = () => {
+  return <LandingPage />;
 };
 
-export default LandingPage;
+export default LandingAppPage;
