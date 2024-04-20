@@ -40,7 +40,7 @@ const QuizGameBlock = () => {
           <br />
           친구들과의 우정을 더욱 강화할 수 있는 특별한 경험을
           <br />
-          ORRIDLE에서 경험해보세요.
+          ORIDDLE에서 경험해보세요.
         </Content>
       </QuizGameBlockRight>
     </Container>
