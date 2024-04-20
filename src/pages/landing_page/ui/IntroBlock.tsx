@@ -33,7 +33,6 @@ const IntroBlock = () => {
           <br /> <br />
           친구들과 덕덕한 퀴즈 탐험을 시작해 보세요!
         </Content>
-        {/* TODO: 여기에 페이지 이동 기능 연결하기 */}
         <Button onClick={goToMainPage}>퀴즈 시작하기</Button>
       </IntroBlockRight>
     </Container>

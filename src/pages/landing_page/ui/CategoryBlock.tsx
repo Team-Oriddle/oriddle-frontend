@@ -25,7 +25,6 @@ const CategoryBlock = () => {
       </CategoryBlockLeft>
 
       {/* 중앙에 위치해있는 flex 무시하는 이미지 */}
-      {/* TODO: 중앙을 기준으로 이미지 위치를 옮기려면? */}
       <Image
         src='/landing/red_duck.png'
         alt='랜딩 레드 오리'
