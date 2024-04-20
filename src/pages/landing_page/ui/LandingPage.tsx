@@ -33,4 +33,7 @@ const Container = styled.div`
   align-items: center;
   background-color: #f5ecdf;
   background-image: url("/landing/landing_background.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 4394px;
 `;
