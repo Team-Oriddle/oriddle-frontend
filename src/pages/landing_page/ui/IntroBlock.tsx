@@ -27,7 +27,7 @@ const IntroBlock = () => {
           퀴즈를 <br /> 덕덕하게!
         </Title>
         <Content>
-          ORRIDLE은 퀴즈를 준비하고 게시한 뒤, 방을 만들어
+          ORIDDLE은 퀴즈를 준비하고 게시한 뒤, 방을 만들어
           <br /> <br />
           원하는 친구들을 초대해 실시간으로 퀴즈를 푸는 서비스입니다.
           <br /> <br />
