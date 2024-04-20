@@ -1,5 +1,5 @@
 "use client";
-import DetailContainer from "@/containers/detail/DetailContainer";
+import QuizInfoPage from "@/pages/quiz_info/ui/quizInfoPage";
 
 type Props = {
   params: {
@@ -8,7 +8,7 @@ type Props = {
 }
 
 const DetailPage = ({ params }:Props) => {
-  return <DetailContainer quizId = {params.slug}/>;
+  return <QuizInfoPage quizId = {params.slug}/>;
 };
 
 export default DetailPage;

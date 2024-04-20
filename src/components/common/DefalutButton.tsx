@@ -21,6 +21,9 @@ const ButtonLayout = styled.div`
   align-items: center;
   font-size: 20;
   font-weight: bold;
+  :hover{
+    cursor: pointer;
+  }
 `
 
 const DefalutButton = ({onClick,color,txt}:ButtonProps) =>{
