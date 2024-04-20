@@ -34,6 +34,7 @@ const CategoryBlock = () => {
         height={419}
       />
 
+      {/* 이미지 필드 */}
       <CategoryBlockRight>
         {/* TODO: 이미지 들어갈 박스 영역 */}
         <ImageBox>여기에 이미지를 추가하세요.</ImageBox>
