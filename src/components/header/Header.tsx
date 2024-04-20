@@ -4,13 +4,13 @@ import styled from "styled-components";
 const Layout = styled.div`
   padding-top: 30px;
   margin-bottom: 30px;
-  grid-column: 1/13;
   height: 70px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   color: black;
+  width: 1440px;
 `;
 
 const Title = styled.h1`
