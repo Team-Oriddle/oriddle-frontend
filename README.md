@@ -1,4 +1,4 @@
-# Orridle-Frontend
+# Oriddle-Frontend
 
 ## Branch Naming Convention
 
