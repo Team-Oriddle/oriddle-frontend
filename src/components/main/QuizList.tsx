@@ -19,7 +19,7 @@ const Layout = styled.div`
   grid-column: 1/13;
   display: flex;
   flex-direction: column;
-  align-items: end;
+  align-items: start;
 `;
 
 const QuizLayout = styled.div`
@@ -30,8 +30,10 @@ const QuizLayout = styled.div`
   row-gap: 20px;
 `;
 const QuizListController = styled.div`
+  width: 1440px;
   font-size: 20px;
   margin-bottom: 10px;
+  text-align: end;
 `;
 
 export const QuizList = () => {
