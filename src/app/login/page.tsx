@@ -1,8 +1,9 @@
 "use client";
-import LoginContainer from "@/containers/login/LoginContainer";
 
-const LoginPage = () => {
-  return <LoginContainer />;
+import { LoginPage } from "@/pages/login";
+
+const LoginAppPage = () => {
+  return <LoginPage />;
 };
 
-export default LoginPage;
+export default LoginAppPage;
