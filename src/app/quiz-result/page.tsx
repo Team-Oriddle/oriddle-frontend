@@ -1,7 +1,9 @@
-import QuizResultContainer from "@/containers/quiz-result/QuizResultContainer";
+"use client";
 
-const QuizResultPage = () => {
-  return <QuizResultContainer />;
+import { QuizResultPage } from "@/pages/quiz_result_page";
+
+const QuizResultAppPage = () => {
+  return <QuizResultPage />;
 };
 
-export default QuizResultPage;
+export default QuizResultAppPage;
