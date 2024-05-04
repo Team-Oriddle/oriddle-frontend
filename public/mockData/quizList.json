@@ -7,13 +7,13 @@
         "quizId": 1,
         "title": "테스트 퀴즈1",
         "imageUrl": "https://source.unsplash.com/random/1",
-        "description": "테스트 퀴즈1입니다."
+        "description": "테스트 퀴즈1입니다. 서버에서 불러와지지 않았습니다."
       },
       {
         "quizId": 2,
         "title": "테스트 퀴즈2",
         "imageUrl": "https://source.unsplash.com/random/2",
-        "description": "테스트 퀴즈2입니다."
+        "description": "테스트 퀴즈2입니다. 서버에서 불러와지지 않았습니다."
       }
     ]
   }

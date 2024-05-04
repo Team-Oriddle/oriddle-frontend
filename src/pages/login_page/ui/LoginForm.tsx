@@ -1,14 +1,22 @@
 // LoginForm.tsx
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 
 const LoginForm = () => {
-  const socialLogin = (provider: "google" | "facebook") => {
-    const redirectEndPoint = encodeURIComponent("/");
-    const baseUrl = `http://localhost:8080/api/v1/login/${provider}?redirectEndPoint=${redirectEndPoint}`;
-    console.log(`소셜 로그인 시도 - ${provider}`);
-    window.location.href = baseUrl;
-  };
+  const router = useRouter();
+
+  const socialLogin = useCallback(
+    (provider: "google" | "facebook") => {
+      // const redirectEndPoint = "/auth/callback";
+      const redirectEndPoint = "/";
+      console.log(redirectEndPoint);
+      const baseUrl = `http://localhost:8080/api/v1/login/${provider}?redirectEndPoint=${redirectEndPoint}`;
+      console.log(`소셜 로그인 시도 - ${provider}`);
+      router.push(baseUrl);
+    },
+    [router]
+  );
 
   return (
     <Form className='login-form'>

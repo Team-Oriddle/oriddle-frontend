@@ -1,5 +1,5 @@
-import LoginForm from "@/pages/login/ui/LoginForm";
-import { SignupForm } from "@/pages/login/ui/SignupForm";
+import LoginForm from "@/pages/login_page/ui/LoginForm";
+import { SignupForm } from "@/pages/login_page/ui/SignupForm";
 import { useState } from "react";
 import styled from "styled-components";
 

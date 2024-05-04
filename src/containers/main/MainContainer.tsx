@@ -1,5 +1,8 @@
 import { Header } from "@/components/header/Header";
 import { QuizList } from "@/components/main/QuizList";
+import { userAtom } from "@/store/userAtom";
+import axios from "axios";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -27,6 +30,34 @@ const Wrapper = styled.div`
 `;
 
 const MainContainer = () => {
+  console.log(userAtom);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/v1/user/info",
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.status !== 200) {
+          throw new Error("Failed to fetch user data");
+        }
+
+        const userData = await response.data;
+        console.log(userData);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   return (
     <Container>
       <Wrapper>
