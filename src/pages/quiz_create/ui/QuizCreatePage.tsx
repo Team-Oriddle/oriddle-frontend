@@ -1,4 +1,6 @@
 import { Header } from "@/components/header/Header"
+import { ChooseQuizFromCreate } from "@/features/ChooseQuizFromCreate/ui/ChooseQuizFromCreate"
+import { useEffect, useState } from "react"
 import styled from "styled-components"
 
 const Container = styled.div`
@@ -92,7 +94,50 @@ type QuizCreateProps = {
   QuizGameId :number
 }
 
+interface IQuiz{
+  number:number,
+  description:string,
+  source:string,
+  type:string,
+  timeLimit:number,
+  score:number,
+  mainAnswer:string,
+  addtionalAnswers:string[]
+}
+
 export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
+
+  const [ quizList, setQuizList ] = useState<any>([
+    {
+      "number": 1, 
+      "description": "", // 문제 설명
+      "source": "", // 문제에 사용되는 이미지 URL
+      "type": "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
+      "sourceType": "", // 문제의 소스 타입(QuestionSourceType)
+      "timeLimit": null, // 문제 제한 시간
+      "score": null, // 정답자에게 부여할 점수
+      "mainAnswer": "", // 문제 메인 정답
+      "additionalAnswers": []
+    },
+    {
+      "number": 2, 
+      "description": "", // 문제 설명
+      "source": "", // 문제에 사용되는 이미지 URL
+      "type": "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
+      "sourceType": "", // 문제의 소스 타입(QuestionSourceType)
+      "timeLimit": null, // 문제 제한 시간
+      "score": null, // 정답자에게 부여할 점수
+      "mainAnswer": "", // 문제 메인 정답
+      "additionalAnswers": []
+    }
+  ])
+  const [selectedQuiz, setSelectedQuiz ] = useState<any>(0)
+  
+  const handleQuizSelect = (quiz:any) =>{
+    setSelectedQuiz(quiz);
+    console.log(quiz)
+  }
+
   return(
     <Container>
       <Header/>
@@ -101,9 +146,10 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
           <SettingButton>
 
           </SettingButton>
+          <ChooseQuizFromCreate quizList={quizList} onQuizSelect={handleQuizSelect} />
         </LeftBox>
         <CenterBox>
-          <TitleInput></TitleInput>
+          <TitleInput> {selectedQuiz.number}</TitleInput>
           <QuizContainer>
             <SourceInput></SourceInput>
             <QuizInput></QuizInput>
