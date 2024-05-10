@@ -9,7 +9,7 @@ const LoginForm = () => {
   const socialLogin = useCallback(
     (provider: "google" | "facebook") => {
       // const redirectEndPoint = "/auth/callback";
-      const redirectEndPoint = "/";
+      const redirectEndPoint = "/auth/callback";
       console.log(redirectEndPoint);
       const baseUrl = `http://localhost:8080/api/v1/login/${provider}?redirectEndPoint=${redirectEndPoint}`;
       console.log(`소셜 로그인 시도 - ${provider}`);
