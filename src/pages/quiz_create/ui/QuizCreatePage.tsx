@@ -50,13 +50,14 @@ const SettingButton = styled.div`
 `
 
 
-const TitleInput = styled.div`
+const TitleInput = styled.input`
   width: 100%;
   height: 60px;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   color: black;
   background-color: white;
   margin: 10px 0px;
+  border: none;
 `
 
 const QuizContainer = styled.div`
@@ -73,11 +74,12 @@ const SourceInput = styled.div`
   background-color: white;
   margin-right: 20px;
 `
-const QuizInput = styled.div`
+const QuizInput = styled.input`
   width: 464px;
   height: 100%;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   background-color: white;
+  border:none;
 `
 const AnswerInput = styled.div`
   width: 100%;
@@ -110,16 +112,7 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
 
   const [ quizList, setQuizList ] = useState<any>([
     {
-      "description": "", // 문제 설명
-      "source": "", // 문제에 사용되는 이미지 URL
-      "type": "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
-      "sourceType": "", // 문제의 소스 타입(QuestionSourceType)
-      "timeLimit": null, // 문제 제한 시간
-      "score": null, // 정답자에게 부여할 점수
-      "mainAnswer": "", // 문제 메인 정답
-      "additionalAnswers": []
-    },
-    {
+      "number":0,
       "description": "", // 문제 설명
       "source": "", // 문제에 사용되는 이미지 URL
       "type": "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
@@ -138,7 +131,9 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
   }
 
   const handleAddQuiz = () =>{
+    const newNumber = quizList[quizList.length - 1].number + 1 
     setQuizList([...quizList,{
+      "number":newNumber,
       "description": "", // 문제 설명
       "source": "", // 문제에 사용되는 이미지 URL
       "type": "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
@@ -150,22 +145,27 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
     }])
   }
 
+  useEffect(()=>{
+
+  },[])
+
+
+
   return(
     <Container>
       <Header/>
       <Wrapper>
         <LeftBox>
           <SettingButton>
-
           </SettingButton>
           <ChooseQuizFromCreatePage quizList={quizList} onQuizSelect={handleQuizSelect} />
           <AddQuizFromCreatePage addQuiz={handleAddQuiz}/>
         </LeftBox>
         <CenterBox>
-          <TitleInput> {quizList[selectedQuiz].descrition}</TitleInput>
+          <TitleInput  >{quizList[selectedQuiz].descrition}</TitleInput>
           <QuizContainer>
-            <SourceInput></SourceInput>
-            <QuizInput></QuizInput>
+            <SourceInput>{selectedQuiz}</SourceInput>
+            <QuizInput value={quizList[selectedQuiz].descrition}></QuizInput>
           </QuizContainer>
           <AnswerInput></AnswerInput>
           <OtherAnswerInput></OtherAnswerInput>
