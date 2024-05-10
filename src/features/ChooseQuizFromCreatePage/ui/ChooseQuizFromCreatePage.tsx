@@ -19,7 +19,7 @@ const QuizBox = styled.div`
     }
 `
 
-export const ChooseQuizFromCreate = ({quizList, onQuizSelect}:any)=>{
+export const ChooseQuizFromCreatePage = ({quizList, onQuizSelect}:any)=>{
 
   useEffect(()=>{
     console.log(quizList)
@@ -27,10 +27,10 @@ export const ChooseQuizFromCreate = ({quizList, onQuizSelect}:any)=>{
 
   return(
     <Container>
-      {quizList.map((quiz:any) =>(
-        <QuizBox key={quiz.number} onClick={()=>onQuizSelect(quiz)}>
+      {quizList.map((quiz:any,index:any) =>(
+        <QuizBox key={index} onClick={()=>onQuizSelect(quiz)}>
           {quiz.description}
-          {quiz.number}
+          {index}
         </QuizBox>
       ))}
     </Container>

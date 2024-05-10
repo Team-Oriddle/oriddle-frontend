@@ -1,5 +1,6 @@
 import { Header } from "@/components/header/Header"
-import { ChooseQuizFromCreate } from "@/features/ChooseQuizFromCreate/ui/ChooseQuizFromCreate"
+import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage/ui/AddQuizFromCreatePage"
+import { ChooseQuizFromCreatePage } from "@/features/ChooseQuizFromCreatePage/ui/ChooseQuizFromCreatePage"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
 
@@ -109,7 +110,6 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
 
   const [ quizList, setQuizList ] = useState<any>([
     {
-      "number": 1, 
       "description": "", // 문제 설명
       "source": "", // 문제에 사용되는 이미지 URL
       "type": "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
@@ -120,7 +120,6 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
       "additionalAnswers": []
     },
     {
-      "number": 2, 
       "description": "", // 문제 설명
       "source": "", // 문제에 사용되는 이미지 URL
       "type": "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
@@ -138,6 +137,19 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
     console.log(quiz)
   }
 
+  const handleAddQuiz = () =>{
+    setQuizList([...quizList,{
+      "description": "", // 문제 설명
+      "source": "", // 문제에 사용되는 이미지 URL
+      "type": "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
+      "sourceType": "", // 문제의 소스 타입(QuestionSourceType)
+      "timeLimit": null, // 문제 제한 시간
+      "score": null, // 정답자에게 부여할 점수
+      "mainAnswer": "", // 문제 메인 정답
+      "additionalAnswers": []
+    }])
+  }
+
   return(
     <Container>
       <Header/>
@@ -146,7 +158,8 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
           <SettingButton>
 
           </SettingButton>
-          <ChooseQuizFromCreate quizList={quizList} onQuizSelect={handleQuizSelect} />
+          <ChooseQuizFromCreatePage quizList={quizList} onQuizSelect={handleQuizSelect} />
+          <AddQuizFromCreatePage addQuiz={handleAddQuiz}/>
         </LeftBox>
         <CenterBox>
           <TitleInput> {selectedQuiz.number}</TitleInput>
@@ -158,7 +171,6 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
           <OtherAnswerInput></OtherAnswerInput>
         </CenterBox>
         <RightBox>
-          
         </RightBox>
       </Wrapper>
     </Container>
