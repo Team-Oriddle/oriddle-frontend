@@ -131,7 +131,7 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
     }
   ])
   const [selectedQuiz, setSelectedQuiz ] = useState<any>(0)
-  
+  //TODO: index를 쓸것인지 number를 가져가서 쓸것인지 고려
   const handleQuizSelect = (index:any) =>{
     setSelectedQuiz(index);
     console.log(index)
