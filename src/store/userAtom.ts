@@ -3,7 +3,6 @@ import { atom } from "jotai";
 interface User {
   id: string;
   name: string;
-  provider: string;
   email: string;
 }
 
