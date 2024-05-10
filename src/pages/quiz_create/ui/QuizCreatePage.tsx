@@ -132,9 +132,9 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
   ])
   const [selectedQuiz, setSelectedQuiz ] = useState<any>(0)
   
-  const handleQuizSelect = (quiz:any) =>{
-    setSelectedQuiz(quiz);
-    console.log(quiz)
+  const handleQuizSelect = (index:any) =>{
+    setSelectedQuiz(index);
+    console.log(index)
   }
 
   const handleAddQuiz = () =>{
@@ -162,7 +162,7 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
           <AddQuizFromCreatePage addQuiz={handleAddQuiz}/>
         </LeftBox>
         <CenterBox>
-          <TitleInput> {selectedQuiz.number}</TitleInput>
+          <TitleInput> {quizList[selectedQuiz].descrition}</TitleInput>
           <QuizContainer>
             <SourceInput></SourceInput>
             <QuizInput></QuizInput>

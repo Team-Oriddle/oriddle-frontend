@@ -28,7 +28,7 @@ export const ChooseQuizFromCreatePage = ({quizList, onQuizSelect}:any)=>{
   return(
     <Container>
       {quizList.map((quiz:any,index:any) =>(
-        <QuizBox key={index} onClick={()=>onQuizSelect(quiz)}>
+        <QuizBox key={index} onClick={()=>onQuizSelect(index)}>
           {quiz.description}
           {index}
         </QuizBox>
