@@ -8,7 +8,9 @@ const LoginForm = () => {
 
   const socialLogin = useCallback(
     (provider: "google" | "facebook") => {
-      // const redirectEndPoint = "/auth/callback";
+      // 현재 페이지 엔드포인트를 세션 스토리지에 저장합니다.
+      sessionStorage.setItem("redirectUrl", window.location.href);
+
       const redirectEndPoint = "/auth/callback";
       console.log(redirectEndPoint);
       const baseUrl = `http://localhost:8080/api/v1/login/${provider}?redirectEndPoint=${redirectEndPoint}`;

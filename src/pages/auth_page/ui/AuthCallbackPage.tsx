@@ -36,7 +36,14 @@ export const AuthCallbackPage = () => {
           user: userData,
         }));
 
-        router.push("/"); // Redirect to home after successful login
+        // 세션스토리지에 저장된 리다이렉트 URL이 있다면 해당 URL로 이동
+        const redirectUrl = sessionStorage.getItem("redirectUrl");
+        if (redirectUrl) {
+          sessionStorage.removeItem("redirectUrl");
+          router.push(redirectUrl);
+        } else {
+          router.push("/"); // Redirect to home after successful login
+        }
       } catch (error) {
         console.error("Error fetching user data:", error);
         router.push("/login"); // Redirect to login page on failure

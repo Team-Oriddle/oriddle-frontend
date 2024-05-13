@@ -1,8 +1,5 @@
 import { Header } from "@/components/header/Header";
 import { QuizList } from "@/components/main/QuizList";
-import { userAtom } from "@/store/userAtom";
-import axios from "axios";
-import { useEffect } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
