@@ -49,15 +49,26 @@ const SettingButton = styled.div`
   margin-bottom: 12px;
 `
 
-
-const TitleInput = styled.input`
-  width: 100%;
-  height: 60px;
+const StyleInput = styled.input`
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   color: black;
   background-color: white;
-  margin: 10px 0px;
   border: none;
+  text-align: center;
+`
+
+const TitleInput = styled(StyleInput)`
+  width: 100%;
+  height: 60px;
+  font-weight: bold;
+  margin: 10px 0px;
+  font-size: 28px;
+`
+
+const QuizInput = styled(StyleInput)`
+  width: 464px;
+  height: 100%;
+  font-size: 28px;
 `
 
 const QuizContainer = styled.div`
@@ -74,101 +85,271 @@ const SourceInput = styled.div`
   background-color: white;
   margin-right: 20px;
 `
-const QuizInput = styled.input`
-  width: 464px;
-  height: 100%;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
-  background-color: white;
-  border:none;
-`
-const AnswerInput = styled.div`
+
+const AnswerInput = styled(StyleInput)`
   width: 100%;
   height: 150px;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
-  background-color: white;
   margin: 10px 0px;
+  font-size: 28px;
+
 `
 
-const OtherAnswerInput = styled(AnswerInput)`
+const OtherAnswerInput = styled.div`
+  width: 100%;
+  height: 150px;
+  margin: 10px 0px;
+  font-size: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+  color: black;
+  background-color: white;
+  border: none;
+  text-align: center;
+  overflow-y: scroll;
 `
 
+const AnswerOptionButton = styled.div`
+  width: 100%;
+  height: 32px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  font-size: 30px;
+  text-align: center;
+  &:hover {
+    background-color: #643DD2;
+    color: white;
+  }
+`
+
+const OptionAnswerInput = styled.input`
+  background-color: white;
+  font-size: 32px;
+  width: calc(100% - 40px); // Adjust to leave space for the delete button
+  height: 60px;
+  margin-right: 10px;
+  color: black;
+  background-color: white;
+  border: none;
+  text-align: center;
+`
+
+const DeleteButton = styled.button`
+  color: #643DD2;
+  font-weight: bold;
+  background-color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`
+
+const AnswerWrapper = styled.div`
+  background-color: white;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+`
 
 type QuizCreateProps = {
-  QuizGameId :number
+  QuizGameId: number;
 }
 
-interface IQuiz{
-  number:number,
-  description:string,
-  source:string,
-  type:string,
-  timeLimit:number,
-  score:number,
-  mainAnswer:string,
-  addtionalAnswers:string[]
+interface IQuiz {
+  number: number;
+  description: string;
+  source: string;
+  type: string;
+  timeLimit: number;
+  score: number;
+  mainAnswer: string;
+  addtionalAnswers: string[];
 }
 
-export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
-
-  const [ quizList, setQuizList ] = useState<any>([
+export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
+  const [quizList, setQuizList] = useState<any>([
     {
-      "number":0,
-      "description": "", // 문제 설명
-      "source": "", // 문제에 사용되는 이미지 URL
-      "type": "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
-      "sourceType": "", // 문제의 소스 타입(QuestionSourceType)
-      "timeLimit": null, // 문제 제한 시간
-      "score": null, // 정답자에게 부여할 점수
-      "mainAnswer": "", // 문제 메인 정답
-      "additionalAnswers": []
+      number: 0,
+      description: "", // 문제 설명
+      source: "", // 문제에 사용되는 이미지 URL
+      type: "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
+      sourceType: "", // 문제의 소스 타입(QuestionSourceType)
+      timeLimit: null, // 문제 제한 시간
+      score: null, // 정답자에게 부여할 점수
+      answers: [
+        {
+          content: ''
+        }
+      ]
     }
   ])
-  const [selectedQuiz, setSelectedQuiz ] = useState<any>(0)
-  //TODO: index를 쓸것인지 number를 가져가서 쓸것인지 고려
-  const handleQuizSelect = (index:any) =>{
+
+  const [selectedQuiz, setSelectedQuiz] = useState<any>(0)
+
+  const handleQuizSelect = (index: any) => {
     setSelectedQuiz(index);
-    console.log(index)
+    console.log('선택된 퀴즈는' + index)
   }
 
-  const handleAddQuiz = () =>{
-    const newNumber = quizList[quizList.length - 1].number + 1 
-    setQuizList([...quizList,{
-      "number":newNumber,
-      "description": "", // 문제 설명
-      "source": "", // 문제에 사용되는 이미지 URL
-      "type": "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
-      "sourceType": "", // 문제의 소스 타입(QuestionSourceType)
-      "timeLimit": null, // 문제 제한 시간
-      "score": null, // 정답자에게 부여할 점수
-      "mainAnswer": "", // 문제 메인 정답
-      "additionalAnswers": []
+  const handleAddQuiz = () => {
+    const newNumber = quizList[quizList.length - 1].number + 1
+    setQuizList([...quizList, {
+      number: newNumber,
+      description: "", // 문제 설명
+      source: "", // 문제에 사용되는 이미지 URL
+      type: "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
+      sourceType: "", // 문제의 소스 타입(QuestionSourceType)
+      timeLimit: null, // 문제 제한 시간
+      score: null, // 정답자에게 부여할 점수,
+      answers: [
+        {
+          content: ''
+        }
+      ]
     }])
+    setSelectedQuiz(newNumber)
   }
 
-  useEffect(()=>{
+  const handleAddOptionAnswer = () => {
+    const newQuizList = quizList.map((quiz: any) => {
+      if (quiz.number === selectedQuiz) {
+        const newAnswers = [...quiz.answers, {
+          content: ''
+        }]
+        console.log(quiz.answers)
+        return { ...quiz, answers: newAnswers }
+      }
+      return quiz
+    })
+    setQuizList(newQuizList)
+  }
 
-  },[])
+  const handleEditOptionAnswer = (editNumber: any, editValue: any) => {
+    const newQuizList = quizList.map((quiz: any) => {
+      if (quiz.number === selectedQuiz) {
+        const newAnswers = quiz.answers.map((answer: any, index) => {
+          if (editNumber === index) {
+            return { ...answer, content: editValue }
+          }
+          return answer
+        });
+        return { ...quiz, answers: newAnswers }
+      }
+      return quiz
+    })
+    setQuizList(newQuizList)
+  }
 
+  const handleDeleteOptionAnswer = (deleteIndex: number) => {
+    const newQuizList = quizList.map((quiz: any) => {
+      if (quiz.number === selectedQuiz) {
+        const newAnswers = quiz.answers.filter((_: any, index: number) => index !== deleteIndex);
+        return { ...quiz, answers: newAnswers };
+      }
+      return quiz;
+    });
+    setQuizList(newQuizList);
+  }
 
+  const handleEditQuiz = (EditNumber: number, EditObject: string, EditValue: any) => {
+    const newQuizList = quizList.map((quiz: any) => {
+      if (quiz.number === EditNumber) {
+        return { ...quiz, [EditObject]: EditValue }
+      }
+      return quiz
+    });
+    setQuizList(newQuizList)
+  }
 
-  return(
+  const handleEditMainAnswers = (EditNumber: number, EditValue: any) => {
+    const newQuizList = quizList.map((quiz: any) => {
+      if (quiz.number === EditNumber) {
+        const newAnswers = quiz.answers.map((answer: any, index: number) => {
+          if (index === 0) {
+            return { ...answer, content: EditValue };
+          }
+          return answer;
+        });
+        return { ...quiz, answers: newAnswers };
+      }
+      return quiz;
+    });
+    setQuizList(newQuizList);
+  }
+
+  const handleDeleteQuiz = (number: number) => {
+    const newArray = quizList.filter((quiz: any) => {
+      if (quiz.number === number) {
+        return false // 탈출
+      }
+      return true
+    }).map((quiz: any) => {
+      if (quiz.number >= number) {
+        return { ...quiz, number: quiz.number - 1 }
+      }
+      return quiz
+    })
+    setSelectedQuiz(number - 2)
+    setQuizList(newArray)
+  }
+
+  const [isDelete, setIsDelete] = useState<boolean>(false)
+  //0. 버튼을 누르면 selected를 변경하고 isDelete를 변경을해줌
+  //1. isDelete -> false->true
+  //2.  
+
+  return (
     <Container>
-      <Header/>
+      <Header />
       <Wrapper>
         <LeftBox>
           <SettingButton>
           </SettingButton>
-          <ChooseQuizFromCreatePage quizList={quizList} onQuizSelect={handleQuizSelect} />
-          <AddQuizFromCreatePage addQuiz={handleAddQuiz}/>
+          <ChooseQuizFromCreatePage
+            quizList={quizList}
+            onQuizSelect={handleQuizSelect}
+            onQuizDelete={handleDeleteQuiz}
+          />
+          <AddQuizFromCreatePage addQuiz={handleAddQuiz} />
         </LeftBox>
         <CenterBox>
-          <TitleInput  >{quizList[selectedQuiz].descrition}</TitleInput>
+          <TitleInput value={"제목"}></TitleInput>
+          {/* TODO: EditQuiz로 feature 생성 */}
           <QuizContainer>
             <SourceInput>{selectedQuiz}</SourceInput>
-            <QuizInput value={quizList[selectedQuiz].descrition}></QuizInput>
+            <QuizInput
+              placeholder="질문을 입력해주세요"
+              value={quizList[selectedQuiz]?.description ?? ""}
+              onChange={(e) => handleEditQuiz(selectedQuiz, 'description', e.target.value)}
+            ></QuizInput>
           </QuizContainer>
-          <AnswerInput></AnswerInput>
-          <OtherAnswerInput></OtherAnswerInput>
+          <AnswerInput
+            placeholder="정답을 입력해주세요"
+            value={quizList[selectedQuiz]?.answers[0].content ?? ""}
+            onChange={(e) => handleEditMainAnswers(selectedQuiz, e.target.value)}
+          ></AnswerInput>
+          <OtherAnswerInput>
+            {quizList[selectedQuiz].answers.slice(1).map((answer: any, index: number) => (
+              <AnswerWrapper key={index + 1}>
+                <OptionAnswerInput
+                  value={answer.content}
+                  onChange={(e) => handleEditOptionAnswer(index + 1, e.target.value)}
+                />
+                <DeleteButton onClick={() => handleDeleteOptionAnswer(index + 1)}>X</DeleteButton>
+              </AnswerWrapper>
+            ))}
+            <AnswerOptionButton onClick={handleAddOptionAnswer}>+</AnswerOptionButton>
+          </OtherAnswerInput>
+          {/* TODO: feature로 빼내기 */}
         </CenterBox>
         <RightBox>
         </RightBox>
@@ -177,46 +358,3 @@ export const QuizCreatePage = ({QuizGameId}:QuizCreateProps) =>{
   )
 }
 
-
-// {
-// 	"title": "나라 이름 맞추기", // 퀴즈의 제목
-// 	"description": "주어진 국기의 나라이름을 맞추는 퀴즈", // 퀴즈에 대한 설명
-// 	"questions": [
-// 								 {
-// 										"number": 1, // 문제 번호
-// 										"description": "이 나라의 이름은?", // 문제 설명
-// 										"source": "http//asdacxca", // 문제에 사용되는 이미지 URL
-// 										"type": "SHORT_ANSWER", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
-// 										"sourceType": "IMAGE", // 문제의 소스 타입(QuestionSourceType)
-// 										"timeLimit": 10, // 문제 제한 시간
-// 										"score": 20, // 정답자에게 부여할 점수
-// 										"mainAnswer": "메인 정답", // 문제 메인 정답
-// 										"additionalAnswers": [
-// 																						{
-// 																							"content": "추가 정답1"
-// 																						},
-// 																						{
-// 																							"content": "추가 정답2"
-// 																						}
-// 																					]  
-// 									},
-// 									{
-// 										"number": 2, // 문제 번호
-// 										"description": "이 나라의 이름은?", // 문제 설명
-// 										"source": "http//asdacxca", // 문제에 사용되는 이미지 URL
-// 										"type": "SHORT_ANSWER", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
-// 										"sourceType": "IMAGE", // 문제의 소스 타입(QuestionSourceType: NONE, SOUND, IMAGE, VIDEO)
-// 										"timeLimit": 10, // 문제 제한 시간
-// 										"score": 20, // 정답자에게 부여할 점수
-// 										"mainAnswer": "메인 정답", // 문제 메인 정답
-// 										"additionalAnswers": [
-// 																						{
-// 																							"content": "추가 정답1"
-// 																						},
-// 																						{
-// 																							"content": "추가 정답2"
-// 																						}
-// 																					]  
-// 									}
-// 								]
-// }

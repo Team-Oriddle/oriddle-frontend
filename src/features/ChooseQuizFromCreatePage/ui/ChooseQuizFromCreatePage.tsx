@@ -19,7 +19,7 @@ const QuizBox = styled.div`
     }
 `
 
-export const ChooseQuizFromCreatePage = ({quizList, onQuizSelect}:any)=>{
+export const ChooseQuizFromCreatePage = ({quizList, onQuizSelect, onQuizDelete}:any)=>{
 
   useEffect(()=>{
     console.log(quizList)
@@ -31,8 +31,9 @@ export const ChooseQuizFromCreatePage = ({quizList, onQuizSelect}:any)=>{
         <QuizBox key={index} onClick={()=>onQuizSelect(quiz.number)}>
           {quiz.description}
           {quiz.number}
+          <div onClick={()=>onQuizDelete(quiz.number)}> 삭제 하기</div>
         </QuizBox>
       ))}
-    </Container>
+    </Container>  
   )
 }
