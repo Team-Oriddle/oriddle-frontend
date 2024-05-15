@@ -17,7 +17,7 @@ const Layout = styled.div`
 `
 
 const QuizImg = styled.div`
-  grid-column: 1/6;
+  width: 586px;
   height: 400px;
   display: flex;
   justify-content: center;
@@ -27,7 +27,7 @@ const QuizImg = styled.div`
 `
 
 const QuizDetailLayout = styled.div`
-  grid-column: 6/13;
+  width: 830px;
   height: 400px;
   background-color: white;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));

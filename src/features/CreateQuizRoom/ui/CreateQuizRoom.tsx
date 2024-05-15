@@ -101,14 +101,11 @@ export const CreateQuizRoom = ({quizId,handleModal}:Props) =>{
         "maxParticipant": userNumber // NotNull, 2이상 8이하
       })
     }).then((response)=>{
-      console.log(response)
+      console.log(response.json)
       //TODO: 페이지 이동 코드 작성
     }
     ).catch((error)=>{
-      console.log(QuizId)
-      console.log(quizRoomTitle)
-      console.log(userNumber)
-      console.log(error)
+
     })
   }
 

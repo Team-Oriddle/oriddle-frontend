@@ -394,11 +394,11 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
             :
             <Image
               src={quizList[selectedQuiz]?.source}
-              alt="Example Image"
-              width={342}
-              height={250}
-          />}
-
+              alt="썸네일"
+              layout="fill"
+              objectFit="cover"
+            />}
+          {/* TODO: 이미지 비율 자연스럽게 변경 */}
             </SourceInput>
             <QuizInput
               placeholder="질문을 입력해주세요"

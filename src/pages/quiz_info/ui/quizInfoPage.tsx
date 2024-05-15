@@ -62,7 +62,6 @@ const UserEvaluateButtonLayout = styled.div`
 
 const UserEvaluateQuizLayout = styled.div`
   width: 100%;
-  grid-column: 1/13;
   height: 160px;
   display: flex;
   flex-direction: row;
