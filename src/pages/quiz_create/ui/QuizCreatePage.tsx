@@ -1,6 +1,7 @@
 import { Header } from "@/components/header/Header"
 import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage/ui/AddQuizFromCreatePage"
 import { ChooseQuizFromCreatePage } from "@/features/ChooseQuizFromCreatePage/ui/ChooseQuizFromCreatePage"
+import Image from "next/image"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
 
@@ -391,9 +392,12 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
               onChange={uploadingImage}
             />
             :
-            "false"
-            //이미지 코드로 변경
-            }
+            <Image
+              src={quizList[selectedQuiz]?.source}
+              alt="Example Image"
+              width={342}
+              height={250}
+          />}
 
             </SourceInput>
             <QuizInput
