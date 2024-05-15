@@ -1,5 +1,53 @@
+import { userAtom } from "@/store/userAtom";
+import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import styled from "styled-components";
+
+export const Header = () => {
+  const [authState] = useAtom(userAtom);
+  useEffect(() => {
+    console.log(`authState: `, authState);
+  }, [authState]);
+
+  const router = useRouter();
+  const routeToMain = () => {
+    router.push("/");
+  };
+
+  const routeToMyPage = () => {
+    alert("My Page로 이동합니다.");
+  };
+
+  const routeToLogin = () => {
+    router.push("/login");
+  };
+
+  const handleLogout = () => {
+    alert("(개발 중)로그아웃 액션입니다.");
+  };
+
+  return (
+    <Layout>
+      <Title onClick={routeToMain}>ORIDDLE</Title>
+      {/* TODO: 검색 바 넣기 */}
+      <Buttons>
+        {/* TODO: 로그인 이전, 이후의 헤더 항목 업데이트 필요 */}
+        {authState.isLoggedIn ? (
+          <>
+            <Button onClick={routeToMyPage}>MY PAGE</Button>
+            <Button onClick={handleLogout}>LOGOUT</Button>
+          </>
+        ) : (
+          <>
+            <Button onClick={routeToMyPage}>MY PAGE</Button>
+            <Button onClick={routeToLogin}>LOGIN</Button>
+          </>
+        )}
+      </Buttons>
+    </Layout>
+  );
+};
 
 const Layout = styled.div`
   padding-top: 30px;
@@ -41,30 +89,3 @@ const Button = styled.button`
   justify-content: center;
   align-items: center;
 `;
-
-export const Header = () => {
-  const router = useRouter();
-  const routeToMain = () => {
-    router.push("/");
-  };
-
-  const routeToMyPage = () => {
-    alert("My Page로 이동합니다.");
-  };
-
-  const routeToLogin = () => {
-    router.push("/login");
-  };
-
-  return (
-    <Layout>
-      <Title onClick={routeToMain}>ORIDDLE</Title>
-      {/* TODO: 검색 바 넣기 */}
-      <Buttons>
-        {/* TODO: 로그인 이전, 이후의 헤더 항목 업데이트 필요 */}
-        <Button onClick={routeToMyPage}>MY PAGE</Button>
-        <Button onClick={routeToLogin}>LOGIN</Button>
-      </Buttons>
-    </Layout>
-  );
-};

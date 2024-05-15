@@ -1,46 +1,24 @@
 // LoginForm.tsx
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 
-const Form = styled.div`
-  .text-lg {
-    font-size: 1.125rem;
-    font-weight: 600;
-  }
-  .mt-4 {
-    margin-top: 1rem;
-  }
-  .mt-6 {
-    margin-top: 1.5rem;
-  }
-  .bg-blue-600 {
-    background-color: #2563eb;
-  }
-  .bg-red-500 {
-    background-color: #ef4444;
-  }
-  input,
-  button {
-    width: 100%;
-    padding: 0.5rem 1rem;
-    margin-top: 0.25rem;
-    border-radius: 0.375rem;
-    border: 1px solid #d1d5db;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  }
-  button {
-    color: white;
-    font-weight: medium;
-  }
-`;
+const LoginForm = () => {
+  const router = useRouter();
 
-export const LoginForm = () => {
-  const socialLogin = (provider: "google" | "facebook") => {
-    const redirectEndPoint = encodeURIComponent("/");
-    const baseUrl = `http://localhost:8080/api/v1/login/${provider}?redirectEndPoint=${redirectEndPoint}`;
-    console.log(`소셜 로그인 시도 - ${provider}`);
-    window.location.href = baseUrl;
-  };
+  const socialLogin = useCallback(
+    (provider: "google" | "facebook") => {
+      // 현재 페이지 엔드포인트를 세션 스토리지에 저장합니다.
+      sessionStorage.setItem("redirectUrl", window.location.href);
+
+      const redirectEndPoint = "/auth/callback";
+      console.log(redirectEndPoint);
+      const baseUrl = `http://localhost:8080/api/v1/login/${provider}?redirectEndPoint=${redirectEndPoint}`;
+      console.log(`소셜 로그인 시도 - ${provider}`);
+      router.push(baseUrl);
+    },
+    [router]
+  );
 
   return (
     <Form className='login-form'>
@@ -91,3 +69,37 @@ export const LoginForm = () => {
     </Form>
   );
 };
+
+export default LoginForm;
+
+const Form = styled.div`
+  .text-lg {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  .mt-6 {
+    margin-top: 1.5rem;
+  }
+  .bg-blue-600 {
+    background-color: #2563eb;
+  }
+  .bg-red-500 {
+    background-color: #ef4444;
+  }
+  input,
+  button {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    margin-top: 0.25rem;
+    border-radius: 0.375rem;
+    border: 1px solid #d1d5db;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  button {
+    color: white;
+    font-weight: medium;
+  }
+`;
