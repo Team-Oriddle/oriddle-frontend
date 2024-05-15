@@ -75,7 +75,7 @@ type Props = {
 
 
 export const CreateQuizRoom = ({quizId,handleModal}:Props) =>{
-  const navigate = useRouter();
+  const router = useRouter();
   const [ userNumber, setUserNumber ] = useState<number>(4);
   const [ roundTime, setRoundTime  ] = useState<number>(10);
   const [ quizRoomTitle, setQuizRoomTitle ] = useState<string>('')
@@ -102,6 +102,7 @@ export const CreateQuizRoom = ({quizId,handleModal}:Props) =>{
       })
     }).then((response)=>{
       console.log(response.json)
+      router.push(`/quiz/room/${response.json.data.quizId}`)
       //TODO: 페이지 이동 코드 작성
     }
     ).catch((error)=>{
