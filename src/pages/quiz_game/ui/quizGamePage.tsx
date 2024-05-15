@@ -108,8 +108,11 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
 
   useEffect(()=>{
     const getSocket = (quizRoomId:number) => {
+      console.log('소켓 연결 시도중')
       const subscriptions = [
         { topic: `/topic/quiz-room/${quizRoomId}/join`, callback:(message) =>{
+          console.log('join')
+
           let newUser = {...message, isHost:false}
           setUserData([...userData,newUser])
           userData.sort(function(a,b){
@@ -118,6 +121,8 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
         }},
         //strictMode가 켜져 있는 경우 제대로 작동하지 않음
         { topic: `/topic/quiz-room/${quizRoomId}/leave`, callback:(message) =>{
+          console.log('leave')
+
           const findIndex = message.userId;
           const copyUserData = userData
           const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
@@ -128,9 +133,13 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
         }},
         //strictMode가 켜져 있는 경우 제대로 작동하지 않음
         { topic: `/topic/quiz-room/${quizRoomId}/question`, callback:(message) =>{
+          console.log('quies')
+
           setQuestionData(message)
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/answer`, callback:(message) =>{
+          console.log('answer')
+
           setAnswerData(message)
           let copyUserData = userData
           let foundIndex = -1;
@@ -149,20 +158,26 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
           toggleAnswerModal()
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/finish`, callback:(message) =>{
+          console.log('fin')
+
           console.log(message)
           //TODO: 결과 페이지로 이동
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/time-out`, callback:(message) =>{
+          console.log('time-out')
+
           setAnswerData(message)
           toggleFinishModal()
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/chat`, callback:(message) =>{
+          console.log('chat')
           console.log(message)
           //TODO: 백엔드 채팅이 끝나면 채팅 관련 코드 추가
         }},
       ]
       initializeSocket('ws://localhost:8080/ws', subscriptions)//소켓 연결
     }
+    console.log('useEffect작동')
     getSocket(QuizGameId)
 
   },[isLoading])

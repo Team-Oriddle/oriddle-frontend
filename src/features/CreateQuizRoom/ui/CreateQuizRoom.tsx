@@ -98,13 +98,16 @@ export const CreateQuizRoom = ({quizId,handleModal}:Props) =>{
       body: JSON.stringify({
         "quizId" : QuizId, // NotNull
         "title": quizRoomTitle, // NotNull, 20자 이하, 공백 불가능          
-        "max_participant": userNumber // NotNull, 2이상 8이하
+        "maxParticipant": userNumber // NotNull, 2이상 8이하
       })
     }).then((response)=>{
       console.log(response)
       //TODO: 페이지 이동 코드 작성
     }
     ).catch((error)=>{
+      console.log(QuizId)
+      console.log(quizRoomTitle)
+      console.log(userNumber)
       console.log(error)
     })
   }
