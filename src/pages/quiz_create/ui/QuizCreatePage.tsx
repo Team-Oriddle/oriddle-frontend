@@ -20,24 +20,25 @@ const Container = styled.div`
 const Wrapper = styled.div`
   width: 100%;
   max-width: 1440px;
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 24px;
 `
 
 const LeftBox = styled.div`
-  width: 220px;
+  grid-column: 1/3;
   margin: 0px 6px;
   display: flex;
   flex-direction: column;
 `
 const CenterBox = styled.div`
-  width: 830px;
+  grid-column: 3/10;
   margin: 0px 6px;
   display: flex;
   flex-direction: column;
 `
 const RightBox = styled.div`
-  width: 342px;
+  grid-column: 10/12;
   margin: 0px 6px;
   display: flex;
   flex-direction: column;
@@ -92,7 +93,6 @@ const AnswerInput = styled(StyleInput)`
   height: 150px;
   margin: 10px 0px;
   font-size: 28px;
-
 `
 
 const OtherAnswerInput = styled.div`
@@ -130,7 +130,7 @@ const AnswerOptionButton = styled.div`
 const OptionAnswerInput = styled.input`
   background-color: white;
   font-size: 32px;
-  width: calc(100% - 40px); // Adjust to leave space for the delete button
+  width: calc(100% - 40px);
   height: 60px;
   margin-right: 10px;
   color: black;
@@ -197,6 +197,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   ])
 
   const [selectedQuiz, setSelectedQuiz] = useState<any>(0)
+  const [title, setTitle] = useState<string>('')
 
   const handleQuizSelect = (index: any) => {
     setSelectedQuiz(index);
@@ -312,9 +313,9 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     })
 
     const quizForm = {
-      "title":'제목',
+      "title":title,
       "description":'설명',
-      "image":'https://img.seoul.co.kr/img/upload/2017/07/14/SSI_20170714170426_O2.jpg',
+      "image":'',
       "questions":quizListForm
     }
     try{
@@ -368,8 +369,8 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
 
   return (
     <Container>
-      <Header />
       <Wrapper>
+      <Header />
         <LeftBox>
           <SettingButton>
           </SettingButton>
@@ -381,7 +382,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           <AddQuizFromCreatePage addQuiz={handleAddQuiz} />
         </LeftBox>
         <CenterBox>
-          <TitleInput value={"제목"}></TitleInput>
+          <TitleInput value={title} onChange={(e)=>setTitle(e.target.value)}></TitleInput>
           {/* TODO: EditQuiz로 feature 생성 */}
           <QuizContainer>
             <SourceInput>

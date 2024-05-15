@@ -6,6 +6,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 12px;
+
 `
 const QuizBox = styled.div`
   width: 220px;
@@ -29,6 +30,7 @@ export const ChooseQuizFromCreatePage = ({quizList, onQuizSelect, onQuizDelete}:
     <Container>
       {quizList.map((quiz:any,index:any) =>(
         <QuizBox key={index} onClick={()=>onQuizSelect(quiz.number)}>
+          
           {quiz.description}
           {quiz.number}
           <div onClick={()=>onQuizDelete(quiz.number)}> 삭제 하기</div>
