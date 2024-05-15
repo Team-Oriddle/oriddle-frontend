@@ -160,6 +160,10 @@ const AnswerWrapper = styled.div`
 
 `
 
+const ImageInput = styled(StyleInput)`
+  
+`
+
 type QuizCreateProps = {
   QuizGameId: number;
 }
@@ -180,7 +184,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     {
       number: 0,
       description: "", // 문제 설명
-      source: "https://img.seoul.co.kr/img/upload/2017/07/14/SSI_20170714170426_O2.jpg", // 문제에 사용되는 이미지 URL
+      source: "", // 문제에 사용되는 이미지 URL
       type: "SHORT_ANSWER", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
       sourceType: "IMAGE", // 문제의 소스 타입(QuestionSourceType)
       timeLimit: 30, // 문제 제한 시간
@@ -329,6 +333,37 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     }
   };
 
+  const uploadingImage = (e: any) => {
+    if (!e.target.files) {
+      return;
+    }
+    console.log(e.target.files[0].name);
+    setImg(e.target.files[0]);
+  };
+
+  const [img, setImg] = useState<any>('');
+
+  useEffect(()=>{
+    const formData = new FormData();
+    formData.append('file', img);
+    const uploadImage =async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/v1/quiz/image`,{
+          method:'POST',
+          credentials:'include',
+          body:formData
+        })
+        const data = await response.json();
+        console.log(data);
+        handleEditQuiz(selectedQuiz,'source',data.data.url)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    uploadImage()
+  },[img])
+
+
 
   return (
     <Container>
@@ -349,11 +384,17 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           {/* TODO: EditQuiz로 feature 생성 */}
           <QuizContainer>
             <SourceInput>
-            
-            {selectedQuiz}
-            
-            
-            
+            {
+              quizList[selectedQuiz]?.source === '' ? 
+            <ImageInput
+              type="file"
+              onChange={uploadingImage}
+            />
+            :
+            "false"
+            //이미지 코드로 변경
+            }
+
             </SourceInput>
             <QuizInput
               placeholder="질문을 입력해주세요"
