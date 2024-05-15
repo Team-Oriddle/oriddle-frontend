@@ -96,17 +96,18 @@ export const CreateQuizRoom = ({quizId,handleModal}:Props) =>{
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        "quizId" : QuizId, // NotNull
-        "title": quizRoomTitle, // NotNull, 20자 이하, 공백 불가능          
-        "maxParticipant": userNumber // NotNull, 2이상 8이하
+        "quizId" : QuizId,
+        "title": quizRoomTitle,
+        "maxParticipant": userNumber 
       })
     }).then((response)=>{
       console.log(response.json)
-      router.push(`/quiz/room/${response.json.data.quizId}`)
+      router.push(`/quiz/room/${response.json.data.quizRoomId}`)
       //TODO: 페이지 이동 코드 작성
     }
     ).catch((error)=>{
-
+      console.log(error)
+      alert('방에 참가해있습니다!')
     })
   }
 
