@@ -112,7 +112,6 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
       const subscriptions = [
         { topic: `/topic/quiz-room/${quizRoomId}/join`, callback:(message) =>{
           console.log(message)
-
           let newUser = {...message, isHost:false}
           setUserData([...userData,newUser])
           userData.sort(function(a,b){
@@ -122,7 +121,6 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
         //strictMode가 켜져 있는 경우 제대로 작동하지 않음
         { topic: `/topic/quiz-room/${quizRoomId}/leave`, callback:(message) =>{
           console.log(message)
-
           const findIndex = message.userId;
           const copyUserData = userData
           const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
@@ -146,6 +144,7 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
           userData.forEach((participant, index)=>{
             if(participant.userId === message.userId){
               foundIndex = index
+              console.log('FoundIndex'+foundIndex)
             }
           })
           if(foundIndex !== -1){
@@ -188,7 +187,7 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
       <Wrapper>
           <Header></Header>
           <Question description={questionData.description} number={questionData.number} type={questionData.type} score={questionData.score} ></Question>
-          <QuizSource url={questionData.score} sourceType={questionData.sourceType}></QuizSource>
+          <QuizSource url={questionData.source} sourceType={questionData.sourceType}></QuizSource>
           <UserChat UserList={userData} ></UserChat>
           <SendMessage quizGameId={QuizGameId}></SendMessage>
           <Modal isOpen={answerModalOpen} onClose={toggleAnswerModal}>

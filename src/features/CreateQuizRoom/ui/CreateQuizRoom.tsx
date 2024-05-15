@@ -1,3 +1,4 @@
+import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import styled from "styled-components"
@@ -69,54 +70,55 @@ const CreateButton = styled.div`
 `
 
 type Props = {
-  quizId :number,
-  handleModal:Function
+  quizId: number,
+  handleModal: Function
 }
 
-
-export const CreateQuizRoom = ({quizId,handleModal}:Props) =>{
-  const router = useRouter();
-  const [ userNumber, setUserNumber ] = useState<number>(4);
-  const [ roundTime, setRoundTime  ] = useState<number>(10);
-  const [ quizRoomTitle, setQuizRoomTitle ] = useState<string>('')
-
-  const handleUserSlider = (e:any) =>{
-    setUserNumber(e.target.value)
-  }
-
-  const handleRoundSlider = (e:any) =>{
-    setRoundTime(e.target.value)
-  }
-
-  const PostQuizRoom = async (QuizId:any) =>{
-    await fetch(`http://localhost:8080/api/v1/quiz-room`,{
-      method:'POST',
-      credentials: 'include', 
-      headers: {
-        'Content-Type': 'application/json'
+const PostQuizRoom = async (QuizId: any, quizRoomTitle: string, userNumber: number, router: any) => {
+  try {
+    const response = await axios.post(
+      'http://localhost:8080/api/v1/quiz-room',
+      {
+        quizId: QuizId,
+        title: quizRoomTitle,
+        maxParticipant: userNumber,
       },
-      body: JSON.stringify({
-        "quizId" : QuizId,
-        "title": quizRoomTitle,
-        "maxParticipant": userNumber 
-      })
-    }).then((response)=>{
-      console.log(response.json)
-      router.push(`/quiz/room/${response.json.data.quizRoomId}`)
-      //TODO: 페이지 이동 코드 작성
-    }
-    ).catch((error)=>{
-      console.log(error)
-      alert('방에 참가해있습니다!')
-    })
+      {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    console.log(response.data);
+    router.push(`/quiz/room/${response.data.data.quizRoomId}`);
+    // TODO: 페이지 이동 코드 작성
+  } catch (error) {
+    console.error(error);
+    alert('방에 참가해있습니다!');
+  }
+};
+
+export const CreateQuizRoom = ({ quizId, handleModal }: Props) => {
+  const router = useRouter();
+  const [userNumber, setUserNumber] = useState<number>(4);
+  const [roundTime, setRoundTime] = useState<number>(10);
+  const [quizRoomTitle, setQuizRoomTitle] = useState<string>('');
+
+  const handleUserSlider = (e: any) => {
+    setUserNumber(e.target.value);
   }
 
-  return(
+  const handleRoundSlider = (e: any) => {
+    setRoundTime(e.target.value);
+  }
+
+  return (
     <Layout>
       <Wrapper>
         <ModalClose onClick={handleModal}>X</ModalClose>
         {/* TODO: 모달 닫을 수 있게 수정해아함 */}
-        <TextInput onChange={(e)=>setQuizRoomTitle(e.target.value)} placeholder="제목을 입력해주세요"></TextInput>
+        <TextInput onChange={(e) => setQuizRoomTitle(e.target.value)} placeholder="제목을 입력해주세요"></TextInput>
         {/* TODO: 입력 제한*/}
         <TextInput type="password" placeholder="비밀번호"></TextInput>
         {/* TODO: 입력 제한*/}
@@ -129,7 +131,7 @@ export const CreateQuizRoom = ({quizId,handleModal}:Props) =>{
               {userNumber}
             </div>
           </UserText>
-          <input type="range" min="2" max="8" onChange={handleUserSlider}>
+          <input type="range" min="2" max="8" value={userNumber} onChange={handleUserSlider}>
           </input>
         </PlayerInput>
         <RoundInput>
@@ -141,10 +143,10 @@ export const CreateQuizRoom = ({quizId,handleModal}:Props) =>{
               {roundTime}초
             </div>
           </UserText>
-          <input type="range" min="30" max="200" onChange={handleRoundSlider}>
+          <input type="range" min="30" max="200" value={roundTime} onChange={handleRoundSlider}>
           </input>
         </RoundInput>
-        <CreateButton onClick={()=>PostQuizRoom(quizId)}>방 만들기</CreateButton>
+        <CreateButton onClick={() => PostQuizRoom(quizId, quizRoomTitle, userNumber, router)}>방 만들기</CreateButton>
       </Wrapper>
     </Layout>
   )
