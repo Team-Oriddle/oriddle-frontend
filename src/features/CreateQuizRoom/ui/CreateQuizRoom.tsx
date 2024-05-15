@@ -75,7 +75,7 @@ type Props = {
 
 
 export const CreateQuizRoom = ({quizId,handleModal}:Props) =>{
-  const navigate = useRouter();
+  const router = useRouter();
   const [ userNumber, setUserNumber ] = useState<number>(4);
   const [ roundTime, setRoundTime  ] = useState<number>(10);
   const [ quizRoomTitle, setQuizRoomTitle ] = useState<string>('')
@@ -98,14 +98,15 @@ export const CreateQuizRoom = ({quizId,handleModal}:Props) =>{
       body: JSON.stringify({
         "quizId" : QuizId, // NotNull
         "title": quizRoomTitle, // NotNull, 20자 이하, 공백 불가능          
-        "max_participant": userNumber // NotNull, 2이상 8이하
+        "maxParticipant": userNumber // NotNull, 2이상 8이하
       })
     }).then((response)=>{
-      console.log(response)
+      console.log(response.json)
+      router.push(`/quiz/room/${response.json.data.quizId}`)
       //TODO: 페이지 이동 코드 작성
     }
     ).catch((error)=>{
-      console.log(error)
+
     })
   }
 

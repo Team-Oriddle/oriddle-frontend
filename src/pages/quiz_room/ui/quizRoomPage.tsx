@@ -57,7 +57,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
   //const [chatList, setChatList] = useState([]); //
   const [quizData, setQuizData] = useState([]);
   //TODO: 백엔드에셔 연결 끊김에 대한 처리가 결정된 이후에 응답에 따라 소켓 연결을 시도할지 결정
-  const [isConnect,  setIsConnect] = useState<Boolean>(true);
+  const [isConnect,  setIsConnect] = useState<Boolean>(false);
 
   useEffect(() => {
     //TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
@@ -84,9 +84,11 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
     };
     
     joinGame(QuizroomId);
+
     getQuizRoomData(QuizroomId).then((result)=>{ 
       setQuizData(result)
       setUserData(result.participants)
+      setIsConnect(true)
     });
   }, [QuizroomId]);
 
@@ -95,6 +97,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
       const subscriptions = [
         //strictMode가 켜져 있는 경우 제대로 작동하지 않음
         { topic: `/topic/quiz-room/${quizRoomId}/join`, callback:(message:any) =>{
+          console.log('tlqkf')
           let newUser = {...message, isHost:false}
           setUserData([...userData,newUser])
           userData.sort(function(a,b){
@@ -103,6 +106,8 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
         }},
         //strictMode가 켜져 있는 경우 제대로 작동하지 않음
         { topic: `/topic/quiz-room/${quizRoomId}/leave`, callback:(message:any) =>{
+          console.log('tlqkf')
+
           const findIndex = message.userId;
           const copyUserData = userData
           const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
@@ -112,13 +117,15 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
           setUserData(copyUserData);
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/start`, callback:(message:any) =>{
+          console.log('tlqkf')
+
           router.push(`/quiz/game/${quizRoomId}`)
         }},
       ]
       initializeSocket('ws://localhost:8080/ws', subscriptions)
     }
 
-    getSocket(8)
+    getSocket(QuizroomId)
   },[isConnect])
 
   return (

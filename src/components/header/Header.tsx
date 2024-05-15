@@ -58,7 +58,7 @@ const Layout = styled.div`
   justify-content: space-between;
   align-items: center;
   color: black;
-  width: 1440px;
+  grid-column: 1/14;
 `;
 
 const Title = styled.h1`
