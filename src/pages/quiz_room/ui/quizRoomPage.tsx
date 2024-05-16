@@ -53,6 +53,21 @@ const LoadingUI = styled.div`
   color:  #643DD2;;
 `
 
+const LeaveRoom = styled.div`
+  height: 70px;
+  border-radius: 50px;
+  background-color: purple;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+
+`
+
 
 type QuizRoomProps = {
   QuizroomId :number
@@ -86,6 +101,21 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
     return ()=>  clearInterval(interval)
   },[])
 
+
+  const LeaveThisRoom =async (quizRoomId: string) => {
+    try {
+      const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      console.log(response)
+      router.push('/')
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     // TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
@@ -170,6 +200,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
 
         <HostControllerLayout>
           <EditRoomInfo></EditRoomInfo>
+          <LeaveRoom onClick={()=>LeaveThisRoom(QuizroomId)}>방나가기</LeaveRoom>
           <StartGameButton roomId={QuizroomId}></StartGameButton>
         </HostControllerLayout>
       </Wrapper>
