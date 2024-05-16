@@ -36,8 +36,9 @@ const ParentForLoadingUI = styled.div`
 `
 
 const LoadingUI = styled.div`
+  grid-column: 1/13;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 430px;
@@ -107,8 +108,8 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
 
   const toggleAnswerModal = () => setAnswerModalOpen(!answerModalOpen);
   const toggleFinishModal = () => setFinishModalOpen(!finishModalOpen);
-
-
+  const [ loadingText, setLoadingText ] = useState("Loading")
+  const [ timer, setTimer] = useState(5)
 
   useEffect(()=>{
     //TODO: API 호출부 변경
@@ -121,6 +122,22 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
     //새로운 소켓 연결 해야함
   },[QuizGameId])
 
+  useEffect(()=>{
+    const interval = setInterval(()=>{
+      setLoadingText((prev)=>{
+        if(prev.length < 10) return prev+"."
+        return "Loading"
+      })
+    },500)
+    return ()=>  clearInterval(interval)
+  },[])
+
+  useEffect(()=>{
+    const timeInterval = setInterval(()=>{
+      setTimer((prev) => (prev > 0 ? prev-1 : 0))
+    },1000)
+    return ()=>  clearInterval(timeInterval)
+  },[])
 
   useEffect(()=>{
     const getSocket = (quizRoomId:number) => {
@@ -204,14 +221,15 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
       <Wrapper>
         <Header></Header>
         {
-          isLoading ? <LoadingUI>Loading...</LoadingUI> 
+          isLoading ? <LoadingUI>{loadingText}
+          <div>{timer}</div>
+          </LoadingUI> 
           : 
         <ParentForLoadingUI>
           <Question description={questionData.description} number={questionData.number} type={questionData.type} score={questionData.score} ></Question>
           <QuizSource url={questionData.source} sourceType={questionData.sourceType}></QuizSource>
         </ParentForLoadingUI>
         }
-
           <UserChat UserList={userData} ></UserChat>
           <SendMessage quizGameId={QuizGameId}></SendMessage>
         <Modal isOpen={answerModalOpen} onClose={toggleAnswerModal}>

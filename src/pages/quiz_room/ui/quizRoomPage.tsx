@@ -38,6 +38,20 @@ const HostControllerLayout = styled.div`
   justify-content: space-between;
 `;
 
+
+
+const LoadingUI = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 1070px;
+  font-size: 72px;
+  font-weight: bolder;
+  color:  #643DD2;;
+`
+
+
 type QuizRoomProps = {
   QuizroomId :number
 }
@@ -58,6 +72,17 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
   const [quizData, setQuizData] = useState([]);
   //TODO: 백엔드에셔 연결 끊김에 대한 처리가 결정된 이후에 응답에 따라 소켓 연결을 시도할지 결정
   const [isConnect,  setIsConnect] = useState<Boolean>(false);
+  const [ loadingText, setLoadingText ] = useState("Loading")
+
+  useEffect(()=>{
+    const interval = setInterval(()=>{
+      setLoadingText((prev)=>{
+        if(prev.length < 10) return prev+"."
+        return "Loading"
+      })
+    },500)
+    return ()=>  clearInterval(interval)
+  },[])
 
   useEffect(() => {
     //TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
@@ -97,7 +122,6 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
       const subscriptions = [
         //strictMode가 켜져 있는 경우 제대로 작동하지 않음
         { topic: `/topic/quiz-room/${quizRoomId}/join`, callback:(message:any) =>{
-          console.log('tlqkf')
           let newUser = {...message, isHost:false}
           setUserData([...userData,newUser])
           userData.sort(function(a,b){
@@ -106,7 +130,6 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
         }},
         //strictMode가 켜져 있는 경우 제대로 작동하지 않음
         { topic: `/topic/quiz-room/${quizRoomId}/leave`, callback:(message:any) =>{
-          console.log('tlqkf')
 
           const findIndex = message.userId;
           const copyUserData = userData
@@ -117,8 +140,6 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
           setUserData(copyUserData);
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/start`, callback:(message:any) =>{
-          console.log('tlqkf')
-
           router.push(`/quiz/game/${quizRoomId}`)
         }},
       ]
@@ -132,12 +153,18 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
     <Container>
       <Wrapper>
         <Header></Header>
-        <UserControllerLayout>
+
+          <UserControllerLayout>
           {/* 유저만 컨트롤 가능한 레이아웃 */}
-          <UserList UserList={userData}></UserList>
-          <ChatList></ChatList>
-          <ChatInput></ChatInput>
-        </UserControllerLayout>
+          {
+          userData.length === 0 ? <LoadingUI>{loadingText}</LoadingUI> 
+          :
+            <UserList UserList={userData}></UserList>
+          }
+            <ChatList></ChatList>
+            <ChatInput></ChatInput>
+          </UserControllerLayout>
+
         <HostControllerLayout>
           <EditRoomInfo></EditRoomInfo>
           <StartGameButton roomId={QuizroomId}></StartGameButton>
