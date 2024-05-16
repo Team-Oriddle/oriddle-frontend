@@ -42,7 +42,7 @@ const CenterBox = styled.div`
   flex-direction: column;
 `
 const RightBox = styled.div`
-  grid-column: 10/12;
+  grid-column: 10/13;
   margin: 0px 6px;
   display: flex;
   flex-direction: column;
@@ -162,11 +162,21 @@ const AnswerWrapper = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-
 `
 
 const ImageInput = styled(StyleInput)`
   
+`
+const CreateQuizButton = styled.div`
+  width: 100%;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 12px;
+  font-size: 24px;
+  color: white;
+  padding: 12px 0px;
+  background-color: #643DD2;
+  cursor: pointer;
 `
 
 type QuizCreateProps = {
@@ -203,6 +213,8 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
 
   const [selectedQuiz, setSelectedQuiz] = useState<any>(0)
   const [title, setTitle] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
+
 
   const handleQuizSelect = (index: any) => {
     setSelectedQuiz(index);
@@ -215,10 +227,10 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       number: newNumber,
       description: "", // 문제 설명
       source: "", // 문제에 사용되는 이미지 URL
-      type: "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
-      sourceType: "", // 문제의 소스 타입(QuestionSourceType)
-      timeLimit: null, // 문제 제한 시간
-      score: null, // 정답자에게 부여할 점수,
+      type: "SHORT_ANSWER", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
+      sourceType: "IMAGE", // 문제의 소스 타입(QuestionSourceType)
+      timeLimit: 30, // 문제 제한 시간
+      score: 30, // 정답자에게 부여할 점수
       answers: [
         ''
       ]
@@ -435,9 +447,10 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           {/* TODO: feature로 빼내기 */}
         </CenterBox>
         <RightBox>
-          <div onClick={handleCreateQuiz}>
-            정답 전송 버튼
-          </div>
+          <AnswerInput placeholder="설명을 입력해주세요" value={description} onChange={(e)=>setTitle(e.target.value)}></AnswerInput>
+          <CreateQuizButton onClick={handleCreateQuiz}>
+            퀴즈 생성하기
+          </CreateQuizButton>
         </RightBox>
       </Wrapper>
     </Container>
