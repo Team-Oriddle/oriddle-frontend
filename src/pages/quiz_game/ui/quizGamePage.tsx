@@ -29,6 +29,23 @@ const Wrapper = styled.div`
   column-gap: 24px;
 `
 
+const ParentForLoadingUI = styled.div`
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-column: 1/13;
+`
+
+const LoadingUI = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 430px;
+  font-size: 72px;
+  font-weight: bolder;
+  color:  #643DD2;;
+`
+
 type QuizGameProps = {
   QuizGameId :number
 }
@@ -100,7 +117,6 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
         participant.score = 0;
       })
       setUserData(result.participants)
-      setIsLoading(false)
     })
     //새로운 소켓 연결 해야함
   },[QuizGameId])
@@ -131,8 +147,8 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
         }},
         //strictMode가 켜져 있는 경우 제대로 작동하지 않음
         { topic: `/topic/quiz-room/${quizRoomId}/question`, callback:(message) =>{
+          setIsLoading(false)
           console.log(message)
-
           setQuestionData(message)
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/answer`, callback:(message) =>{
@@ -177,7 +193,7 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
     console.log('useEffect작동')
     getSocket(QuizGameId)
 
-  },[isLoading])
+  },[])
   ///처리해야할 데이터
   //1. 타이머
   //4. 유저 채팅 데이터
@@ -186,20 +202,28 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
   return (
     <Container>
       <Wrapper>
-          <Header></Header>
+        <Header></Header>
+        {
+          isLoading ? <LoadingUI>Loading...</LoadingUI> 
+          : 
+        <ParentForLoadingUI>
           <Question description={questionData.description} number={questionData.number} type={questionData.type} score={questionData.score} ></Question>
           <QuizSource url={questionData.source} sourceType={questionData.sourceType}></QuizSource>
+        </ParentForLoadingUI>
+        }
+
           <UserChat UserList={userData} ></UserChat>
           <SendMessage quizGameId={QuizGameId}></SendMessage>
-          <Modal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
-            <div>정답:{answerData.answer}</div>
-            <div>{answerUser} 님이 정답을 맞추셨습니다</div>
-            <div> (+{answerData.score}점)</div>
-          </Modal>
-          <Modal isOpen={finishModalOpen} onClose={toggleFinishModal}>
-            <div>정답은 {answerData.answer}입니다</div>
-          </Modal>
-      </Wrapper>
+        <Modal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
+          <div>정답:{answerData.answer}</div>
+          <div>{answerUser} 님이 정답을 맞추셨습니다</div>
+          <div> (+{answerData.score}점)</div>
+        </Modal>
+        <Modal isOpen={finishModalOpen} onClose={toggleFinishModal}>
+          <div>정답은 {answerData.answer}입니다</div>
+        </Modal>
+    </Wrapper>
+
     </Container>
   );
 };

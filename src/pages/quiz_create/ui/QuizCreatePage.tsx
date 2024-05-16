@@ -418,7 +418,6 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
               layout="fill"
               objectFit="cover"
             />}
-          {/* TODO: 이미지 비율 자연스럽게 변경 */}
             </SourceInput>
             <QuizInput
               placeholder="질문을 입력해주세요"
@@ -447,7 +446,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           {/* TODO: feature로 빼내기 */}
         </CenterBox>
         <RightBox>
-          <AnswerInput placeholder="설명을 입력해주세요" value={description} onChange={(e)=>setTitle(e.target.value)}></AnswerInput>
+          <AnswerInput placeholder="설명을 입력해주세요" value={description} onChange={(e)=>setDescription(e.target.value)}></AnswerInput>
           <CreateQuizButton onClick={handleCreateQuiz}>
             퀴즈 생성하기
           </CreateQuizButton>
