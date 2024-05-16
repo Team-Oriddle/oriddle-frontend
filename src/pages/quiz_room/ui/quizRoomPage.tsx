@@ -147,7 +147,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
       setUserData(result.participants);
       setIsConnect(true);
     });
-  }, [QuizroomId]);
+  }, []);
   
 
   useEffect(()=>{
