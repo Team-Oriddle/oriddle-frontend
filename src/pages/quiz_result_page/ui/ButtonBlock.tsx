@@ -1,35 +1,37 @@
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { styled } from "styled-components";
 
-const ButtonBlock = ({slug}:any) => {
+const ButtonBlock = ({ slug }: any) => {
   const router = useRouter();
 
-
-
   const routeToMainPage = () => {
-    LeaveThisRoom(slug)
+    LeaveThisRoom(slug);
     router.push("/");
   };
 
-  const TogoRoom = () =>{
-    router.push(`/quiz/room/${slug}`)
-  }
+  const TogoRoom = () => {
+    router.push(`/quiz/room/${slug}`);
+  };
 
-
-  const LeaveThisRoom =async (quizRoomId: string) => {
+  const LeaveThisRoom = async (quizRoomId: string) => {
     try {
-      const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await axios.post(
+        `http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      })
-      console.log(response)
-      router.push('/')
+      );
+      console.log(response);
+      router.push("/");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   return (
     <Container>

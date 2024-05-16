@@ -25,7 +25,7 @@ const Chatting = styled.div`
   padding: 10px;
   margin-bottom: 20px;
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     right: 10px;
@@ -37,7 +37,7 @@ const Chatting = styled.div`
     border-right: 0;
     transform: translate(0, 100%);
   }
-    /* opacity: 1 */
+  /* opacity: 1 */
 
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   transition: opacity 0.2s;
@@ -62,16 +62,20 @@ interface UserCardProps {
   chatMessage: string;
 }
 
-export const UserCard = ({ usernickname, score, chatMessage }: UserCardProps) => {
+export const UserCard = ({
+  usernickname,
+  score,
+  chatMessage,
+}: UserCardProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    console.log(chatMessage)
+    console.log(chatMessage);
     if (chatMessage) {
       setIsVisible(true);
       const timer = setTimeout(() => {
         setIsVisible(false);
-      }, 1000);
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [chatMessage]);
