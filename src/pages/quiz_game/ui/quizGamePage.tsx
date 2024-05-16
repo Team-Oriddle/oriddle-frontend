@@ -136,20 +136,21 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
           setQuestionData(message)
         }},
         { topic: `/topic/quiz-room/${quizRoomId}/answer`, callback:(message) =>{
-          console.log(message)
-
-          setAnswerData(message)
-          let copyUserData = userData
-          let foundIndex = -1;
-          userData.forEach((participant, index)=>{
-            if(participant.userId === message.userId){
-              foundIndex = index
+          console.log(userData)
+          console.log(message)//메시지를 받음
+          setAnswerData(message)//AnswerData로 관리 
+          let copyUserData = userData//userData을 카피 여기서 굳이 순서를 나눌 필요는 없어보임
+          let foundIndex = -1;//초기값 설정
+          userData.forEach((participant, index)=>{//userData를 반복
+            if(participant.userId.value === message.userId){//userData.userID와 message.userID가 같은 값을 찾는다
+              foundIndex = index//찾은 경우
+              //여기서 지금 처리를 score업데이트 해주자
               console.log('FoundIndex'+foundIndex)
-            }
+            }//탈출했는데 없으면
           })
           if(foundIndex !== -1){
             copyUserData[foundIndex].score += message.score;
-            setAnswerUser(copyUserData[foundIndex].nickname)
+            setAnswerUser(copyUserData[foundIndex].nickname)//흠...?
           }else{
             console.log('사용자가 존재하지 않습니다!')
           }
