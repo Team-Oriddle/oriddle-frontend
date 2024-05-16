@@ -7,7 +7,6 @@ const ButtonBlock = ({ slug }: any) => {
 
   const routeToMainPage = () => {
     LeaveThisRoom(slug);
-    router.push("/");
   };
 
   const TogoRoom = () => {
