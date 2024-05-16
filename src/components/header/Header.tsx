@@ -3,6 +3,8 @@ import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import styled from "styled-components";
+import cookie from 'react-cookies';
+
 
 export const Header = () => {
   const [authState] = useAtom(userAtom);
@@ -28,6 +30,10 @@ export const Header = () => {
   };
 
   const CreateQuiz = () => {
+    if(cookie.load('JSESSIONID')=== undefined){
+      alert("로그인 해주세요!")
+      return
+    }
     router.push("/quiz/create/1");
   };
 
