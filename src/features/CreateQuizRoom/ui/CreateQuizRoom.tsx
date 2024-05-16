@@ -2,6 +2,8 @@ import axios from "axios"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import styled from "styled-components"
+import cookie from 'react-cookies';
+
 
 const Layout = styled.div`
   width: 327px;
@@ -75,6 +77,10 @@ type Props = {
 }
 
 const PostQuizRoom = async (QuizId: any, quizRoomTitle: string, userNumber: number, router: any) => {
+  if(cookie.load('JSESSIONID')=== undefined){
+    alert("로그인 해주세요!")
+    return
+  }
   try {
     const response = await axios.post(
       'http://localhost:8080/api/v1/quiz-room',
