@@ -11,6 +11,10 @@ const ButtonBlock = ({slug}:any) => {
     router.push("/");
   };
 
+  const TogoRoom = () =>{
+    router.push(`/quiz/room/${slug}`)
+  }
+
 
   const LeaveThisRoom =async (quizRoomId: string) => {
     try {
@@ -31,7 +35,7 @@ const ButtonBlock = ({slug}:any) => {
     <Container>
       <Button onClick={routeToMainPage}>메인 페이지로 이동</Button>
       {/* TODO: 퀴즈 방으로 돌아가기 구현 */}
-      <Button>다시하기</Button>
+      <Button onClick={TogoRoom}>다시하기</Button>
     </Container>
   );
 };
