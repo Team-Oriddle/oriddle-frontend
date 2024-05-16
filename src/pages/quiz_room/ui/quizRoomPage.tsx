@@ -9,6 +9,8 @@ import { StartGameButton } from "@/features/StartGameButton";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import axios from 'axios';
+
 
 const Container = styled.div`
   display: flex;
@@ -84,38 +86,39 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
     return ()=>  clearInterval(interval)
   },[])
 
+
   useEffect(() => {
-    //TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
-    const joinGame = async (quizRoomId:number) => {
+    // TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
+    const joinGame = async (quizRoomId: number) => {
       try {
-        const response = await fetch(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/join`, {
-          method: 'POST',
-          credentials: 'include', 
+        const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/join`, {}, {
+          withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
           }
         });
-        if (!response.ok) {
+        if (response.status !== 200) {
           throw new Error(`error! status: ${response.status}`);
         }
-      } catch (error:any) {
-        if (error.message === 'HTTP error! status: 401') {
+      } catch (error: any) {
+        console.log(error);
+        if (error.response && error.response.status !== 409) {
           console.log('401');
-          const redirectEndPoint = encodeURIComponent(`/attend/${quizRoomId}`);
+          const redirectEndPoint = encodeURIComponent(`/quiz/room/${quizRoomId}`);
           window.location.href = `http://localhost:8080/api/v1/login/google?redirectEndPoint=${redirectEndPoint}`;
         }
-        console.log(error);
       }
     };
-    
+  
     joinGame(QuizroomId);
-
-    getQuizRoomData(QuizroomId).then((result)=>{ 
-      setQuizData(result)
-      setUserData(result.participants)
-      setIsConnect(true)
+  
+    getQuizRoomData(QuizroomId).then((result) => {
+      setQuizData(result);
+      setUserData(result.participants);
+      setIsConnect(true);
     });
   }, [QuizroomId]);
+  
 
   useEffect(()=>{
     const getSocket = (quizRoomId:number) => {

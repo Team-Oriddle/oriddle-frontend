@@ -120,7 +120,7 @@ export const CreateQuizRoom = ({ quizId, handleModal }: Props) => {
         {/* TODO: 모달 닫을 수 있게 수정해아함 */}
         <TextInput onChange={(e) => setQuizRoomTitle(e.target.value)} placeholder="제목을 입력해주세요"></TextInput>
         {/* TODO: 입력 제한*/}
-        <TextInput type="password" placeholder="비밀번호"></TextInput>
+        <TextInput type="text" placeholder="비밀번호"></TextInput>
         {/* TODO: 입력 제한*/}
         <PlayerInput>
           <UserText>
