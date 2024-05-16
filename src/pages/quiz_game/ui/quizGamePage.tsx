@@ -110,6 +110,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   const [timer, setTimer] = useState(5);
   const [doit, setDoit] = useState(false);
   const [currentChat, setCurrentChat] = useState<ChatType | null>(null);
+  const [questionTimer, setQuestionTimer] = useState(30); // New timer for the question
 
 
   useEffect(() => {
@@ -135,7 +136,11 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
       setTimer((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(timeInterval);
-  }, []);
+  }, [isLoading]);
+
+
+
+
 
   useEffect(() => {
     const getSocket = (quizRoomId: number) => {
