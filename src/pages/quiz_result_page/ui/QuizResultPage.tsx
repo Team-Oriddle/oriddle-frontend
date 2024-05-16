@@ -23,7 +23,7 @@ export const QuizResultPage = ({ slug }: { slug: string }) => {
       {/* TODO: 3. 퀴즈 소요시간(QuizTimeBlock) */}
 
       {/* 하단 페이지 조작 버튼 */}
-      <ButtonBlock />
+      <ButtonBlock slug={slug} />
     </Container>
   );
 };
