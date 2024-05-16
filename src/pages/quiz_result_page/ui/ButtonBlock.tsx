@@ -1,12 +1,31 @@
 import { useRouter } from "next/navigation";
 import { styled } from "styled-components";
 
-const ButtonBlock = () => {
+const ButtonBlock = ({slug}:any) => {
   const router = useRouter();
 
+
+
   const routeToMainPage = () => {
+    LeaveThisRoom(slug)
     router.push("/");
   };
+
+
+  const LeaveThisRoom =async (quizRoomId: string) => {
+    try {
+      const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      console.log(response)
+      router.push('/')
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <Container>
