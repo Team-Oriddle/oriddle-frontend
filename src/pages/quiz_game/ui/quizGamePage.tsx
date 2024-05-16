@@ -109,6 +109,8 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   const [loadingText, setLoadingText] = useState("Loading");
   const [timer, setTimer] = useState(5);
   const [doit, setDoit] = useState(false);
+  const [currentChat, setCurrentChat] = useState<ChatType | null>(null);
+
 
   useEffect(() => {
     getQuizRoomData(QuizGameId).then((result) => {
@@ -214,6 +216,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
           topic: `/topic/quiz-room/${quizRoomId}/chat`,
           callback: (message) => {
             console.log(message);
+            setCurrentChat(message);
             //TODO: 백엔드 채팅이 끝나면 채팅 관련 코드 추가
           },
         },
@@ -247,7 +250,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
             />
           </ParentForLoadingUI>
         )}
-        <UserChat UserList={userData} />
+        <UserChat UserList={userData} currentChat={currentChat} />
         <SendMessage quizGameId={QuizGameId} />
         <Modal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
           <div>정답: {answerData.answer}</div>
