@@ -39,7 +39,7 @@ type SendMessageProps = {
   quizGameId :number
 }
 
-export const SendMessage = ({quizGameId}:SendMessageProps) =>{
+export const SendMessage = ({quizGameId }:SendMessageProps) =>{
   const [input, setInput] = useState('');
 
   const handleInputChange = (event:any) => {
@@ -49,12 +49,11 @@ export const SendMessage = ({quizGameId}:SendMessageProps) =>{
   const handelSendClick = () =>{
     console.log(quizGameId+'로 전달 진행')
     if (input.trim() !== '') {
-      sendMessage(`/app/quiz-room/${quizGameId}/chat`, { answer: input });
+      sendMessage(`/app/quiz-room/${quizGameId}/chat`, { content: input });
       sendMessage(`/app/quiz-room/${quizGameId}/check-answer`, { answer: input });
       setInput('');
     }
     console.log('전달 완료')
-
   }
 
   return(
