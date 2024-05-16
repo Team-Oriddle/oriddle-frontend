@@ -2,8 +2,11 @@ import { Header } from "@/components/header/Header"
 import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage/ui/AddQuizFromCreatePage"
 import { ChooseQuizFromCreatePage } from "@/features/ChooseQuizFromCreatePage/ui/ChooseQuizFromCreatePage"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
+import axios from 'axios';
+
 
 const Container = styled.div`
   display: flex;
@@ -30,6 +33,7 @@ const LeftBox = styled.div`
   margin: 0px 6px;
   display: flex;
   flex-direction: column;
+
 `
 const CenterBox = styled.div`
   grid-column: 3/10;
@@ -181,6 +185,7 @@ interface IQuiz {
 }
 
 export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
+  const router = useRouter();
   const [quizList, setQuizList] = useState<any>([
     {
       number: 0,
@@ -307,33 +312,35 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   //1. isDelete -> false->true
   //2.  
 
-  const handleCreateQuiz =async (QuizGameId:any) => {
-    const quizListForm = quizList.map((quiz:any,index:any) => {
-      return{...quiz, number: index+1 }
-    })
 
+  const handleCreateQuiz = async (QuizGameId) => {
+    const quizListForm = quizList.map((quiz, index) => {
+      return { ...quiz, number: index + 1 };
+    });
+  
     const quizForm = {
-      "title":title,
-      "description":'설명',
-      "image":'',
-      "questions":quizListForm
-    }
-    try{
-      console.log(quizForm)
-      const response = await fetch(`http://localhost:8080/api/v1/quiz`,{
-        method:'POST',
-        credentials:'include',
-        headers:{
+      "title": title,
+      "description": '설명',
+      "image": 'https://orridle.s3.ap-northeast-2.amazonaws.com/quiz-image/0f1a9674-8496-46da-ad64-388afbfe9e97.webp',
+      "questions": quizListForm
+    };
+  
+    try {
+      console.log(quizForm);
+      const response = await axios.post('http://localhost:8080/api/v1/quiz', quizForm, {
+        withCredentials: true,
+        headers: {
           'Content-Type': 'application/json'
-        },
-        body:JSON.stringify(quizForm)
-
-      })
-      console.log(response)
-    } catch(error){
-      console.log(error)
+        }
+      });
+      console.log(response.data.data.quizId)
+      alert("생성되었습니다");
+      router.push(`/quiz/info/${response.data.data.quizId}`)
+    } catch (error) {
+      console.log(error);
     }
   };
+  
 
   const uploadingImage = (e: any) => {
     if (!e.target.files) {
@@ -372,8 +379,8 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       <Wrapper>
       <Header />
         <LeftBox>
-          <SettingButton>
-          </SettingButton>
+          {/* <SettingButton>
+          </SettingButton> */}
           <ChooseQuizFromCreatePage
             quizList={quizList}
             onQuizSelect={handleQuizSelect}
@@ -382,7 +389,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           <AddQuizFromCreatePage addQuiz={handleAddQuiz} />
         </LeftBox>
         <CenterBox>
-          <TitleInput value={title} onChange={(e)=>setTitle(e.target.value)}></TitleInput>
+          <TitleInput placeholder="제목을 입력해주세요" value={title} onChange={(e)=>setTitle(e.target.value)}></TitleInput>
           {/* TODO: EditQuiz로 feature 생성 */}
           <QuizContainer>
             <SourceInput>
