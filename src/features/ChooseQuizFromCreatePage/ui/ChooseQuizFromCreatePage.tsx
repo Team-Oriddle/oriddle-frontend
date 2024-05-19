@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { useEffect } from "react"
 import styled from "styled-components"
 
@@ -11,6 +12,8 @@ const Container = styled.div`
 const QuizBox = styled.div`
   width: 220px;
   height: 124px;
+  display: flex;
+  flex-direction: column;
   background-color: white;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   margin-bottom: 12px;
@@ -18,6 +21,42 @@ const QuizBox = styled.div`
     &:hover {
         transform: scale(1.1);
     }
+`
+const QuizImage = styled.div`
+  width: 100%;
+  height: 80%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`
+
+const Number = styled.div`
+  width: 24px;
+  height: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: white;
+  background-color: #643DD2;
+  border-radius: 50%;
+`
+
+const DeleteButton = styled(Number)` 
+  width: 80px;
+  border-radius: 20px;
+  &:hover{
+    cursor: pointer;
+  }
+`
+
+const EditQuizButton = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  z-index: 99;
 `
 
 export const ChooseQuizFromCreatePage = ({quizList, onQuizSelect, onQuizDelete}:any)=>{
@@ -30,10 +69,23 @@ export const ChooseQuizFromCreatePage = ({quizList, onQuizSelect, onQuizDelete}:
     <Container>
       {quizList.map((quiz:any,index:any) =>(
         <QuizBox key={index} onClick={()=>onQuizSelect(quiz.number)}>
-          
-          {quiz.description}
-          {quiz.number}
-          <div onClick={()=>onQuizDelete(quiz.number)}> 삭제 하기</div>
+          <EditQuizButton>
+          <Number>{index+1}</Number>
+          <DeleteButton onClick={()=>onQuizDelete(quiz.number)}> 삭제 하기</DeleteButton>
+          </EditQuizButton>
+          <QuizImage>
+            {
+              quiz?.source === '' ? 
+              <div>{quiz?.description}</div>
+              :           
+              <Image
+                src={quiz?.source}
+                alt="썸네일"
+                layout="fill"
+                objectFit="cover"
+              />
+            }
+          </QuizImage>
         </QuizBox>
       ))}
     </Container>  

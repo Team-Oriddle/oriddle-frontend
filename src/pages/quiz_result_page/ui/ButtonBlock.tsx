@@ -1,18 +1,42 @@
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { styled } from "styled-components";
 
-const ButtonBlock = () => {
+const ButtonBlock = ({ slug }: any) => {
   const router = useRouter();
 
   const routeToMainPage = () => {
-    router.push("/");
+    LeaveThisRoom(slug);
+  };
+
+  const TogoRoom = () => {
+    router.push(`/quiz/room/${slug}`);
+  };
+
+  const LeaveThisRoom = async (quizRoomId: string) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response);
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <Container>
       <Button onClick={routeToMainPage}>메인 페이지로 이동</Button>
       {/* TODO: 퀴즈 방으로 돌아가기 구현 */}
-      <Button>다시하기</Button>
+      <Button onClick={TogoRoom}>다시하기</Button>
     </Container>
   );
 };

@@ -3,6 +3,8 @@ import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import styled from "styled-components";
+import cookie from 'react-cookies';
+
 
 export const Header = () => {
   const [authState] = useAtom(userAtom);
@@ -27,6 +29,14 @@ export const Header = () => {
     alert("(개발 중)로그아웃 액션입니다.");
   };
 
+  const CreateQuiz = () => {
+    if(cookie.load('JSESSIONID')=== undefined){
+      alert("로그인 해주세요!")
+      return
+    }
+    router.push("/quiz/create/1");
+  };
+
   return (
     <Layout>
       <Title onClick={routeToMain}>ORIDDLE</Title>
@@ -35,6 +45,8 @@ export const Header = () => {
         {/* TODO: 로그인 이전, 이후의 헤더 항목 업데이트 필요 */}
         {authState.isLoggedIn ? (
           <>
+            <Button onClick={CreateQuiz}>MAKE QUIZ</Button>
+
             <Button onClick={routeToMyPage}>MY PAGE</Button>
             <Button onClick={handleLogout}>LOGOUT</Button>
           </>
@@ -72,7 +84,7 @@ const Title = styled.h1`
 `;
 
 const Buttons = styled.div`
-  width: 220px;
+  width: 400px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

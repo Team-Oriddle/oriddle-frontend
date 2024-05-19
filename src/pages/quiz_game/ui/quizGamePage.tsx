@@ -15,56 +15,73 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: start;
   align-items: center;
-  min-height: 100vh; // Viewport Height
-  width: 100vw; // Viewport Width
-  min-width: 100vw;
+  min-height: 100vh;
+  width: 100vw;
   background-color: white;
   color: black;
-`
+`;
+
 const Wrapper = styled.div`
   width: 100%;
   max-width: 1440px;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   column-gap: 24px;
-`
+`;
+
+const ParentForLoadingUI = styled.div`
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-column: 1/13;
+`;
+
+const LoadingUI = styled.div`
+  grid-column: 1/13;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 430px;
+  font-size: 72px;
+  font-weight: bolder;
+  color: #643dd2;
+`;
 
 type QuizGameProps = {
-  QuizGameId :number
+  QuizGameId: number;
+};
+
+interface QuestionDataType {
+  description: string;
+  number: number;
+  score: number;
+  source: string;
+  sourceType: string;
+  timeLimit: number;
+  type: string;
 }
 
-interface QuestionDataType{
-  description:string
-  number:number
-  score:number
-  source:string
-  sourceType:string
-  timeLimit: number
-  type: string
+interface UserData {
+  nickname: string;
+  position: number;
+  userId: number;
+  isHost: boolean;
+  score: number;
 }
 
-interface UserData{
-  nickname:string,
-  position: number,
-  userId:number,
-  isHost:boolean,
-  score:number
+interface ChatType {
+  user: string;
+  chat: string;
 }
 
-interface ChatType{
-  user:string,
-  chat:string
+interface AnswerType {
+  userId?: number;
+  answer: string;
+  score?: number;
 }
 
-interface AnswerType{
-  userId?:number,
-  answer:string,
-  score?:number,
-}
-
-
-export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
-  const navigate = useRouter();
+export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
+  const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(true);
   const [questionData, setQuestionData] = useState<QuestionDataType>({
@@ -76,132 +93,178 @@ export const QuizGamePage = ({QuizGameId}:QuizGameProps) => {
     timeLimit: -1,
     type: "",
   });
-  //TODO: 추후에 채팅기능 추가시 활용
   const [chatLog, setChatLog] = useState<ChatType[]>([]);
   const [userData, setUserData] = useState<UserData[]>([]);
   const [answerData, setAnswerData] = useState<AnswerType>({
-    userId:-1,
-    answer:'',
-    score:-1,
+    userId: -1,
+    answer: "",
+    score: -1,
   });
-  const [ answerUser, setAnswerUser ] = useState<string>('')
+  const [answerUser, setAnswerUser] = useState<string>("");
   const [answerModalOpen, setAnswerModalOpen] = useState(false);
   const [finishModalOpen, setFinishModalOpen] = useState(false);
 
   const toggleAnswerModal = () => setAnswerModalOpen(!answerModalOpen);
   const toggleFinishModal = () => setFinishModalOpen(!finishModalOpen);
+  const [loadingText, setLoadingText] = useState("Loading");
+  const [timer, setTimer] = useState(5);
+  const [doit, setDoit] = useState(false);
+  const [currentChat, setCurrentChat] = useState<ChatType | null>(null);
+  const [questionTimer, setQuestionTimer] = useState(30); // New timer for the question
+
+
+  useEffect(() => {
+    getQuizRoomData(QuizGameId).then((result) => {
+      const participants = result.participants.map((participant) => ({
+        ...participant,
+        score: 0,
+      }));
+      setUserData(participants);
+    });
+    setDoit(true);
+  }, [QuizGameId]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLoadingText((prev) => (prev.length < 10 ? prev + "." : "Loading"));
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const timeInterval = setInterval(() => {
+      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timeInterval);
+  }, [isLoading]);
 
 
 
-  useEffect(()=>{
-    //TODO: API 호출부 변경
-    getQuizRoomData(QuizGameId).then((result)=>{
-      result.participants.forEach(participant =>{
-        participant.score = 0;
-      })
-      setUserData(result.participants)
-      setIsLoading(false)
-    })
-    //새로운 소켓 연결 해야함
-  },[QuizGameId])
 
 
-  useEffect(()=>{
-    const getSocket = (quizRoomId:number) => {
-      console.log('소켓 연결 시도중')
+  useEffect(() => {
+    const getSocket = (quizRoomId: number) => {
+      console.log("소켓 연결 시도중");
       const subscriptions = [
-        { topic: `/topic/quiz-room/${quizRoomId}/join`, callback:(message) =>{
-          console.log('join')
+        {
+          topic: `/topic/quiz-room/${quizRoomId}/join`,
+          callback: (message) => {
+            console.log(message);
+            let newUser = { ...message, isHost: false };
+            setUserData((prevUserData) => {
+              const updatedUserData = [...prevUserData, newUser];
+              return updatedUserData.sort((a, b) => a.position - b.position);
+            });
+          },
+        },
+        {
+          topic: `/topic/quiz-room/${quizRoomId}/leave`,
+          callback: (message) => {
+            console.log(message);
+            setUserData((prevUserData) => {
+              const updatedUserData = prevUserData.filter(
+                (player) => player.userId !== message.userId
+              );
+              return updatedUserData;
+            });
+          },
+        },
+        {
+          topic: `/topic/quiz-room/${quizRoomId}/question`,
+          callback: (message) => {
+            setIsLoading(false);
+            console.log(message);
+            setQuestionData(message);
+          },
+        },
+        {
+          topic: `/topic/quiz-room/${quizRoomId}/answer`,
+          callback: (message) => {
+            console.log(userData);
+            console.log(message);
+            setAnswerData(message);
+            setUserData((prevUserData) => {
+              const updatedUserData = prevUserData.map((user) =>
+                user.userId.value === message.userId
+                  ? { ...user, score: user.score + message.score }
+                  : user
+              );
+              const answerUser = updatedUserData.find(
+                (user) => user.userId.value === message.userId
+              );
+              if (answerUser) {
+                setAnswerUser(answerUser.nickname);
+              } else {
+                console.log("사용자가 존재하지 않습니다!");
+              }
+              return updatedUserData;
+            });
+            toggleAnswerModal();
+          },
+        },
+        {
+          topic: `/topic/quiz-room/${quizRoomId}/finish`,
+          callback: (message) => {
+            console.log(message);
+            router.push(`/quiz-result/${message.quizResultId}`);
+          },
+        },
+        {
+          topic: `/topic/quiz-room/${quizRoomId}/time-out`,
+          callback: (message) => {
+            console.log(message);
+            setAnswerData(message);
+            toggleFinishModal();
+          },
+        },
+        {
+          topic: `/topic/quiz-room/${quizRoomId}/chat`,
+          callback: (message) => {
+            console.log(message);
+            setCurrentChat(message);
+            //TODO: 백엔드 채팅이 끝나면 채팅 관련 코드 추가
+          },
+        },
+      ];
+      initializeSocket("ws://localhost:8080/ws", subscriptions);
+    };
+    console.log("useEffect작동");
+    getSocket(QuizGameId);
+  }, [doit, QuizGameId]);
 
-          let newUser = {...message, isHost:false}
-          setUserData([...userData,newUser])
-          userData.sort(function(a,b){
-            return a.position-b.position
-          })
-        }},
-        //strictMode가 켜져 있는 경우 제대로 작동하지 않음
-        { topic: `/topic/quiz-room/${quizRoomId}/leave`, callback:(message) =>{
-          console.log('leave')
-
-          const findIndex = message.userId;
-          const copyUserData = userData
-          const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
-          if (removeUserData !== -1) {
-            copyUserData.splice(removeUserData, 1);
-          }
-          setUserData(copyUserData);
-        }},
-        //strictMode가 켜져 있는 경우 제대로 작동하지 않음
-        { topic: `/topic/quiz-room/${quizRoomId}/question`, callback:(message) =>{
-          console.log('quies')
-
-          setQuestionData(message)
-        }},
-        { topic: `/topic/quiz-room/${quizRoomId}/answer`, callback:(message) =>{
-          console.log('answer')
-
-          setAnswerData(message)
-          let copyUserData = userData
-          let foundIndex = -1;
-          userData.forEach((participant, index)=>{
-            if(participant.userId === message.userId){
-              foundIndex = index
-            }
-          })
-          if(foundIndex !== -1){
-            copyUserData[foundIndex].score += message.score;
-            setAnswerUser(copyUserData[foundIndex].nickname)
-          }else{
-            console.log('사용자가 존재하지 않습니다!')
-          }
-          setUserData(copyUserData)
-          toggleAnswerModal()
-        }},
-        { topic: `/topic/quiz-room/${quizRoomId}/finish`, callback:(message) =>{
-          console.log('fin')
-
-          console.log(message)
-          //TODO: 결과 페이지로 이동
-        }},
-        { topic: `/topic/quiz-room/${quizRoomId}/time-out`, callback:(message) =>{
-          console.log('time-out')
-
-          setAnswerData(message)
-          toggleFinishModal()
-        }},
-        { topic: `/topic/quiz-room/${quizRoomId}/chat`, callback:(message) =>{
-          console.log('chat')
-          console.log(message)
-          //TODO: 백엔드 채팅이 끝나면 채팅 관련 코드 추가
-        }},
-      ]
-      initializeSocket('ws://localhost:8080/ws', subscriptions)//소켓 연결
-    }
-    console.log('useEffect작동')
-    getSocket(QuizGameId)
-
-  },[isLoading])
-  ///처리해야할 데이터
-  //1. 타이머
-  //4. 유저 채팅 데이터
-
-  //chat의 경우 메세지가 오면 보여준다
   return (
     <Container>
       <Wrapper>
-          <Header></Header>
-          <Question description={questionData.description} number={questionData.number} type={questionData.type} score={questionData.score} ></Question>
-          <QuizSource url={questionData.score} sourceType={questionData.sourceType}></QuizSource>
-          <UserChat UserList={userData} ></UserChat>
-          <SendMessage quizGameId={QuizGameId}></SendMessage>
-          <Modal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
-            <div>정답:{answerData.answer}</div>
-            <div>{answerUser} 님이 정답을 맞추셨습니다</div>
-            <div> (+{answerData.score}점)</div>
-          </Modal>
-          <Modal isOpen={finishModalOpen} onClose={toggleFinishModal}>
-            <div>정답은 {answerData.answer}입니다</div>
-          </Modal>
+        <Header />
+        {isLoading ? (
+          <LoadingUI>
+            {loadingText}
+            <div>{timer}</div>
+          </LoadingUI>
+        ) : (
+          <ParentForLoadingUI>
+            <Question
+              description={questionData.description}
+              number={questionData.number}
+              type={questionData.type}
+              score={questionData.score}
+            />
+            <QuizSource
+              url={questionData.source}
+              sourceType={questionData.sourceType}
+            />
+          </ParentForLoadingUI>
+        )}
+        <UserChat UserList={userData} currentChat={currentChat} />
+        <SendMessage quizGameId={QuizGameId} />
+        <Modal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
+          <div>정답: {answerData.answer}</div>
+          <div>{answerUser} 님이 정답을 맞추셨습니다</div>
+          <div>(+{answerData.score}점)</div>
+        </Modal>
+        <Modal isOpen={finishModalOpen} onClose={toggleFinishModal}>
+          <div>정답은 {answerData.answer}입니다</div>
+        </Modal>
       </Wrapper>
     </Container>
   );

@@ -14,7 +14,7 @@ export const ChatList = () =>{
 
   return (
     <Layout>
-      ㄴㄴ
+      
     </Layout>
   )
 }

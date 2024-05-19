@@ -1,9 +1,11 @@
-import { Header } from "@/components/header/Header"
-import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage/ui/AddQuizFromCreatePage"
-import { ChooseQuizFromCreatePage } from "@/features/ChooseQuizFromCreatePage/ui/ChooseQuizFromCreatePage"
-import Image from "next/image"
-import { useEffect, useState } from "react"
-import styled from "styled-components"
+import { Header } from "@/components/header/Header";
+import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage/ui/AddQuizFromCreatePage";
+import { ChooseQuizFromCreatePage } from "@/features/ChooseQuizFromCreatePage/ui/ChooseQuizFromCreatePage";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -15,7 +17,7 @@ const Container = styled.div`
   min-width: 100vw;
   background-color: white;
   color: black;
-`
+`;
 
 const Wrapper = styled.div`
   width: 100%;
@@ -23,33 +25,33 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   column-gap: 24px;
-`
+`;
 
 const LeftBox = styled.div`
   grid-column: 1/3;
   margin: 0px 6px;
   display: flex;
   flex-direction: column;
-`
+`;
 const CenterBox = styled.div`
   grid-column: 3/10;
   margin: 0px 6px;
   display: flex;
   flex-direction: column;
-`
+`;
 const RightBox = styled.div`
-  grid-column: 10/12;
+  grid-column: 10/13;
   margin: 0px 6px;
   display: flex;
   flex-direction: column;
-`
+`;
 const SettingButton = styled.div`
   width: 100%;
   height: 60px;
   border-radius: 50px;
-  background-color: #643DD2;
+  background-color: #643dd2;
   margin-bottom: 12px;
-`
+`;
 
 const StyleInput = styled.input`
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
@@ -57,7 +59,7 @@ const StyleInput = styled.input`
   background-color: white;
   border: none;
   text-align: center;
-`
+`;
 
 const TitleInput = styled(StyleInput)`
   width: 100%;
@@ -65,13 +67,13 @@ const TitleInput = styled(StyleInput)`
   font-weight: bold;
   margin: 10px 0px;
   font-size: 28px;
-`
+`;
 
 const QuizInput = styled(StyleInput)`
   width: 464px;
   height: 100%;
   font-size: 28px;
-`
+`;
 
 const QuizContainer = styled.div`
   width: 100%;
@@ -79,21 +81,21 @@ const QuizContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin: 10px 0px;
-`
+`;
 const SourceInput = styled.div`
   width: 342px;
   height: 100%;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   background-color: white;
   margin-right: 20px;
-`
+`;
 
 const AnswerInput = styled(StyleInput)`
   width: 100%;
   height: 150px;
   margin: 10px 0px;
   font-size: 28px;
-`
+`;
 
 const OtherAnswerInput = styled.div`
   width: 100%;
@@ -109,7 +111,7 @@ const OtherAnswerInput = styled.div`
   border: none;
   text-align: center;
   overflow-y: scroll;
-`
+`;
 
 const AnswerOptionButton = styled.div`
   width: 100%;
@@ -122,10 +124,10 @@ const AnswerOptionButton = styled.div`
   font-size: 30px;
   text-align: center;
   &:hover {
-    background-color: #643DD2;
+    background-color: #643dd2;
     color: white;
   }
-`
+`;
 
 const OptionAnswerInput = styled.input`
   background-color: white;
@@ -137,10 +139,10 @@ const OptionAnswerInput = styled.input`
   background-color: white;
   border: none;
   text-align: center;
-`
+`;
 
 const DeleteButton = styled.button`
-  color: #643DD2;
+  color: #643dd2;
   font-weight: bold;
   background-color: white;
   border: none;
@@ -151,23 +153,31 @@ const DeleteButton = styled.button`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-`
+`;
 
 const AnswerWrapper = styled.div`
   background-color: white;
   display: flex;
   align-items: center;
   width: 100%;
+`;
 
-`
-
-const ImageInput = styled(StyleInput)`
-  
-`
+const ImageInput = styled(StyleInput)``;
+const CreateQuizButton = styled.div`
+  width: 100%;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 12px;
+  font-size: 24px;
+  color: white;
+  padding: 12px 0px;
+  background-color: #643dd2;
+  cursor: pointer;
+`;
 
 type QuizCreateProps = {
   QuizGameId: number;
-}
+};
 
 interface IQuiz {
   number: number;
@@ -181,6 +191,7 @@ interface IQuiz {
 }
 
 export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
+  const router = useRouter();
   const [quizList, setQuizList] = useState<any>([
     {
       number: 0,
@@ -190,85 +201,91 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       sourceType: "IMAGE", // 문제의 소스 타입(QuestionSourceType)
       timeLimit: 30, // 문제 제한 시간
       score: 30, // 정답자에게 부여할 점수
-      answers: [
-        ''
-      ]
-    }
-  ])
+      answers: [""],
+    },
+  ]);
 
-  const [selectedQuiz, setSelectedQuiz] = useState<any>(0)
-  const [title, setTitle] = useState<string>('')
+  const [selectedQuiz, setSelectedQuiz] = useState<any>(0);
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
 
   const handleQuizSelect = (index: any) => {
     setSelectedQuiz(index);
-    console.log('선택된 퀴즈는' + index)
-  }
+    console.log("선택된 퀴즈는" + index);
+  };
 
   const handleAddQuiz = () => {
-    const newNumber = quizList[quizList.length - 1].number + 1
-    setQuizList([...quizList, {
-      number: newNumber,
-      description: "", // 문제 설명
-      source: "", // 문제에 사용되는 이미지 URL
-      type: "", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
-      sourceType: "", // 문제의 소스 타입(QuestionSourceType)
-      timeLimit: null, // 문제 제한 시간
-      score: null, // 정답자에게 부여할 점수,
-      answers: [
-        ''
-      ]
-    }])
-    setSelectedQuiz(newNumber)
-  }
+    const newNumber = quizList[quizList.length - 1].number + 1;
+    setQuizList([
+      ...quizList,
+      {
+        number: newNumber,
+        description: "", // 문제 설명
+        source: "", // 문제에 사용되는 이미지 URL
+        type: "SHORT_ANSWER", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
+        sourceType: "IMAGE", // 문제의 소스 타입(QuestionSourceType)
+        timeLimit: 30, // 문제 제한 시간
+        score: 30, // 정답자에게 부여할 점수
+        answers: [""],
+      },
+    ]);
+    setSelectedQuiz(newNumber);
+  };
 
   const handleAddOptionAnswer = () => {
     const newQuizList = quizList.map((quiz: any) => {
       if (quiz.number === selectedQuiz) {
-        const newAnswers = [...quiz.answers, '']
-        console.log(quiz.answers)
-        return { ...quiz, answers: newAnswers }
-      }
-      return quiz
-    })
-    setQuizList(newQuizList)
-  }
-
-  const handleEditOptionAnswer = (editNumber: any, editValue: any) => {
-    const newQuizList = quizList.map((quiz: any) => {
-      if (quiz.number === selectedQuiz) {
-        const newAnswers = quiz.answers.map((answer: any, index:any) => {
-          if (editNumber === index) {
-            return { ...answer, editValue }
-          }
-          return answer
-        });
-        return { ...quiz, answers: newAnswers }
-      }
-      return quiz
-    })
-    setQuizList(newQuizList)
-  }
-
-  const handleDeleteOptionAnswer = (deleteIndex: number) => {
-    const newQuizList = quizList.map((quiz: any) => {
-      if (quiz.number === selectedQuiz) {
-        const newAnswers = quiz.answers.filter((_: any, index: number) => index !== deleteIndex);
+        const newAnswers = [...quiz.answers, ""];
+        console.log(quiz.answers);
         return { ...quiz, answers: newAnswers };
       }
       return quiz;
     });
     setQuizList(newQuizList);
-  }
+  };
 
-  const handleEditQuiz = (EditNumber: number, EditObject: string, EditValue: any) => {
+  const handleEditOptionAnswer = (editNumber: any, editValue: any) => {
+    const newQuizList = quizList.map((quiz: any) => {
+      if (quiz.number === selectedQuiz) {
+        const newAnswers = quiz.answers.map((answer: any, index: any) => {
+          if (editNumber === index) {
+            return { ...answer, editValue };
+          }
+          return answer;
+        });
+        return { ...quiz, answers: newAnswers };
+      }
+      return quiz;
+    });
+    setQuizList(newQuizList);
+  };
+
+  const handleDeleteOptionAnswer = (deleteIndex: number) => {
+    const newQuizList = quizList.map((quiz: any) => {
+      if (quiz.number === selectedQuiz) {
+        const newAnswers = quiz.answers.filter(
+          (_: any, index: number) => index !== deleteIndex
+        );
+        return { ...quiz, answers: newAnswers };
+      }
+      return quiz;
+    });
+    setQuizList(newQuizList);
+  };
+
+  const handleEditQuiz = (
+    EditNumber: number,
+    EditObject: string,
+    EditValue: any
+  ) => {
     const newQuizList = quizList.map((quiz: any) => {
       if (quiz.number === EditNumber) {
-        return { ...quiz, [EditObject]: EditValue }
+        return { ...quiz, [EditObject]: EditValue };
       }
-      return quiz
+      return quiz;
     });
-    setQuizList(newQuizList)
-  }
+    setQuizList(newQuizList);
+  };
 
   const handleEditMainAnswers = (EditNumber: number, EditValue: any) => {
     const newQuizList = quizList.map((quiz: any) => {
@@ -284,54 +301,61 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       return quiz;
     });
     setQuizList(newQuizList);
-  }
-  
-  const handleDeleteQuiz = (number: number) => {
-    const newArray = quizList.filter((quiz: any) => {
-      if (quiz.number === number) {
-        return false
-      }
-      return true
-    }).map((quiz: any) => {
-      if (quiz.number >= number) {
-        return { ...quiz, number: quiz.number - 1 }
-      }
-      return quiz
-    })
-    setSelectedQuiz(number - 2)
-    setQuizList(newArray)
-  }
+  };
 
-  const [isDelete, setIsDelete] = useState<boolean>(false)
+  const handleDeleteQuiz = (number: number) => {
+    const newArray = quizList
+      .filter((quiz: any) => {
+        if (quiz.number === number) {
+          return false;
+        }
+        return true;
+      })
+      .map((quiz: any) => {
+        if (quiz.number >= number) {
+          return { ...quiz, number: quiz.number - 1 };
+        }
+        return quiz;
+      });
+    setSelectedQuiz(number - 2);
+    setQuizList(newArray);
+  };
+
+  const [isDelete, setIsDelete] = useState<boolean>(false);
   //0. 버튼을 누르면 selected를 변경하고 isDelete를 변경을해줌
   //1. isDelete -> false->true
-  //2.  
+  //2.
 
-  const handleCreateQuiz =async (QuizGameId:any) => {
-    const quizListForm = quizList.map((quiz:any,index:any) => {
-      return{...quiz, number: index+1 }
-    })
+  const handleCreateQuiz = async (QuizGameId) => {
+    const quizListForm = quizList.map((quiz, index) => {
+      return { ...quiz, number: index + 1 };
+    });
 
     const quizForm = {
-      "title":title,
-      "description":'설명',
-      "image":'',
-      "questions":quizListForm
-    }
-    try{
-      console.log(quizForm)
-      const response = await fetch(`http://localhost:8080/api/v1/quiz`,{
-        method:'POST',
-        credentials:'include',
-        headers:{
-          'Content-Type': 'application/json'
-        },
-        body:JSON.stringify(quizForm)
+      title: title,
+      description: description,
+      image:
+        "https://orridle.s3.ap-northeast-2.amazonaws.com/quiz-image/0f1a9674-8496-46da-ad64-388afbfe9e97.webp",
+      questions: quizListForm,
+    };
 
-      })
-      console.log(response)
-    } catch(error){
-      console.log(error)
+    try {
+      console.log(quizForm);
+      const response = await axios.post(
+        "http://localhost:8080/api/v1/quiz",
+        quizForm,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data.data.quizId);
+      alert("생성되었습니다");
+      router.push(`/quiz/info/${response.data.data.quizId}`);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -343,37 +367,38 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     setImg(e.target.files[0]);
   };
 
-  const [img, setImg] = useState<any>('');
+  const [img, setImg] = useState<any>("");
 
-  useEffect(()=>{
+  useEffect(() => {
     const formData = new FormData();
-    formData.append('file', img);
-    const uploadImage =async () => {
+    formData.append("file", img);
+    const uploadImage = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/v1/quiz/image`,{
-          method:'POST',
-          credentials:'include',
-          body:formData
-        })
+        const response = await fetch(
+          `http://localhost:8080/api/v1/quiz/image`,
+          {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+          }
+        );
         const data = await response.json();
         console.log(data);
-        handleEditQuiz(selectedQuiz,'source',data.data.url)
+        handleEditQuiz(selectedQuiz, "source", data.data.url);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-    uploadImage()
-  },[img])
-
-
+    };
+    uploadImage();
+  }, [img]);
 
   return (
     <Container>
       <Wrapper>
-      <Header />
+        <Header />
         <LeftBox>
-          <SettingButton>
-          </SettingButton>
+          {/* <SettingButton>
+          </SettingButton> */}
           <ChooseQuizFromCreatePage
             quizList={quizList}
             onQuizSelect={handleQuizSelect}
@@ -382,59 +407,75 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           <AddQuizFromCreatePage addQuiz={handleAddQuiz} />
         </LeftBox>
         <CenterBox>
-          <TitleInput value={title} onChange={(e)=>setTitle(e.target.value)}></TitleInput>
+          <TitleInput
+            placeholder="제목을 입력해주세요"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          ></TitleInput>
           {/* TODO: EditQuiz로 feature 생성 */}
           <QuizContainer>
             <SourceInput>
-            {
-              quizList[selectedQuiz]?.source === '' ? 
-            <ImageInput
-              type="file"
-              onChange={uploadingImage}
-            />
-            :
-            <Image
-              src={quizList[selectedQuiz]?.source}
-              alt="썸네일"
-              layout="fill"
-              objectFit="cover"
-            />}
-          {/* TODO: 이미지 비율 자연스럽게 변경 */}
+              {quizList[selectedQuiz]?.source === "" ? (
+                <ImageInput type="file" onChange={uploadingImage} />
+              ) : (
+                <Image
+                  src={quizList[selectedQuiz]?.source}
+                  alt="썸네일"
+                  layout="fill"
+                  objectFit="cover"
+                />
+              )}
             </SourceInput>
             <QuizInput
               placeholder="질문을 입력해주세요"
               value={quizList[selectedQuiz]?.description ?? ""}
-              onChange={(e) => handleEditQuiz(selectedQuiz, 'description', e.target.value)}
+              onChange={(e) =>
+                handleEditQuiz(selectedQuiz, "description", e.target.value)
+              }
             ></QuizInput>
           </QuizContainer>
           <AnswerInput
             placeholder="정답을 입력해주세요"
             value={quizList[selectedQuiz]?.answers[0] ?? ""}
-            onChange={(e) => handleEditMainAnswers(selectedQuiz, e.target.value)}
+            onChange={(e) =>
+              handleEditMainAnswers(selectedQuiz, e.target.value)
+            }
           ></AnswerInput>
           <OtherAnswerInput>
-            {quizList[selectedQuiz]?.answers.slice(1).map((answer: any, index: number) => (
-              <AnswerWrapper key={index + 1}>
-                <OptionAnswerInput
-                  value={answer.content}
-                  onChange={(e) => handleEditOptionAnswer(index + 1, e.target.value)}
-                />
-                <DeleteButton onClick={() => handleDeleteOptionAnswer(index + 1)}>X</DeleteButton>
-              </AnswerWrapper>
-            )) ??
-            null}
-            <AnswerOptionButton onClick={handleAddOptionAnswer}>+</AnswerOptionButton>
+            {quizList[selectedQuiz]?.answers
+              .slice(1)
+              .map((answer: any, index: number) => (
+                <AnswerWrapper key={index + 1}>
+                  <OptionAnswerInput
+                    value={answer.content}
+                    onChange={(e) =>
+                      handleEditOptionAnswer(index + 1, e.target.value)
+                    }
+                  />
+                  <DeleteButton
+                    onClick={() => handleDeleteOptionAnswer(index + 1)}
+                  >
+                    X
+                  </DeleteButton>
+                </AnswerWrapper>
+              )) ?? null}
+            <AnswerOptionButton onClick={handleAddOptionAnswer}>
+              +
+            </AnswerOptionButton>
           </OtherAnswerInput>
           {/* TODO: feature로 빼내기 */}
         </CenterBox>
         <RightBox>
-          <div onClick={handleCreateQuiz}>
-            정답 전송 버튼
-          </div>
+          <AnswerInput
+            placeholder="설명을 입력해주세요"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          ></AnswerInput>
+          <CreateQuizButton onClick={handleCreateQuiz}>
+            퀴즈 생성하기
+          </CreateQuizButton>
         </RightBox>
       </Wrapper>
     </Container>
-  )
-}
-
-
+  );
+};

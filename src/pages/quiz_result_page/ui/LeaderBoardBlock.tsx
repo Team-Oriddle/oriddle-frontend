@@ -2,7 +2,7 @@ import { userAtom } from "@/store/userAtom";
 import axios from "axios";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
-import { styled } from "styled-components";
+import styled from "styled-components";
 
 // const mockResponse = {
 //   code: "QS0001",
@@ -26,9 +26,9 @@ import { styled } from "styled-components";
 // };
 
 const LeaderBoardBlock = ({ slug }: { slug: string }) => {
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<{ rankingTable: any[] } | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
   const [userData] = useAtom(userAtom);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const LeaderBoardBlock = ({ slug }: { slug: string }) => {
     const fetchResult = async () => {
       try {
         const response = await axios.get(baseUrl);
-        setResults(response.data);
+        setResults(response.data.data); // Assuming `response.data.data` contains the rankingTable
         console.log(response.data);
         setLoading(false);
       } catch (e: any) {
@@ -50,7 +50,7 @@ const LeaderBoardBlock = ({ slug }: { slug: string }) => {
   }, [slug]);
 
   if (loading) return <div>로딩중...</div>;
-  if (error) return <div>Error: {(error as Error).message}</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   // 본인에 해당하는 부분은 다른 색상을 지니고 있다.
   return (
@@ -60,8 +60,8 @@ const LeaderBoardBlock = ({ slug }: { slug: string }) => {
 
       {/* TODO: 플레이어 수에 따라 해당 박스 개수 조절, 본인에 해당하는 박스는 다른 스타일로 표시 */}
       {/* 좌측 박스 컨텐츠 */}
-      {results &&
-        (results as any).rankingTable.map((result: any) => {
+      {results && results.rankingTable ? (
+        results.rankingTable.map((result) => {
           const isCurrentUser = userData.user?.id === result.userId;
           return (
             // 본인에 해당하는 부분은 다른 색상을 지니고 있다.
@@ -75,7 +75,10 @@ const LeaderBoardBlock = ({ slug }: { slug: string }) => {
               <Score>{result.score}점</Score>
             </LeaderBoardBox>
           );
-        })}
+        })
+      ) : (
+        <div>No results found</div>
+      )}
 
       {/* 점수 들어가는 곳 */}
     </Container>

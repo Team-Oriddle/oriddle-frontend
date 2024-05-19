@@ -7,6 +7,9 @@ const nextConfig = {
       'orridle.s3.ap-northeast-2.amazonaws.com'
     ],
   },
+  compiler:{
+    styledComponents:true
+  }
 };
 
 module.exports = nextConfig;
