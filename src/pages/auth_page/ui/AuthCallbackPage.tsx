@@ -9,7 +9,6 @@ export const AuthCallbackPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // API endpoint from where we can fetch user data
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
@@ -18,7 +17,6 @@ export const AuthCallbackPage = () => {
             withCredentials: true,
             headers: {
               "Content-Type": "application/json",
-              // Include authentication token if needed
             },
           }
         );
@@ -36,17 +34,16 @@ export const AuthCallbackPage = () => {
           user: userData,
         }));
 
-        // 세션스토리지에 저장된 리다이렉트 URL이 있다면 해당 URL로 이동
         const redirectUrl = sessionStorage.getItem("redirectUrl");
         if (redirectUrl) {
           sessionStorage.removeItem("redirectUrl");
           router.push(redirectUrl);
         } else {
-          router.push("/"); // Redirect to home after successful login
+          router.push("/"); // 로그인 성공 후 홈으로 리디렉션 (기본값)
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
-        router.push("/login"); // Redirect to login page on failure
+        router.push("/login"); // 실패 시 로그인 페이지로 리디렉션
       }
     };
 
