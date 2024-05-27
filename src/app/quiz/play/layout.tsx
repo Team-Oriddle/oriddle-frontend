@@ -1,9 +1,9 @@
-import { SocketContext } from "@/entities/socket/lib/SocketContext";
+import { SocketProvider } from "@/entities/socket/lib/SocketContext";
 
 export default function Layout({ children }) {
   return (
-    <SocketContext.Provider value={'hello'}>
+    <SocketProvider>
       <main>{children}</main>
-    </SocketContext.Provider>
+    </SocketProvider>
   )
 }
