@@ -3,7 +3,7 @@ import { QuizGamePage } from "@/pages/quiz_game";
 
 type QuizGameProps = {
   params: {
-    slug: number;
+    slug: string;
   }
 }
 

@@ -48,7 +48,7 @@ const LoadingUI = styled.div`
 `;
 
 type QuizGameProps = {
-  QuizGameId: number;
+  QuizGameId: string;
 };
 
 interface QuestionDataType {

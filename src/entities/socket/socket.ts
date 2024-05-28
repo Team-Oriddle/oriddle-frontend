@@ -24,6 +24,9 @@ export const initializeSocket = (url: string, subscriptions: Array<{topic: strin
       console.error('Error!: ' + frame.headers['message']);
       console.error(frame.body);
     },
+    debug: (str) => {
+      console.log(str);
+  },
   });
   console.log('이미 지나감')
 

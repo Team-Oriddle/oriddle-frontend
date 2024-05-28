@@ -153,42 +153,38 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
 
   const {client, connected} = useStomp();
 
-  useEffect(()=>{
-    if(client && connected){
-      console.log('연결됨')
+  // useEffect(()=>{
+  //   if(client && connected){
+  //     console.log('연결됨')
       
-      console.log('새로운 구독 생성')
-      const subscribeJoin = client?.subscribe(`topic/quiz-room/${QuizroomId}/join`,(message)=>{
-        console.log(message)
-      let newUser = {...message, isHost:false}
-        setUserData([...userData,newUser])
-        userData.sort(function(a,b){
-          return a.position-b.position
-        })
-      })
-      console.log('새로운 구독 생성')
-      const subscribeLeave = client.subscribe(`topic/quiz-room/${QuizroomId}/leave`,(message)=>{
-        console.log(message)
-        const findIndex = message.userId;
-        const copyUserData = userData
-        const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
-        if (removeUserData !== -1) {
-          copyUserData.splice(removeUserData, 1);
-        }
-        setUserData(copyUserData);
-      })
-      console.log('새로운 구독 생성')
-      const subscribeStart = client.subscribe(`topic/quiz-room/${QuizroomId}/start`,(message)=>{
-        console.log(message)
-        router.push(`/quiz/game/${QuizroomId}`)
-      })
+  //     console.log('새로운 구독 생성')
+  //     const subscribeJoin = client.subscribe(`topic/quiz-room/${QuizroomId}/join`,(message)=>{
+  //       console.log(message)
+  //     let newUser = {...message, isHost:false}
+  //       setUserData([...userData,newUser])
+  //       userData.sort(function(a,b){
+  //         return a.position-b.position
+  //       })
+  //     })
+  //     console.log('새로운 구독 생성')
+  //     const subscribeLeave = client.subscribe(`topic/quiz-room/${QuizroomId}/leave`,(message)=>{
+  //       console.log(message)
+  //       const findIndex = message.userId;
+  //       const copyUserData = userData
+  //       const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
+  //       if (removeUserData !== -1) {
+  //         copyUserData.splice(removeUserData, 1);
+  //       }
+  //       setUserData(copyUserData);
+  //     })
+  //     console.log('새로운 구독 생성')
+  //     const subscribeStart = client.subscribe(`topic/quiz-room/${QuizroomId}/start`,(message)=>{
+  //       console.log(message)
+  //       router.push(`/quiz/game/${QuizroomId}`)
+  //     })
 
-      return ()=>{
-        console.log('unsub')
-        subscribeJoin.unsubscribe();
-      }
-    }
-  },[client,connected,QuizroomId, router])
+  //   }
+  // },[client,connected,QuizroomId, router])
   
   return (
     <Container>
