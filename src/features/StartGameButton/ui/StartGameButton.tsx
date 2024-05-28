@@ -17,7 +17,7 @@ const Layout = styled.div`
 `
 
 type StartGameProps = {
-  roomId :number
+  roomId :string
 }
 
 export const StartGameButton = ({roomId}:StartGameProps) => {

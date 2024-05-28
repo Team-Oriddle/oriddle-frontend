@@ -77,10 +77,7 @@ type Props = {
 }
 
 const PostQuizRoom = async (QuizId: any, quizRoomTitle: string, userNumber: number, router: any) => {
-  if(cookie.load('JSESSIONID')=== undefined){
-    alert("로그인 해주세요!")
-    return
-  }
+
   try {
     const response = await axios.post(
       'http://localhost:8080/api/v1/quiz-room',
@@ -97,7 +94,7 @@ const PostQuizRoom = async (QuizId: any, quizRoomTitle: string, userNumber: numb
       }
     );
     console.log(response.data);
-    router.push(`/quiz/room/${response.data.data.quizRoomId}`);
+    router.push(`/quiz/play/room/${response.data.data.quizRoomId}`);
     // TODO: 페이지 이동 코드 작성
   } catch (error) {
     console.error(error);

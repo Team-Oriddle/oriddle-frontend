@@ -1,3 +1,4 @@
+'use client'
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Client } from '@stomp/stompjs';
 
@@ -14,16 +15,18 @@ export const SocketProvider = ({ children }) => {
         const stompClient = new Client({
             brokerURL: 'ws://localhost:8080/ws',
             onConnect: () => {
+                console.log('연결되었습니다')
                 setConnected(true);
             },
             onDisconnect: () => {
                 setConnected(false);
             },
+            debug: (str) => {
+                console.log(str);
+            },
         });
-
         stompClient.activate();
         setClient(stompClient);
-
         return () => {
             stompClient.deactivate();
         };

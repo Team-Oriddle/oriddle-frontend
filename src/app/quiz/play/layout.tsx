@@ -1,4 +1,4 @@
-import { SocketProvider } from "@/entities/socket/lib/SocketContext";
+import { SocketProvider } from "@/entities/socket/lib/SocketProvider";
 
 export default function Layout({ children }) {
   return (

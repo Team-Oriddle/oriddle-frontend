@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const getQuizRoomData = async (quizRoomId:number) => {
+export const getQuizRoomData = async (quizRoomId:string) => {
   let QuizRoomData
   try {
     const response = await axios.get(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}`, {

@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from 'axios';
+import { useStomp } from "@/entities/socket/lib/SocketProvider";
+import { Client } from "@stomp/stompjs";
 
 
 const Container = styled.div`
@@ -70,7 +72,7 @@ const LeaveRoom = styled.div`
 
 
 type QuizRoomProps = {
-  QuizroomId :number
+  QuizroomId :string
 }
 
 interface UserData{
@@ -119,7 +121,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
 
   useEffect(() => {
     // TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
-    const joinGame = async (quizRoomId: number) => {
+    const joinGame = async (quizRoomId: string) => {
       try {
         const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/join`, {}, {
           withCredentials: true,
@@ -148,40 +150,46 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
       setIsConnect(true);
     });
   }, []);
-  
+
+  const {client, connected} = useStomp();
 
   useEffect(()=>{
-    const getSocket = (quizRoomId:number) => {
-      const subscriptions = [
-        //strictMode가 켜져 있는 경우 제대로 작동하지 않음
-        { topic: `/topic/quiz-room/${quizRoomId}/join`, callback:(message:any) =>{
-          let newUser = {...message, isHost:false}
-          setUserData([...userData,newUser])
-          userData.sort(function(a,b){
-            return a.position-b.position
-          })
-        }},
-        //strictMode가 켜져 있는 경우 제대로 작동하지 않음
-        { topic: `/topic/quiz-room/${quizRoomId}/leave`, callback:(message:any) =>{
+    if(client && connected){
+      console.log('연결됨')
+      
+      console.log('새로운 구독 생성')
+      const subscribeJoin = client?.subscribe(`topic/quiz-room/${QuizroomId}/join`,(message)=>{
+        console.log(message)
+      let newUser = {...message, isHost:false}
+        setUserData([...userData,newUser])
+        userData.sort(function(a,b){
+          return a.position-b.position
+        })
+      })
+      console.log('새로운 구독 생성')
+      const subscribeLeave = client.subscribe(`topic/quiz-room/${QuizroomId}/leave`,(message)=>{
+        console.log(message)
+        const findIndex = message.userId;
+        const copyUserData = userData
+        const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
+        if (removeUserData !== -1) {
+          copyUserData.splice(removeUserData, 1);
+        }
+        setUserData(copyUserData);
+      })
+      console.log('새로운 구독 생성')
+      const subscribeStart = client.subscribe(`topic/quiz-room/${QuizroomId}/start`,(message)=>{
+        console.log(message)
+        router.push(`/quiz/game/${QuizroomId}`)
+      })
 
-          const findIndex = message.userId;
-          const copyUserData = userData
-          const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
-          if (removeUserData !== -1) {
-            copyUserData.splice(removeUserData, 1);
-          }
-          setUserData(copyUserData);
-        }},
-        { topic: `/topic/quiz-room/${quizRoomId}/start`, callback:(message:any) =>{
-          router.push(`/quiz/game/${quizRoomId}`)
-        }},
-      ]
-      initializeSocket('ws://localhost:8080/ws', subscriptions)
+      return ()=>{
+        console.log('unsub')
+        subscribeJoin.unsubscribe();
+      }
     }
-
-    getSocket(QuizroomId)
-  },[isConnect])
-
+  },[client,connected,QuizroomId, router])
+  
   return (
     <Container>
       <Wrapper>
