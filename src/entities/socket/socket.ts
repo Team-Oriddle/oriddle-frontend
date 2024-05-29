@@ -8,9 +8,10 @@ let stompClient: Client | null = null;
 export const initializeSocket = (url: string, subscriptions: Array<{topic: string, callback: (message: any) => void}>) => {
   stompClient = new Client({
     brokerURL: url,
+    reconnectDelay: 5000,
     onConnect: () => {
       //주어진 리스트를 모두 구독
-      console.log('소켓 시도중 ')
+      console.log('소켓 연결됨 ')
       subscriptions.forEach(({ topic, callback }) => {
         console.log('소켓 시도중 '+topic)
         stompClient?.subscribe(topic, (message) => {
@@ -19,18 +20,20 @@ export const initializeSocket = (url: string, subscriptions: Array<{topic: strin
       });
     },
     onStompError: (frame) => {
-      console.log('소켓 안됨 ')
-
+      console.log('소켓 연결 끊김 ')
       console.error('Error!: ' + frame.headers['message']);
       console.error(frame.body);
     },
+    
     debug: (str) => {
       console.log(str);
-  },
+    },
+    
   });
-  console.log('이미 지나감')
 
   stompClient.activate();
+  
+  return stompClient;
 };
 
 export const sendMessage = (destination: string, message: any) => {

@@ -1,3 +1,4 @@
+'use Client'
 import { ChatInput } from "@/components/attend/ChatInput";
 import { ChatList } from "@/components/attend/ChatLIst";
 import { EditRoomInfo } from "@/components/attend/EditRoomInfo";
@@ -11,7 +12,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from 'axios';
 import { useStomp } from "@/entities/socket/lib/SocketProvider";
-import { Client } from "@stomp/stompjs";
+import { Client } from '@stomp/stompjs';
 
 
 const Container = styled.div`
@@ -85,6 +86,7 @@ interface UserData{
 //TODO: isLoading처리
 export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
   const router = useRouter();
+  const {client, connected} = useStomp();
   const [userData, setUserData] = useState<UserData[]>([]); 
   //TODO: 추후에 채팅기능 추가되면 채팅 기능 관련 기능도 추가
   //const [chatList, setChatList] = useState([]); //
@@ -136,7 +138,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
         console.log(error);
         if (error.response && error.response.status !== 409) {
           console.log('401');
-          const redirectEndPoint = encodeURIComponent(`/quiz/room/${quizRoomId}`);
+          const redirectEndPoint = encodeURIComponent(`/quiz/play/${quizRoomId}/room`);
           window.location.href = `http://localhost:8080/api/v1/login/google?redirectEndPoint=${redirectEndPoint}`;
         }
       }
@@ -148,43 +150,57 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
       setQuizData(result);
       setUserData(result.participants);
       setIsConnect(true);
-    });
+    }); 
   }, []);
 
-  const {client, connected} = useStomp();
+  const setSocketConnect = () => {
+    if (client && connected) {
+      try {
+        console.log('Subscribing to topic');
+        client.subscribe(`/topic/quiz-room/${QuizroomId}/start`, (message) => {
+          console.log(message);
+          router.push(`/quiz/play/${QuizroomId}/game`)
 
-  // useEffect(()=>{
-  //   if(client && connected){
-  //     console.log('연결됨')
-      
-  //     console.log('새로운 구독 생성')
-  //     const subscribeJoin = client.subscribe(`topic/quiz-room/${QuizroomId}/join`,(message)=>{
-  //       console.log(message)
-  //     let newUser = {...message, isHost:false}
-  //       setUserData([...userData,newUser])
-  //       userData.sort(function(a,b){
-  //         return a.position-b.position
-  //       })
-  //     })
-  //     console.log('새로운 구독 생성')
-  //     const subscribeLeave = client.subscribe(`topic/quiz-room/${QuizroomId}/leave`,(message)=>{
-  //       console.log(message)
-  //       const findIndex = message.userId;
-  //       const copyUserData = userData
-  //       const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
-  //       if (removeUserData !== -1) {
-  //         copyUserData.splice(removeUserData, 1);
-  //       }
-  //       setUserData(copyUserData);
-  //     })
-  //     console.log('새로운 구독 생성')
-  //     const subscribeStart = client.subscribe(`topic/quiz-room/${QuizroomId}/start`,(message)=>{
-  //       console.log(message)
-  //       router.push(`/quiz/game/${QuizroomId}`)
-  //     })
+        });
+        client.subscribe(`/topic/quiz-room/${QuizroomId}/join`, (message) => {
+          console.log(message);
+          const socketData = JSON.parse(message.body);
+          const newUser = {...socketData, isHost:false}
+          setUserData([...userData,newUser])
+          userData.sort(function(a,b){
+            return a.position-b.position
+          })
+        });
+        client.subscribe(`/topic/quiz-room/${QuizroomId}/leave`, (message) => {
+          const socketData = JSON.parse(message.body);
+          const findIndex = socketData.userId;
+          const copyUserData = userData
+          const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
+          if (removeUserData !== -1) {
+            copyUserData.splice(removeUserData, 1);
+          }
+          setUserData(copyUserData);
 
-  //   }
-  // },[client,connected,QuizroomId, router])
+        });
+      } catch (error) {
+        console.error('Failed to subscribe:', error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    if(client){
+      client.onConnect = () =>{
+        setSocketConnect();
+        console.log('hello')
+      }
+      client.onStompError = (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      };
+    }
+  }, [client]);
+
   
   return (
     <Container>
@@ -211,3 +227,5 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
     </Container>
   );
 };
+
+
