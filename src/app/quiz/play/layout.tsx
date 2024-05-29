@@ -11,9 +11,6 @@ interface UserData{
 
 export default function Layout({ children }) {
 
-  const [userData, setUserData] = useState<UserData[]>([]); 
-
-  //여기서 소켓 프로바이더로 넘겨줌
   return (
     <SocketProvider> 
       <main>{children}</main>
@@ -21,4 +18,3 @@ export default function Layout({ children }) {
   )
 }
 
-//얘가 SPA 레이아웃임 ㅇ

@@ -94,8 +94,7 @@ const PostQuizRoom = async (QuizId: any, quizRoomTitle: string, userNumber: numb
       }
     );
     console.log(response.data);
-    router.push(`/quiz/play/room/${response.data.data.quizRoomId}`);
-    // TODO: 페이지 이동 코드 작성
+    router.push(`/quiz/play/${response.data.data.quizRoomId}/room`);
   } catch (error) {
     console.error(error);
     alert('방에 참가해있습니다!');
