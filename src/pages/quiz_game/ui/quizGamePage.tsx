@@ -125,7 +125,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     });
     setDoit(true);
     setSocketConnect();
-  }, [QuizGameId]);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
