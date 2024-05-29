@@ -23,7 +23,7 @@ export const SocketProvider = ({ children }) => {
 
     const setNewSocket =async () => {
         try {
-            const newSocket = await initializeSocket('ws://localhost:8080/ws',[])
+            const newSocket = await initializeSocket('ws://localhost:8080/ws')
             setClient(newSocket)
             setConnected(true)
         } catch (error) {
