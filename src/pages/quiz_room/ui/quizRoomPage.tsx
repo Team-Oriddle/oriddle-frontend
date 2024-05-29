@@ -152,7 +152,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
       setIsConnect(true);
     }); 
   }, []);
-
+//strict 모드이기에 구독을 2번 진행함
   const setSocketConnect = () => {
     if (client && connected) {
       try {
