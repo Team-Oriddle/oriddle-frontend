@@ -1,4 +1,3 @@
-'use Client'
 import { ChatInput } from "@/components/attend/ChatInput";
 import { ChatList } from "@/components/attend/ChatLIst";
 import { EditRoomInfo } from "@/components/attend/EditRoomInfo";

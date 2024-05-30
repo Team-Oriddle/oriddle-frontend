@@ -1,4 +1,3 @@
-'use client'
 import { UserChat } from "@/components/game/UserChat";
 import { Question } from "@/components/game/Question";
 import { QuizSource } from "@/components/game/QuizSource";
@@ -10,7 +9,7 @@ import { initializeSocket } from "@/entities/socket/socket";
 import Modal from "@/components/game/Modal";
 import { SendMessage } from "@/features/SendMessage/ui/sendMessage";
 import { getQuizRoomData } from "@/entities/quizroom";
-import { useStomp } from "@/entities/socket/lib/SocketProvider";
+import {   useStomp } from "@/entities/socket/lib/SocketProvider";
 
 const Container = styled.div`
   display: flex;
