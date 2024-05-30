@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from 'axios';
+import { useStomp } from "@/entities/socket/lib/SocketProvider";
+import { Client } from '@stomp/stompjs';
 
 
 const Container = styled.div`
@@ -70,7 +72,7 @@ const LeaveRoom = styled.div`
 
 
 type QuizRoomProps = {
-  QuizroomId :number
+  QuizroomId :string
 }
 
 interface UserData{
@@ -83,6 +85,7 @@ interface UserData{
 //TODO: isLoading처리
 export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
   const router = useRouter();
+  const {client, connected} = useStomp();
   const [userData, setUserData] = useState<UserData[]>([]); 
   //TODO: 추후에 채팅기능 추가되면 채팅 기능 관련 기능도 추가
   //const [chatList, setChatList] = useState([]); //
@@ -119,7 +122,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
 
   useEffect(() => {
     // TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
-    const joinGame = async (quizRoomId: number) => {
+    const joinGame = async (quizRoomId: string) => {
       try {
         const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/join`, {}, {
           withCredentials: true,
@@ -134,7 +137,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
         console.log(error);
         if (error.response && error.response.status !== 409) {
           console.log('401');
-          const redirectEndPoint = encodeURIComponent(`/quiz/room/${quizRoomId}`);
+          const redirectEndPoint = encodeURIComponent(`/quiz/play/${quizRoomId}/room`);
           window.location.href = `http://localhost:8080/api/v1/login/google?redirectEndPoint=${redirectEndPoint}`;
         }
       }
@@ -146,42 +149,58 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
       setQuizData(result);
       setUserData(result.participants);
       setIsConnect(true);
-    });
+    }); 
   }, []);
-  
+//strict 모드이기에 구독을 2번 진행함
+  const setSocketConnect = () => {
+    if (client && connected) {
+      try {
+        console.log('Subscribing to topic');
+        client.subscribe(`/topic/quiz-room/${QuizroomId}/start`, (message) => {
+          console.log(message);
+          router.push(`/quiz/play/${QuizroomId}/game`)
 
-  useEffect(()=>{
-    const getSocket = (quizRoomId:number) => {
-      const subscriptions = [
-        //strictMode가 켜져 있는 경우 제대로 작동하지 않음
-        { topic: `/topic/quiz-room/${quizRoomId}/join`, callback:(message:any) =>{
-          let newUser = {...message, isHost:false}
+        });
+        client.subscribe(`/topic/quiz-room/${QuizroomId}/join`, (message) => {
+          console.log(message);
+          const socketData = JSON.parse(message.body);
+          const newUser = {...socketData, isHost:false}
           setUserData([...userData,newUser])
           userData.sort(function(a,b){
             return a.position-b.position
           })
-        }},
-        //strictMode가 켜져 있는 경우 제대로 작동하지 않음
-        { topic: `/topic/quiz-room/${quizRoomId}/leave`, callback:(message:any) =>{
-
-          const findIndex = message.userId;
+        });
+        client.subscribe(`/topic/quiz-room/${QuizroomId}/leave`, (message) => {
+          const socketData = JSON.parse(message.body);
+          const findIndex = socketData.userId;
           const copyUserData = userData
           const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
           if (removeUserData !== -1) {
             copyUserData.splice(removeUserData, 1);
           }
           setUserData(copyUserData);
-        }},
-        { topic: `/topic/quiz-room/${quizRoomId}/start`, callback:(message:any) =>{
-          router.push(`/quiz/game/${quizRoomId}`)
-        }},
-      ]
-      initializeSocket('ws://localhost:8080/ws', subscriptions)
+
+        });
+      } catch (error) {
+        console.error('Failed to subscribe:', error);
+      }
     }
+  }
 
-    getSocket(QuizroomId)
-  },[isConnect])
+  useEffect(() => {
+    if(client){
+      client.onConnect = () =>{
+        setSocketConnect();
+        console.log('hello')
+      }
+      client.onStompError = (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      };
+    }
+  }, [client]);
 
+  
   return (
     <Container>
       <Wrapper>
@@ -207,3 +226,5 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
     </Container>
   );
 };
+
+
