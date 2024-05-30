@@ -76,31 +76,6 @@ type Props = {
   handleModal: Function
 }
 
-const PostQuizRoom = async (QuizId: any, quizRoomTitle: string, userNumber: number, router: any) => {
-
-  try {
-    const response = await axios.post(
-      'http://localhost:8080/api/v1/quiz-room',
-      {
-        quizId: QuizId,
-        title: quizRoomTitle,
-        maxParticipant: userNumber,
-      },
-      {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    console.log(response.data);
-    router.push(`/quiz/play/${response.data.data.quizRoomId}/room`);
-  } catch (error) {
-    console.error(error);
-    alert('방에 참가해있습니다!');
-  }
-};
-
 export const CreateQuizRoom = ({ quizId, handleModal }: Props) => {
   const router = useRouter();
   const [userNumber, setUserNumber] = useState<number>(4);
@@ -115,10 +90,39 @@ export const CreateQuizRoom = ({ quizId, handleModal }: Props) => {
     setRoundTime(e.target.value);
   }
 
+  const PostQuizRoom = async (QuizId: any, quizRoomTitle: string, userNumber: number, router: any) => {
+    if(quizRoomTitle === ''){
+      alert("방 이름을 입력해주세요!")
+      return
+    }
+    try {
+      const response = await axios.post(
+        'http://localhost:8080/api/v1/quiz-room',
+        {
+          quizId: QuizId,
+          title: quizRoomTitle,
+          maxParticipant: userNumber,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log(response.data);
+      router.push(`/quiz/room/${response.data.data.quizRoomId}`);
+      // TODO: 페이지 이동 코드 작성
+    } catch (error) {
+      console.error(error);
+      alert('방에 참가해있습니다!');
+    }
+  };
+
   return (
     <Layout>
       <Wrapper>
-        <ModalClose onClick={handleModal}>X</ModalClose>
+        <ModalClose onClick={()=>handleModal}>X</ModalClose>
         {/* TODO: 모달 닫을 수 있게 수정해아함 */}
         <TextInput onChange={(e) => setQuizRoomTitle(e.target.value)} placeholder="제목을 입력해주세요"></TextInput>
         {/* TODO: 입력 제한*/}
