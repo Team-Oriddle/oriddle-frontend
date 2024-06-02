@@ -1,52 +1,47 @@
-import styled from "styled-components"
+import styled from "styled-components";
 
-interface ButtonProps{
-  color:string,
-  txt:string
-  //onClick함수
-  //width
-  //height
-}
+type ButtonLayoutType = {
+  bgColor: string;
+  txtColor: string;
+};
 
-const ButtonLayout = styled.div`
+const ButtonLayout = styled.button<ButtonLayoutType>`
   width: 150px;
   height: 50px;
   border-radius: 50px;
-  border: 1px solid #643DD2;
-  background-color: ${(props) => props.bgColor};
-  color:${(props)=> props.txtColor};
+  border: 1px solid #643dd2;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  font-size: 20;
+  font-size: 20px;
   font-weight: bold;
-  :hover{
-    cursor: pointer;
-  }
-`
+  background-color: ${(props) => props.bgColor};
+  color: ${(props) => props.txtColor};
+  cursor: pointer; // 버튼의 경우 :hover에서 pointer로 주지 않아도 기본적으로 커서가 pointer로 변경됩니다.
+`;
 
-const DefalutButton = ({onClick,color,txt}:ButtonProps) =>{
-  let bgColor: string;
-  let textColor: string;
+type ButtonProps = {
+  color: string; // '보라' | '하양'과 같은 문자열로 동적인 색상 변경을 위한 타입
+  txt: string;
+  /** 현재 모든 버튼에 클릭 이벤트가 들어있지는 않습니다. */
+  onClick?: () => void;
+};
 
-  switch (color) {
-    case "보라":
-      bgColor = "#643DD2";
-      textColor = "#FFFFFF"
-      break;
-    // 다른 색상에 대한 처리도 추가 가능
-    default:
-      bgColor = "#FFFFFF"
-      textColor = "#643DD2";
-      break;
-  }
+// color 값 초기값 설정
+const DefalutButton = ({ color = "보라", txt = "", onClick }: ButtonProps) => {
+  // 코드 안정성을 위해 let 대신 const 사용으로 변경
+  // TODO: Custom Pallette 생성 후 코드 이동
+  const customPurple: string = "#643DD2";
+  const customWhite: string = "#FFFFFF";
+  const bgColor: string = color === "보라" ? customPurple : customWhite;
+  const textColor: string = color === "보라" ? customWhite : customPurple;
 
-  return(
+  return (
     <ButtonLayout bgColor={bgColor} txtColor={textColor} onClick={onClick}>
       {txt}
     </ButtonLayout>
-  )
-}
+  );
+};
 
-export default DefalutButton
+export default DefalutButton;
