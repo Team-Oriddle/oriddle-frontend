@@ -93,6 +93,11 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  ::-webkit-scrollbar {width: 8px; height:8px;}
+  ::-webkit-scrollbar-button {display:none;}
+  ::-webkit-scrollbar-track {background:none;}
+  ::-webkit-scrollbar-thumb {border-radius:50px; background:#c2c2c2;}
+  ::-webkit-scrollbar-thumb:hover {background:#404040;}
 }
 
 a {

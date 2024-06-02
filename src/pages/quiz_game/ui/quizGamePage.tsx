@@ -9,6 +9,7 @@ import { initializeSocket } from "@/entities/socket/socket";
 import Modal from "@/components/game/Modal";
 import { SendMessage } from "@/features/SendMessage/ui/sendMessage";
 import { getQuizRoomData } from "@/entities/quizroom";
+import {   useStomp } from "@/entities/socket/lib/SocketProvider";
 
 const Container = styled.div`
   display: flex;
@@ -48,7 +49,7 @@ const LoadingUI = styled.div`
 `;
 
 type QuizGameProps = {
-  QuizGameId: number;
+  QuizGameId: string;
 };
 
 interface QuestionDataType {
@@ -122,7 +123,8 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
       setUserData(participants);
     });
     setDoit(true);
-  }, [QuizGameId]);
+    setSocketConnect();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -139,98 +141,75 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   }, [isLoading]);
 
 
+  const {client, connected} = useStomp();
 
 
-
-  useEffect(() => {
-    const getSocket = (quizRoomId: number) => {
-      console.log("소켓 연결 시도중");
-      const subscriptions = [
-        {
-          topic: `/topic/quiz-room/${quizRoomId}/join`,
-          callback: (message) => {
-            console.log(message);
-            let newUser = { ...message, isHost: false };
-            setUserData((prevUserData) => {
-              const updatedUserData = [...prevUserData, newUser];
-              return updatedUserData.sort((a, b) => a.position - b.position);
-            });
-          },
-        },
-        {
-          topic: `/topic/quiz-room/${quizRoomId}/leave`,
-          callback: (message) => {
-            console.log(message);
-            setUserData((prevUserData) => {
-              const updatedUserData = prevUserData.filter(
-                (player) => player.userId !== message.userId
-              );
-              return updatedUserData;
-            });
-          },
-        },
-        {
-          topic: `/topic/quiz-room/${quizRoomId}/question`,
-          callback: (message) => {
-            setIsLoading(false);
-            console.log(message);
-            setQuestionData(message);
-          },
-        },
-        {
-          topic: `/topic/quiz-room/${quizRoomId}/answer`,
-          callback: (message) => {
-            console.log(userData);
-            console.log(message);
-            setAnswerData(message);
-            setUserData((prevUserData) => {
-              const updatedUserData = prevUserData.map((user) =>
-                user.userId.value === message.userId
-                  ? { ...user, score: user.score + message.score }
-                  : user
-              );
-              const answerUser = updatedUserData.find(
-                (user) => user.userId.value === message.userId
-              );
-              if (answerUser) {
-                setAnswerUser(answerUser.nickname);
-              } else {
-                console.log("사용자가 존재하지 않습니다!");
-              }
-              return updatedUserData;
-            });
-            toggleAnswerModal();
-          },
-        },
-        {
-          topic: `/topic/quiz-room/${quizRoomId}/finish`,
-          callback: (message) => {
-            console.log(message);
-            router.push(`/quiz-result/${message.quizResultId}`);
-          },
-        },
-        {
-          topic: `/topic/quiz-room/${quizRoomId}/time-out`,
-          callback: (message) => {
-            console.log(message);
-            setAnswerData(message);
-            toggleFinishModal();
-          },
-        },
-        {
-          topic: `/topic/quiz-room/${quizRoomId}/chat`,
-          callback: (message) => {
-            console.log(message);
-            setCurrentChat(message);
-            //TODO: 백엔드 채팅이 끝나면 채팅 관련 코드 추가
-          },
-        },
-      ];
-      initializeSocket("ws://localhost:8080/ws", subscriptions);
-    };
-    console.log("useEffect작동");
-    getSocket(QuizGameId);
-  }, [doit, QuizGameId]);
+  const setSocketConnect = () => {
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/join`, (message) => {
+      const socketData = JSON.parse(message.body)
+      console.log(socketData);
+      let newUser = { ...socketData, isHost: false };
+      setUserData((prevUserData) => {
+        const updatedUserData = [...prevUserData, newUser];
+        return updatedUserData.sort((a, b) => a.position - b.position);
+      });
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/leave`, (message) => {
+      const socketData = JSON.parse(message.body)
+      console.log(socketData);
+      setUserData((prevUserData) => {
+        const updatedUserData = prevUserData.filter(
+          (player) => player.userId !== socketData.userId
+        );
+        return updatedUserData;
+      });
+      // 필요한 추가 로직
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/question`, (message) => {
+      setIsLoading(false);
+      const socketData = JSON.parse(message.body)
+      console.log(socketData);
+      setQuestionData(socketData);      // 필요한 추가 로직
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/answer`, (message) => {
+      console.log(userData);
+      const socketData = JSON.parse(message.body)
+      setAnswerData(socketData);
+      setUserData((prevUserData) => {
+        const updatedUserData = prevUserData.map((user) =>
+          user.userId === socketData.userId
+            ? { ...user, score: user.score + socketData.score }
+            : user
+        );
+        const answerUser = updatedUserData.find(
+          (user) => user.userId === socketData.userId
+        );
+        if (answerUser) {
+          setAnswerUser(answerUser.nickname);
+        } else {
+          console.log("사용자가 존재하지 않습니다!");
+        }
+        return updatedUserData;
+      });
+      toggleAnswerModal();
+      // 필요한 추가 로직
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/finish`, (message) => {
+      const socketData = JSON.parse(message.body)
+      console.log(socketData);
+      router.push(`/quiz-result/${socketData.quizResultId}`);      // 필요한 추가 로직
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/time-out`, (message) => {
+      const socketData = JSON.parse(message.body)
+      console.log(socketData);
+      setAnswerData(socketData);
+      toggleFinishModal();      // 필요한 추가 로직
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/chat`, (message) => {
+      const socketData = JSON.parse(message.body);
+      setCurrentChat(socketData);      // 필요한 추가 로직
+    });
+  }
 
   return (
     <Container>

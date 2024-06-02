@@ -40,6 +40,7 @@ type SendMessageProps = {
 }
 
 export const SendMessage = ({quizGameId }:SendMessageProps) =>{
+  const ENTER = 'Enter'
   const [input, setInput] = useState('');
 
   const handleInputChange = (event:any) => {
@@ -56,12 +57,22 @@ export const SendMessage = ({quizGameId }:SendMessageProps) =>{
     console.log('전달 완료')
   }
 
+  const handleKeyPress = (event) => {
+    if(event.key === ENTER) {
+      event.preventDefault()
+      handelSendClick()
+    }
+  }
+
+  
+
   return(
     <Layout>
       <ChattingInput
         placeholder="정답을 입력해주세요"
         value={input}
         onChange={handleInputChange}
+        onKeyDown={handleKeyPress}
       >
       </ChattingInput>
       <Button onClick={handelSendClick}>전송</Button>
