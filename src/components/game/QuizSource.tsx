@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const Layout = styled.div`
-  grid-column: 5/9;
+  width: 464px;
   background-color: white;
   height: 320px;
   color: black;

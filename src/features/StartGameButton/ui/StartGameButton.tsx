@@ -2,6 +2,7 @@ import { useRouter } from "next/navigation"
 import styled from "styled-components"
 
 const Layout = styled.div`
+  width: 342px;
   height: 70px;
   border-radius: 50px;
   background-color: purple;
@@ -13,6 +14,8 @@ const Layout = styled.div`
   font-weight: bold;
   color: white;
   cursor: pointer;
+  margin-left: 12px;
+  margin-top: 24px;
 
 `
 

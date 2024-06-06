@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Layout = styled.div`
-  grid-column: 1/13;
+  min-width: 1080px;
   background-color: white;
   height: 70px;
   color: black;

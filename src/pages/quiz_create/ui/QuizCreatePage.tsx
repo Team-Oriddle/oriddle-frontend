@@ -394,8 +394,8 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
 
   return (
     <Container>
+      <Header />
       <Wrapper>
-        <Header />
         <LeftBox>
           {/* <SettingButton>
           </SettingButton> */}

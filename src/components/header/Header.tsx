@@ -30,10 +30,6 @@ export const Header = () => {
   };
 
   const CreateQuiz = () => {
-    if(cookie.load('JSESSIONID')=== undefined){
-      alert("로그인 해주세요!")
-      return
-    }
     router.push("/quiz/create/1");
   };
 
@@ -70,7 +66,7 @@ const Layout = styled.div`
   justify-content: space-between;
   align-items: center;
   color: black;
-  grid-column: 1/14;
+  width: 1440px;
 `;
 
 const Title = styled.h1`

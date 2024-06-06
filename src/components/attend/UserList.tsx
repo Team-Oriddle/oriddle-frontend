@@ -10,8 +10,7 @@ const Layout = styled.div`
   padding-right: 27px;
   margin-bottom: 20px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(8, 1fr);
   gap: 10px 20px;
   background-color: white;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));

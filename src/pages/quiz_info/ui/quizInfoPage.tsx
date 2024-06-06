@@ -6,7 +6,7 @@ import { CreateComment } from "@/features/CreateComment/ui/CreateComment";
 import { useState } from "react";
 import styled from "styled-components";
 
-const Container = styled.div`
+const Layout = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -20,9 +20,8 @@ const Container = styled.div`
 const Wrapper = styled.div`
   width: 100%;
   max-width: 1440px;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  column-gap: 24px;
+  display: flex;
+  flex-direction: column;
 `
 const CommentLayout = styled.div`
   width: 1440px;
@@ -30,7 +29,6 @@ const CommentLayout = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  grid-column: 1/13;
   margin-top: 10px;
   margin-bottom: 10px;
 `
@@ -61,7 +59,6 @@ const UserEvaluateButtonLayout = styled.div`
 `
 
 const UserEvaluateQuizLayout = styled.div`
-  grid-column: 1/13;
   height: 160px;
   display: flex;
   flex-direction: row;
@@ -89,7 +86,7 @@ const QuizInfoPage = ({quizId}:Props) => {
   ]
 
   return (
-    <Container>
+    <Layout>
       <Wrapper>
         <Header></Header>
         {/* //TODO:퀴즈 생성 모달 클릭시 헤더 CSS 변경이 있어야함 */}
@@ -109,7 +106,7 @@ const QuizInfoPage = ({quizId}:Props) => {
           </CommentLayout>
         ))}
       </Wrapper>
-    </Container>
+    </Layout>
   );
 };
 

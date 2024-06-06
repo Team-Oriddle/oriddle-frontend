@@ -7,7 +7,7 @@ const Layout = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  grid-column: 1/13;
+  width: 1440px;
   height: 70px;
   background-color: white;
   margin: 20px;
