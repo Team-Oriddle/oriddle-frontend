@@ -13,11 +13,10 @@ import axios from 'axios';
 import { useStomp } from "@/entities/socket/lib/SocketProvider";
 import { Client } from '@stomp/stompjs';
 
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: center;
   align-items: center;
   min-height: 100vh; // Viewport Height
   width: 100vw; // Viewport Width
@@ -26,17 +25,16 @@ const Container = styled.div`
 `
 const Wrapper = styled.div`
   width: 100%;
-  max-width: 1440px;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  column-gap: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `
 const UserControllerLayout = styled.div`
-  grid-column: 1/10;
+  width: 1440px;
 `
 
 const HostControllerLayout = styled.div`
-  grid-column: 10/13;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -67,9 +65,33 @@ const LeaveRoom = styled.div`
   font-weight: bold;
   color: white;
   cursor: pointer;
+`
+const ChatLayout = styled.div`
+  width: 100%;
+  height: 300px;
+`
+const FirstBox = styled.div`
+  width: 100%;
+  height: 300px;
+  display: flex;
+  flex-direction: row;
 
 `
 
+const SecondBox = styled.div`
+  width: 100%;
+  height: 70px;
+  display: flex;
+  flex-direction: row;
+`
+
+const QuizRoomInfoWrapper = styled.div`
+  width: 342px;
+  height: 300px;
+  background-color: white;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+  margin-left: 12px;
+`
 
 type QuizRoomProps = {
   QuizroomId :string
@@ -203,24 +225,30 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
   
   return (
     <Container>
+      <Header/>
       <Wrapper>
-        <Header></Header>
-
           <UserControllerLayout>
-          {/* 유저만 컨트롤 가능한 레이아웃 */}
           {
           userData.length === 0 ? <LoadingUI>{loadingText}</LoadingUI> 
           :
             <UserList UserList={userData}></UserList>
           }
-            <ChatList></ChatList>
-            <ChatInput></ChatInput>
-          </UserControllerLayout>
+            <ChatLayout>
+              <FirstBox>
+                <ChatList></ChatList>
+                <QuizRoomInfoWrapper>
 
+                </QuizRoomInfoWrapper>
+              </FirstBox>
+              <SecondBox>
+                <ChatInput></ChatInput>
+                <StartGameButton roomId={QuizroomId}></StartGameButton>
+              </SecondBox>
+            </ChatLayout>
+          </UserControllerLayout>
         <HostControllerLayout>
           <EditRoomInfo></EditRoomInfo>
           <LeaveRoom onClick={()=>LeaveThisRoom(QuizroomId)}>방나가기</LeaveRoom>
-          <StartGameButton roomId={QuizroomId}></StartGameButton>
         </HostControllerLayout>
       </Wrapper>
     </Container>

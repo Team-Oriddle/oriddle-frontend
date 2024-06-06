@@ -1,8 +1,8 @@
 import styled from "styled-components"
 
 const Layout = styled.div`
-  width: 240px;
-  height: 150px;
+  width: 120px;
+  height: 300px;
   border-radius: 10px;
   display: flex;
   flex-direction: row;

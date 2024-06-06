@@ -6,18 +6,15 @@ const Layout = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  grid-column: 1/13;
   margin-top: 22px;
   margin-bottom: 22px;
 `
-
 const UserIcon = styled.div`
   width: 98px;
   height: 98px;
   border-radius: 50%;
   background-color: purple;
 `
-
 const TextInputLayout = styled.div`
   width: 1318px;
   height: 100%;
@@ -40,7 +37,6 @@ const CommentInput = styled.input`
     border: none;
   }
 `
-
 const OtherInputLayout = styled.div`
   width: 1200px;
   height: 70px;
@@ -48,9 +44,6 @@ const OtherInputLayout = styled.div`
   flex-direction: row;
   justify-content: space-around;
 `
-
-
-
 export const CreateComment = () => {
 
   return(

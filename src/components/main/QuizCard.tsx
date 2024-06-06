@@ -5,6 +5,7 @@ import styled from "styled-components";
 const Layout = styled.div`
   height: 500px;
   padding: 16px;
+  width: 342px;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;

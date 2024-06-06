@@ -3,7 +3,6 @@ import { QuizCard } from "./QuizCard";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router"; // useRouter 추가
 import axios from "axios";
-
 //생각해아할 부분 퀴즈 컨트롤러 컴포넌트로 따로 뺴서 valueChange로 관리할것인지
 //아니면 그냥 여기서 관리할 것 인지 고민하고 결정
 
@@ -16,7 +15,7 @@ type Quiz = {
 };
 
 const Layout = styled.div`
-  grid-column: 1/13;
+  width: 1440px;
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -24,11 +23,14 @@ const Layout = styled.div`
 
 const QuizLayout = styled.div`
   width: 100%;
+  max-width: 1440px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  column-gap: 24px;
-  row-gap: 20px;
+  row-gap: 24px;
+  column-gap: 20px;
+  //TODO: 그리드 적용
 `;
+
 const QuizListController = styled.div`
   width: 1440px;
   font-size: 20px;

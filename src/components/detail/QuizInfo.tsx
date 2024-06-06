@@ -10,14 +10,13 @@ import Image from "next/image";
 
 const Layout = styled.div`
   margin-top: 250px;
-  display: grid;
   column-gap: 24px;
-  grid-column: 1/13;
-  grid-template-columns: repeat(12, 1fr);
-`;
+  display: flex;
+  flex-direction: row;
+`
 
 const QuizImg = styled.div`
-  grid-column: 1/6;
+  width: 586px;
   height: 400px;
   display: flex;
   justify-content: center;
@@ -27,7 +26,7 @@ const QuizImg = styled.div`
 `;
 
 const QuizDetailLayout = styled.div`
-  grid-column: 6/13;
+  width: 830px;
   height: 400px;
   background-color: white;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
@@ -131,8 +130,7 @@ const ContentText = styled.div`
 const HashTagText = styled.div`
   font-size: 20px;
   font-weight: 600;
-`;
-
+`
 type Props = {
   quizId: number;
 };
@@ -196,10 +194,12 @@ export const QuizInfo = ({ quizId }: Props) => {
               />
             </ModalLayout>
           </ModalBackdrop>
-        ) : // 모달이 열려있다면
-        null
-        //모달이 당혀있다면
-      }
+          // 모달이 열려있다면
+        :
+          null
+          //모달이 당혀있다면
+          //TODO: &&연산자
+        }
     </Layout>
   );
 };

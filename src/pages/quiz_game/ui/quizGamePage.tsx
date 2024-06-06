@@ -24,20 +24,22 @@ const Container = styled.div`
 
 const Wrapper = styled.div`
   width: 100%;
-  max-width: 1440px;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  column-gap: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const ParentForLoadingUI = styled.div`
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-column: 1/13;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const LoadingUI = styled.div`
-  grid-column: 1/13;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
