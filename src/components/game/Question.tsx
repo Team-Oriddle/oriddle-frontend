@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Layout = styled.div`
-  min-width: 1080px;
+  width: 1440px;
   background-color: white;
   height: 70px;
   color: black;

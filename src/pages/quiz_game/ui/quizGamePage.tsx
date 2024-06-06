@@ -5,11 +5,12 @@ import { Header } from "@/components/header/Header";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { initializeSocket } from "@/entities/socket/socket";
 import Modal from "@/components/game/Modal";
 import { SendMessage } from "@/features/SendMessage/ui/sendMessage";
 import { getQuizRoomData } from "@/entities/quizroom";
 import {   useStomp } from "@/entities/socket/lib/SocketProvider";
+import { ChatList } from "@/components/attend/ChatList";
+import { Answer, ChatData, QuestionData, UserData } from "@/shared/type";
 
 const Container = styled.div`
   display: flex;
@@ -54,40 +55,11 @@ type QuizGameProps = {
   QuizGameId: string;
 };
 
-interface QuestionDataType {
-  description: string;
-  number: number;
-  score: number;
-  source: string;
-  sourceType: string;
-  timeLimit: number;
-  type: string;
-}
-
-interface UserData {
-  nickname: string;
-  position: number;
-  userId: number;
-  isHost: boolean;
-  score: number;
-}
-
-interface ChatType {
-  user: string;
-  chat: string;
-}
-
-interface AnswerType {
-  userId?: number;
-  answer: string;
-  score?: number;
-}
-
 export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [questionData, setQuestionData] = useState<QuestionDataType>({
+  const [questionData, setQuestionData] = useState<QuestionData>({
     description: "",
     number: -1,
     score: -1,
@@ -96,9 +68,8 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     timeLimit: -1,
     type: "",
   });
-  const [chatLog, setChatLog] = useState<ChatType[]>([]);
   const [userData, setUserData] = useState<UserData[]>([]);
-  const [answerData, setAnswerData] = useState<AnswerType>({
+  const [answerData, setAnswerData] = useState<Answer>({
     userId: -1,
     answer: "",
     score: -1,
@@ -106,14 +77,15 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   const [answerUser, setAnswerUser] = useState<string>("");
   const [answerModalOpen, setAnswerModalOpen] = useState(false);
   const [finishModalOpen, setFinishModalOpen] = useState(false);
-
   const toggleAnswerModal = () => setAnswerModalOpen(!answerModalOpen);
   const toggleFinishModal = () => setFinishModalOpen(!finishModalOpen);
   const [loadingText, setLoadingText] = useState("Loading");
   const [timer, setTimer] = useState(5);
   const [doit, setDoit] = useState(false);
-  const [currentChat, setCurrentChat] = useState<ChatType | null>(null);
-  const [questionTimer, setQuestionTimer] = useState(30); // New timer for the question
+  const [currentChat, setCurrentChat] = useState<ChatData | null>(null);
+  const [chatList, setChatList] = useState<ChatData[]>([]); //
+  const [questionTimer, setQuestionTimer] = useState<number>(30);
+  const [ viewChattingLog, setViewChattingLog ]= useState<boolean>(false) 
 
 
   useEffect(() => {
@@ -142,10 +114,9 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     return () => clearInterval(timeInterval);
   }, [isLoading]);
 
-
   const {client, connected} = useStomp();
 
-
+  //TODO: 퀴즈 게임방으로 접속할시 에러 발생함
   const setSocketConnect = () => {
     client.subscribe(`/topic/quiz-room/${QuizGameId}/join`, (message) => {
       const socketData = JSON.parse(message.body)
@@ -165,13 +136,12 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
         );
         return updatedUserData;
       });
-      // 필요한 추가 로직
     });
     client.subscribe(`/topic/quiz-room/${QuizGameId}/question`, (message) => {
       setIsLoading(false);
       const socketData = JSON.parse(message.body)
       console.log(socketData);
-      setQuestionData(socketData);      // 필요한 추가 로직
+      setQuestionData(socketData);    
     });
     client.subscribe(`/topic/quiz-room/${QuizGameId}/answer`, (message) => {
       console.log(userData);
@@ -194,23 +164,24 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
         return updatedUserData;
       });
       toggleAnswerModal();
-      // 필요한 추가 로직
     });
     client.subscribe(`/topic/quiz-room/${QuizGameId}/finish`, (message) => {
       const socketData = JSON.parse(message.body)
       console.log(socketData);
-      router.push(`/quiz-result/${socketData.quizResultId}`);      // 필요한 추가 로직
+      router.push(`/quiz-result/${socketData.quizResultId}`);     
     });
     client.subscribe(`/topic/quiz-room/${QuizGameId}/time-out`, (message) => {
       const socketData = JSON.parse(message.body)
       console.log(socketData);
       setAnswerData(socketData);
-      toggleFinishModal();      // 필요한 추가 로직
+      toggleFinishModal();  
     });
     client.subscribe(`/topic/quiz-room/${QuizGameId}/chat`, (message) => {
       const socketData = JSON.parse(message.body);
-      setCurrentChat(socketData);      // 필요한 추가 로직
+      setChatList((prevChatList) => [...prevChatList, socketData]);
+      setCurrentChat(socketData);    
     });
+    //TODO: 구독 해제가 필요함
   }
 
   return (
@@ -236,8 +207,26 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
             />
           </ParentForLoadingUI>
         )}
-        <UserChat UserList={userData} currentChat={currentChat} />
-        <SendMessage quizGameId={QuizGameId} />
+        {
+          viewChattingLog 
+            ? 
+          <ChatList 
+            OpenChatList={()=>setViewChattingLog(false)} 
+            width={1440}
+            chatList={chatList}
+          />
+            :
+          <UserChat 
+            UserList={userData} 
+            currentChat={currentChat} 
+          />
+        }
+        <SendMessage 
+          OpenChatList={()=>setViewChattingLog(true)} 
+          width={1440} 
+          placeholder={"정답을 입력해주세요"} 
+          quizGameId={QuizGameId} 
+        />
         <Modal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
           <div>정답: {answerData.answer}</div>
           <div>{answerUser} 님이 정답을 맞추셨습니다</div>

@@ -1,10 +1,8 @@
 import { ChatInput } from "@/components/attend/ChatInput";
-import { ChatList } from "@/components/attend/ChatLIst";
-import { EditRoomInfo } from "@/components/attend/EditRoomInfo";
+import { ChatList } from "@/components/attend/ChatList";
 import { UserList } from "@/components/attend/UserList";
 import { Header } from "@/components/header/Header";
 import { getQuizRoomData } from "@/entities/quizroom";
-import { initializeSocket } from "@/entities/socket/socket";
 import { StartGameButton } from "@/features/StartGameButton";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,11 +10,14 @@ import styled from "styled-components";
 import axios from 'axios';
 import { useStomp } from "@/entities/socket/lib/SocketProvider";
 import { Client } from '@stomp/stompjs';
+import { SendMessage } from "@/features/SendMessage";
+import { EditQuizRoomInfo } from "@/features/EditQuizRoomInfo/ui/EditQuizRoomInfo";
+import { QuizData, UserData } from "@/shared/type";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   min-height: 100vh; // Viewport Height
   width: 100vw; // Viewport Width
@@ -38,9 +39,7 @@ const HostControllerLayout = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-`;
-
-
+`
 
 const LoadingUI = styled.div`
   display: flex;
@@ -75,21 +74,16 @@ const FirstBox = styled.div`
   height: 300px;
   display: flex;
   flex-direction: row;
-
 `
-
 const SecondBox = styled.div`
   width: 100%;
   height: 70px;
   display: flex;
   flex-direction: row;
+  margin-top: 20px;
 `
 
 const QuizRoomInfoWrapper = styled.div`
-  width: 342px;
-  height: 300px;
-  background-color: white;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   margin-left: 12px;
 `
 
@@ -97,24 +91,20 @@ type QuizRoomProps = {
   QuizroomId :string
 }
 
-interface UserData{
-  nickname:string,
-  position: number,
-  userId:number,
-  isHost:Boolean
-}
-
-//TODO: isLoading처리
 export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
   const router = useRouter();
   const {client, connected} = useStomp();
   const [userData, setUserData] = useState<UserData[]>([]); 
-  //TODO: 추후에 채팅기능 추가되면 채팅 기능 관련 기능도 추가
-  //const [chatList, setChatList] = useState([]); //
-  const [quizData, setQuizData] = useState([]);
+  const [chatList, setChatList] = useState([]); //
+  const [quizData, setQuizData] = useState<QuizData|null>({
+    "roomTitle": "",
+    "quizTitle": "",
+    "maxParticipant": 0,
+    "participants": []
+});
+  const [ isConnect,  setIsConnect] = useState<boolean>(false);
+  const [ loadingText, setLoadingText ] = useState<string>("Loading")
   //TODO: 백엔드에셔 연결 끊김에 대한 처리가 결정된 이후에 응답에 따라 소켓 연결을 시도할지 결정
-  const [isConnect,  setIsConnect] = useState<Boolean>(false);
-  const [ loadingText, setLoadingText ] = useState("Loading")
 
   useEffect(()=>{
     const interval = setInterval(()=>{
@@ -127,20 +117,20 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
   },[])
 
 
-  const LeaveThisRoom =async (quizRoomId: string) => {
-    try {
-      const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      console.log(response)
-      router.push('/')
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // const LeaveThisRoom =async (quizRoomId: string) => {
+  //   try {
+  //     const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
+  //       withCredentials: true,
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       }
+  //     })
+  //     console.log(response)
+  //     router.push('/')
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   useEffect(() => {
     // TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
@@ -173,6 +163,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
       setIsConnect(true);
     }); 
   }, []);
+  
 //strict 모드이기에 구독을 2번 진행함
   const setSocketConnect = () => {
     if (client && connected) {
@@ -181,7 +172,6 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
         client.subscribe(`/topic/quiz-room/${QuizroomId}/start`, (message) => {
           console.log(message);
           router.push(`/quiz/play/${QuizroomId}/game`)
-
         });
         client.subscribe(`/topic/quiz-room/${QuizroomId}/join`, (message) => {
           console.log(message);
@@ -203,6 +193,12 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
           setUserData(copyUserData);
 
         });
+        client.subscribe(`/topic/quiz-room/${QuizroomId}/chat`, (message) => {
+          console.log('메세지 받음')
+          const newChat = JSON.parse(message.body);
+          setChatList((prevChatList) => [...prevChatList, newChat]);
+          console.log(chatList);
+        })
       } catch (error) {
         console.error('Failed to subscribe:', error);
       }
@@ -221,7 +217,6 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
       };
     }
   }, [client]);
-
   
   return (
     <Container>
@@ -235,21 +230,17 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
           }
             <ChatLayout>
               <FirstBox>
-                <ChatList></ChatList>
+                <ChatList OpenChatList={null} width={1074} chatList={chatList} ></ChatList>
                 <QuizRoomInfoWrapper>
-
+                  <EditQuizRoomInfo maxParticipant={quizData.maxParticipant} quizTitle={quizData.quizTitle}></EditQuizRoomInfo>
                 </QuizRoomInfoWrapper>
               </FirstBox>
               <SecondBox>
-                <ChatInput></ChatInput>
+                <SendMessage OpenChatList={null} width={1074} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage>
                 <StartGameButton roomId={QuizroomId}></StartGameButton>
               </SecondBox>
             </ChatLayout>
           </UserControllerLayout>
-        <HostControllerLayout>
-          <EditRoomInfo></EditRoomInfo>
-          <LeaveRoom onClick={()=>LeaveThisRoom(QuizroomId)}>방나가기</LeaveRoom>
-        </HostControllerLayout>
       </Wrapper>
     </Container>
   );

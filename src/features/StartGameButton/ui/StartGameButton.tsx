@@ -5,7 +5,7 @@ const Layout = styled.div`
   width: 342px;
   height: 70px;
   border-radius: 50px;
-  background-color: purple;
+  background-color: #FD7400;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -13,10 +13,8 @@ const Layout = styled.div`
   font-size: 30px;
   font-weight: bold;
   color: white;
-  cursor: pointer;
-  margin-left: 12px;
-  margin-top: 24px;
-
+  cursor: pointer; 
+  margin-left: 24px;
 `
 
 type StartGameProps = {
@@ -26,8 +24,7 @@ type StartGameProps = {
 export const StartGameButton = ({roomId}:StartGameProps) => {
   //TODO: API로 로직을 빼내야 하는지 추후에 고민
 
-  const navigate = useRouter();
-  const PressStartGameButton = async(roomId:number) =>{
+  const PressStartGameButton = async(roomId:string) =>{
     try{
       const response = await fetch(`http://localhost:8080/api/v1/quiz-room/${roomId}/start`,{
         method:'POST',
