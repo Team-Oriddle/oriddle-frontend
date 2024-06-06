@@ -40,6 +40,7 @@ const ChattingInput = styled.input`
 `;
 
 type SendMessageProps = {
+  isInGame:boolean,
   width: number;
   placeholder: string;
   quizGameId: string;
@@ -53,7 +54,7 @@ function debounce(func, wait) {
   };
 }
 
-export const SendMessage = ({ width, placeholder, quizGameId }: SendMessageProps) => {
+export const SendMessage = ({ isInGame, width, placeholder, quizGameId }: SendMessageProps) => {
   const ENTER = 'Enter';
   const [input, setInput] = useState('');
 

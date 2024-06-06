@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import styled from "styled-components";
 
 const Layout = styled.div`
-  width: 1074px;
+  width: ${(props) => props.width}px;
   margin-bottom: 20px;
   height: 300px;
   background-color: white;
@@ -29,7 +29,7 @@ const ChatContent = styled.div`
   font-size: 22px;
 `;
 
-export const ChatList = ({ chatList }: any) => {
+export const ChatList = ({ width, chatList }: any) => {
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -41,7 +41,7 @@ export const ChatList = ({ chatList }: any) => {
   }, [chatList]);
 
   return (
-    <Layout>
+    <Layout width={width}>
       {chatList.map((chat: any, index: number) => (
         <ChatMessage key={index}>
           <ChatNickname>{chat.nickname}:</ChatNickname>

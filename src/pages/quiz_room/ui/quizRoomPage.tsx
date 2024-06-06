@@ -237,13 +237,13 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
           }
             <ChatLayout>
               <FirstBox>
-                <ChatList chatList={chatList} ></ChatList>
+                <ChatList width={1074} chatList={chatList} ></ChatList>
                 <QuizRoomInfoWrapper>
                   <EditQuizRoomInfo maxParticipant={quizData.maxParticipant} quizTitle={quizData.quizTitle}></EditQuizRoomInfo>
                 </QuizRoomInfoWrapper>
               </FirstBox>
               <SecondBox>
-                <SendMessage width={1074} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage>
+                <SendMessage isInGame={false} width={1074} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage>
                 <StartGameButton roomId={QuizroomId}></StartGameButton>
               </SecondBox>
             </ChatLayout>
