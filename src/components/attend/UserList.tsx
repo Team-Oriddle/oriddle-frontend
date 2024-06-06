@@ -4,15 +4,11 @@ import { UserCard } from "./UserCard"
 const Layout = styled.div`
   min-width: 1074px;
   height: 400px;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  padding-left: 27px;
-  padding-right: 27px;
+
   margin-bottom: 20px;
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  gap: 10px 20px;
-  background-color: white;
+  column-gap: 20px;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
 `
 

@@ -194,6 +194,7 @@ export const QuizInfo = ({ quizId }: Props) => {
               />
             </ModalLayout>
           </ModalBackdrop>
+        )
           // 모달이 열려있다면
         :
           null
