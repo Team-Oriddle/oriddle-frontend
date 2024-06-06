@@ -85,6 +85,7 @@ const SecondBox = styled.div`
   height: 70px;
   display: flex;
   flex-direction: row;
+  margin-top: 20px;
 `
 
 const QuizRoomInfoWrapper = styled.div`
@@ -178,7 +179,6 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
         client.subscribe(`/topic/quiz-room/${QuizroomId}/start`, (message) => {
           console.log(message);
           router.push(`/quiz/play/${QuizroomId}/game`)
-
         });
         client.subscribe(`/topic/quiz-room/${QuizroomId}/join`, (message) => {
           console.log(message);
@@ -224,7 +224,6 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
       };
     }
   }, [client]);
-
   
   return (
     <Container>

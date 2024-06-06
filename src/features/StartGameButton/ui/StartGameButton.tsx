@@ -13,8 +13,7 @@ const Layout = styled.div`
   font-size: 30px;
   font-weight: bold;
   color: white;
-  cursor: pointer;
-  margin: 20px  0px;
+  cursor: pointer; 
   margin-left: 24px;
 `
 

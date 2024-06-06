@@ -145,7 +145,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
 
   const {client, connected} = useStomp();
 
-
+  //TODO: 퀴즈 게임방으로 접속할시 에러 발생함
   const setSocketConnect = () => {
     client.subscribe(`/topic/quiz-room/${QuizGameId}/join`, (message) => {
       const socketData = JSON.parse(message.body)

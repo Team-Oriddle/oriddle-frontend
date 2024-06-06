@@ -9,8 +9,11 @@ const Layout = styled.div`
   width: ${(props) => props.width}px;
   height: 70px;
   background-color: white;
-  margin-top: 20px;
+  border-radius: 10px;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+  :focus{
+    outline: none;
+  }
 `;
 
 // 나중에 reset.css 수정하고 버튼으로 변경
@@ -23,6 +26,8 @@ const Button = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  border-bottom-right-radius:10px;
+  border-top-right-radius:10px;
 `;
 
 const ChattingInput = styled.input`
@@ -31,6 +36,7 @@ const ChattingInput = styled.input`
   background-color: white;
   border: none;
   color: black;
+  margin-left: 30px;
 `;
 
 type SendMessageProps = {
