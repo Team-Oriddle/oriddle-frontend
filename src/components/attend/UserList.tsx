@@ -4,7 +4,6 @@ import { UserCard } from "./UserCard"
 const Layout = styled.div`
   min-width: 1074px;
   height: 400px;
-
   margin-bottom: 20px;
   display: grid;
   grid-template-columns: repeat(8, 1fr);

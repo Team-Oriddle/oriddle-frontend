@@ -237,7 +237,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
           </ParentForLoadingUI>
         )}
         <UserChat UserList={userData} currentChat={currentChat} />
-        <SendMessage quizGameId={QuizGameId} />
+        <SendMessage width={1440} placeholder={"정답을 입력해주세요"} quizGameId={QuizGameId} />
         <Modal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
           <div>정답: {answerData.answer}</div>
           <div>{answerUser} 님이 정답을 맞추셨습니다</div>

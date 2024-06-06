@@ -1,18 +1,19 @@
 import styled from "styled-components"
 
 
-export const EditQuizRoomInfo = () =>{
+export const EditQuizRoomInfo = ({maxParticipant, quizTitle}) =>{
   return(
     <Layout>
       <Header>
         <HeaderItem>
           퀴즈 방 정보
           <div>설정</div>
+          {/* TODO: 유저가 방장인 경우에만 버튼이 able하게 */}
         </HeaderItem>
       </Header>
       <Body>
-        <Text>퀴즈 제목 :</Text>
-        <Text>최대 인원 : </Text>
+        <Text>퀴즈 제목 : {quizTitle}</Text>
+        <Text>최대 인원 : {maxParticipant}</Text>
         <Text>공개 여부 :</Text>
         <Text>비밀 번호 :</Text>
       </Body>
