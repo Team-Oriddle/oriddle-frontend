@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import { UserCard } from "./UserCard";
+import { ChatData, UserData } from "@/shared/type";
 
 const Layout = styled.div`
-  grid-column: 1/13;
+  width: 1440px;
   min-width: 500px;
   height: 350px;
   display: flex;
@@ -12,22 +13,9 @@ const Layout = styled.div`
   background-color: white;
 `;
 
-interface User {
-  userId: number;
-  position: number;
-  nickname: string;
-  role: string;
-  score: number;
-}
-
-interface ChatType {
-  user: string;
-  chat: string;
-}
-
 interface UserChatProps {
-  UserList: User[];
-  currentChat: ChatType | null;
+  UserList: UserData[];
+  currentChat: ChatData | null;
 }
 
 export const UserChat = ({ UserList, currentChat }: UserChatProps) => {

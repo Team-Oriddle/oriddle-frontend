@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { ChatData } from "@/shared/type";
+import { SetStateAction, useEffect, useRef } from "react";
 import styled from "styled-components";
 
 const Layout = styled.div`
@@ -13,6 +14,7 @@ const Layout = styled.div`
   color: black;
   overflow-y: auto;
   font-size: 22px;
+  position: relative;
 `;
 
 const ChatMessage = styled.div`
@@ -29,26 +31,52 @@ const ChatContent = styled.div`
   font-size: 22px;
 `;
 
-export const ChatList = ({ width, chatList }: any) => {
+const CloseButton = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: white;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10;
+`;
 
+const ChatContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+`;
+
+type ChatListProps = {
+  OpenChatList:(value: SetStateAction<boolean>) => void,
+  width:number,
+  chatList: ChatData[]
+}
+
+export const ChatList = ({ OpenChatList, width, chatList }: ChatListProps) => {
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    console.log(chatList)
+    console.log(chatList);
   }, [chatList]);
 
   return (
     <Layout width={width}>
-      {chatList.map((chat: any, index: number) => (
-        <ChatMessage key={index}>
-          <ChatNickname>{chat.nickname}:</ChatNickname>
-          <ChatContent>{chat.content}</ChatContent>
-        </ChatMessage>
-      ))}
-      <div ref={chatEndRef} />
+      {OpenChatList !== null ? (
+        <CloseButton onClick={() => OpenChatList(false)}>닫기</CloseButton>
+      ) : null}
+      <ChatContainer>
+        {chatList.map((chat: any, index: number) => (
+          <ChatMessage key={index}>
+            <ChatNickname>{chat.nickname}:</ChatNickname>
+            <ChatContent>{chat.content}</ChatContent>
+          </ChatMessage>
+        ))}
+        <div ref={chatEndRef} />
+      </ChatContainer>
     </Layout>
   );
 };

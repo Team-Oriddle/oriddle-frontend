@@ -13,20 +13,20 @@ const Layout = styled.div`
 
 
 type UserListProps = {
-  UserList: User[]
+  UserList: IUser[]
 }
 
-interface User{
+interface IUser{
   userId:number,
   position:number,
   nickname:string,
-  role:string
+  isHost:boolean
 }
 
 export const UserList = ({UserList}:UserListProps) => {
   return(
     <Layout>
-      {UserList.map((user:User)=> (
+      {UserList.map((user:IUser)=> (
         <UserCard key={user.position} usernickname={user.nickname}></UserCard>
       ))}
     </Layout>

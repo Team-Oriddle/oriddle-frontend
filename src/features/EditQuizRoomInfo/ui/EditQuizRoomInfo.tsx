@@ -1,5 +1,9 @@
 import styled from "styled-components"
 
+type QuizRoomInfoProps ={
+  maxParticipant:number,
+  quizTitle:string
+}
 
 export const EditQuizRoomInfo = ({maxParticipant, quizTitle}) =>{
   return(
