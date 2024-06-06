@@ -1,18 +1,17 @@
 import { sendMessage } from "@/entities/socket/socket";
 import { useState } from "react";
-import styled from "styled-components"
-
+import styled from "styled-components";
 
 const Layout = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 1440px;
+  width: ${(props) => props.width}px;
   height: 70px;
   background-color: white;
-  margin: 20px;
+  margin-top: 20px;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
-`
+`;
 
 // 나중에 reset.css 수정하고 버튼으로 변경
 const Button = styled.div`
@@ -24,58 +23,66 @@ const Button = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-`
+`;
 
 const ChattingInput = styled.input`
   width: 100%;
   font-size: 22px;
   background-color: white;
   border: none;
-  color: black
-`
-;
+  color: black;
+`;
 
 type SendMessageProps = {
-  quizGameId :number
+  width: number;
+  placeholder: string;
+  quizGameId: string;
+};
+
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
 }
 
-export const SendMessage = ({quizGameId }:SendMessageProps) =>{
-  const ENTER = 'Enter'
+export const SendMessage = ({ width, placeholder, quizGameId }: SendMessageProps) => {
+  const ENTER = 'Enter';
   const [input, setInput] = useState('');
 
-  const handleInputChange = (event:any) => {
+  const handleInputChange = (event: any) => {
     setInput(event.target.value);
   };
 
-  const handelSendClick = () =>{
-    console.log(quizGameId+'로 전달 진행')
+  const sendClick = () => {
+    console.log(quizGameId + '로 전달 진행');
     if (input.trim() !== '') {
       sendMessage(`/app/quiz-room/${quizGameId}/chat`, { content: input });
       sendMessage(`/app/quiz-room/${quizGameId}/check-answer`, { answer: input });
       setInput('');
     }
-    console.log('전달 완료')
-  }
+    console.log('전달 완료');
+  };
+
+  const debouncedSendClick = debounce(sendClick, 100);
 
   const handleKeyPress = (event) => {
-    if(event.key === ENTER) {
-      event.preventDefault()
-      handelSendClick()
+    if (event.key === ENTER) {
+      event.preventDefault();
+      debouncedSendClick();
     }
-  }
+  };
 
-  
-
-  return(
-    <Layout>
+  return (
+    <Layout width={width}>
       <ChattingInput
-        placeholder="정답을 입력해주세요"
+        placeholder={placeholder}
         value={input}
         onChange={handleInputChange}
         onKeyDown={handleKeyPress}
-      >
-      </ChattingInput>
-      <Button onClick={handelSendClick}>전송</Button>
+      />
+      <Button onClick={debouncedSendClick}>전송</Button>
     </Layout>
-  )
-}
+  );
+};
