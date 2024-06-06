@@ -68,7 +68,6 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     timeLimit: -1,
     type: "",
   });
-  const [chatLog, setChatLog] = useState<ChatData[]>([]);
   const [userData, setUserData] = useState<UserData[]>([]);
   const [answerData, setAnswerData] = useState<Answer>({
     userId: -1,
@@ -84,7 +83,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   const [timer, setTimer] = useState(5);
   const [doit, setDoit] = useState(false);
   const [currentChat, setCurrentChat] = useState<ChatData | null>(null);
-  const [chatList, setChatList] = useState([]); //
+  const [chatList, setChatList] = useState<ChatData[]>([]); //
   const [questionTimer, setQuestionTimer] = useState<number>(30);
   const [ viewChattingLog, setViewChattingLog ]= useState<boolean>(false) 
 
