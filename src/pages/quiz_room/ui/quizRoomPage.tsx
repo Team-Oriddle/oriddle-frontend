@@ -13,6 +13,7 @@ import { Client } from '@stomp/stompjs';
 import { SendMessage } from "@/features/SendMessage";
 import { EditQuizRoomInfo } from "@/features/EditQuizRoomInfo/ui/EditQuizRoomInfo";
 import { QuizData, UserData } from "@/shared/type";
+import { on } from "events";
 
 const Container = styled.div`
   display: flex;
@@ -106,6 +107,8 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
   const [ loadingText, setLoadingText ] = useState<string>("Loading")
   //TODO: 백엔드에셔 연결 끊김에 대한 처리가 결정된 이후에 응답에 따라 소켓 연결을 시도할지 결정
 
+
+
   useEffect(()=>{
     const interval = setInterval(()=>{
       setLoadingText((prev)=>{
@@ -156,54 +159,76 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
     };
   
     joinGame(QuizroomId);
-  
+
     getQuizRoomData(QuizroomId).then((result) => {
+      console.log("퀴즈 데이터를 불러옴")
       setQuizData(result);
       setUserData(result.participants);
+      console.log("사용자 정보를 받아옴");
+      console.log(result.participants);
       setIsConnect(true);
-    }); 
-  }, []);
+    });
+  }, [connected]);
   
 //strict 모드이기에 구독을 2번 진행함
-  const setSocketConnect = () => {
-    if (client && connected) {
-      try {
-        console.log('Subscribing to topic');
-        client.subscribe(`/topic/quiz-room/${QuizroomId}/start`, (message) => {
-          console.log(message);
-          router.push(`/quiz/play/${QuizroomId}/game`)
-        });
-        client.subscribe(`/topic/quiz-room/${QuizroomId}/join`, (message) => {
-          console.log(message);
-          const socketData = JSON.parse(message.body);
-          const newUser = {...socketData, isHost:false}
-          setUserData([...userData,newUser])
-          userData.sort(function(a,b){
-            return a.position-b.position
-          })
-        });
-        client.subscribe(`/topic/quiz-room/${QuizroomId}/leave`, (message) => {
-          const socketData = JSON.parse(message.body);
-          const findIndex = socketData.userId;
-          const copyUserData = userData
-          const removeUserData = copyUserData.findIndex(player => player.userId === findIndex)
-          if (removeUserData !== -1) {
-            copyUserData.splice(removeUserData, 1);
-          }
-          setUserData(copyUserData);
+const setSocketConnect = () => {
+  if (client && connected) {
+    try {
+      console.log('Subscribing to topic');
+      client.subscribe(`/topic/quiz-room/${QuizroomId}/start`, (message) => {
+        console.log(message);
+        router.push(`/quiz/play/${QuizroomId}/game`)
+      });
 
+      client.subscribe(`/topic/quiz-room/${QuizroomId}/join`, (message) => {
+        console.log("유저가 새로 조인함");
+        const socketData = JSON.parse(message.body);
+        const newUser = { ...socketData };
+        console.log("기존 유저 정보", userData);
+        console.log("새로운 유저 정보", newUser);
+
+        setUserData((prevUserData) => {
+          const updatedUserData = [...prevUserData, newUser];
+          updatedUserData.sort((a, b) => a.position - b.position);
+          return updatedUserData;
         });
-        client.subscribe(`/topic/quiz-room/${QuizroomId}/chat`, (message) => {
-          console.log('메세지 받음')
-          const newChat = JSON.parse(message.body);
-          setChatList((prevChatList) => [...prevChatList, newChat]);
-          console.log(chatList);
-        })
-      } catch (error) {
-        console.error('Failed to subscribe:', error);
-      }
+      });
+
+      client.subscribe(`/topic/quiz-room/${QuizroomId}/leave`, (message) => {
+        const socketData = JSON.parse(message.body);
+        const findIndex = socketData.userId;
+        
+        setUserData((prevUserData) => {
+          const updatedUserData = [...prevUserData];
+          const removeUserDataIndex = updatedUserData.findIndex(player => player.userId === findIndex);
+          if (removeUserDataIndex !== -1) {
+            updatedUserData.splice(removeUserDataIndex, 1);
+          }
+          return updatedUserData;
+        });
+      });
+
+      client.subscribe(`/topic/quiz-room/${QuizroomId}/chat`, (message) => {
+        console.log('메세지 받음');
+        const newChat = JSON.parse(message.body);
+        setChatList((prevChatList) => [...prevChatList, newChat]);
+        console.log(chatList);
+      });
+    } catch (error) {
+      console.error('Failed to subscribe:', error);
     }
   }
+}
+
+  useEffect(() => {
+    console.log('유저 정보 설정됨')
+  }, [userData]);
+
+  useEffect(()=>{ 
+    console.log(userData)
+  },[userData])
+
+    
 
   useEffect(() => {
     if(client){
@@ -216,7 +241,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
         console.error('Additional details: ' + frame.body);
       };
     }
-  }, [client]);
+  }, [connected]);
   
   return (
     <Container>
@@ -229,6 +254,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
             <UserList UserList={userData}></UserList>
           }
             <ChatLayout>
+              {userData.length}
               <FirstBox>
                 <ChatList OpenChatList={null} width={1074} chatList={chatList} ></ChatList>
                 <QuizRoomInfoWrapper>
