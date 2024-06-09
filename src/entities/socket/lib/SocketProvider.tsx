@@ -26,7 +26,6 @@ export const SocketProvider = ({ children }) => {
             const newSocket = await initializeSocket('ws://localhost:8080/ws')
             setClient(newSocket)
             setConnected(true)
-            console.log('소켓 연결됨')
         } catch (error) {
             console.log(error)
         }

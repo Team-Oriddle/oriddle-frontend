@@ -181,12 +181,8 @@ const setSocketConnect = () => {
       });
 
       client.subscribe(`/topic/quiz-room/${QuizroomId}/join`, (message) => {
-        console.log("유저가 새로 조인함");
         const socketData = JSON.parse(message.body);
         const newUser = { ...socketData };
-        console.log("기존 유저 정보", userData);
-        console.log("새로운 유저 정보", newUser);
-
         setUserData((prevUserData) => {
           const updatedUserData = [...prevUserData, newUser];
           updatedUserData.sort((a, b) => a.position - b.position);
@@ -209,7 +205,6 @@ const setSocketConnect = () => {
       });
 
       client.subscribe(`/topic/quiz-room/${QuizroomId}/chat`, (message) => {
-        console.log('메세지 받음');
         const newChat = JSON.parse(message.body);
         setChatList((prevChatList) => [...prevChatList, newChat]);
         console.log(chatList);
@@ -220,21 +215,11 @@ const setSocketConnect = () => {
   }
 }
 
-  useEffect(() => {
-    console.log('유저 정보 설정됨')
-  }, [userData]);
-
-  useEffect(()=>{ 
-    console.log(userData)
-  },[userData])
-
-    
 
   useEffect(() => {
     if(client){
       client.onConnect = () =>{
         setSocketConnect();
-        console.log('hello')
       }
       client.onStompError = (frame) => {
         console.error('Broker reported error: ' + frame.headers['message']);
