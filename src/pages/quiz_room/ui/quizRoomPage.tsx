@@ -226,7 +226,7 @@ const setSocketConnect = () => {
         console.error('Additional details: ' + frame.body);
       };
     }
-  }, [connected]);
+  }, [client]);
   
   return (
     <Container>
