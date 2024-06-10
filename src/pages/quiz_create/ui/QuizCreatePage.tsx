@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { EditQuizSetting } from "@/features/EditQuizSetting/ui/EditQuizSetting";
 
 const Container = styled.div`
   display: flex;
@@ -21,36 +22,49 @@ const Container = styled.div`
 
 const Wrapper = styled.div`
   width: 100%;
-  max-width: 1440px;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  column-gap: 24px;
+  /* max-width: 1440px; */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 `;
 
 const LeftBox = styled.div`
-  grid-column: 1/3;
-  margin: 0px 6px;
+  width: 244px;
+  margin: 0px 0px;
   display: flex;
   flex-direction: column;
+  align-items:center;
+  height: 640px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 `;
+
 const CenterBox = styled.div`
-  grid-column: 3/10;
-  margin: 0px 6px;
+  width: 830px;
+  margin: 0px 12px;
   display: flex;
   flex-direction: column;
 `;
+
 const RightBox = styled.div`
-  grid-column: 10/13;
-  margin: 0px 6px;
+  width: 342px;
+  margin: 0px 12px;
   display: flex;
   flex-direction: column;
 `;
+
 const SettingButton = styled.div`
   width: 100%;
   height: 60px;
   border-radius: 50px;
-  background-color: #643dd2;
+  background-color: #FD7400;
   margin-bottom: 12px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const StyleInput = styled.input`
@@ -87,7 +101,7 @@ const SourceInput = styled.div`
   height: 100%;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   background-color: white;
-  margin-right: 20px;
+  margin-right: 24px;
 `;
 
 const AnswerInput = styled(StyleInput)`
@@ -124,7 +138,7 @@ const AnswerOptionButton = styled.div`
   font-size: 30px;
   text-align: center;
   &:hover {
-    background-color: #643dd2;
+    background-color: #FD7400;
     color: white;
   }
 `;
@@ -171,7 +185,7 @@ const CreateQuizButton = styled.div`
   font-size: 24px;
   color: white;
   padding: 12px 0px;
-  background-color: #643dd2;
+  background-color: #FD7400;
   cursor: pointer;
 `;
 
@@ -208,6 +222,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   const [selectedQuiz, setSelectedQuiz] = useState<any>(0);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [settingPage, setSettingPage] = useState<number>(1);
 
   const handleQuizSelect = (index: any) => {
     setSelectedQuiz(index);
@@ -397,8 +412,9 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       <Header />
       <Wrapper>
         <LeftBox>
-          {/* <SettingButton>
-          </SettingButton> */}
+          <SettingButton>
+            전체 설정
+          </SettingButton>
           <ChooseQuizFromCreatePage
             quizList={quizList}
             onQuizSelect={handleQuizSelect}
@@ -406,6 +422,9 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           />
           <AddQuizFromCreatePage addQuiz={handleAddQuiz} />
         </LeftBox>
+
+
+
         <CenterBox>
           <TitleInput
             placeholder="제목을 입력해주세요"
@@ -465,15 +484,20 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           </OtherAnswerInput>
           {/* TODO: feature로 빼내기 */}
         </CenterBox>
+
+
         <RightBox>
-          <AnswerInput
+          {/* <AnswerInput
             placeholder="설명을 입력해주세요"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-          ></AnswerInput>
-          <CreateQuizButton onClick={handleCreateQuiz}>
+          ></AnswerInput> */}
+          <EditQuizSetting></EditQuizSetting>
+          <EditQuizSetting></EditQuizSetting>
+          <EditQuizSetting></EditQuizSetting>
+          {/* <CreateQuizButton onClick={handleCreateQuiz}>
             퀴즈 생성하기
-          </CreateQuizButton>
+          </CreateQuizButton> */}
         </RightBox>
       </Wrapper>
     </Container>
