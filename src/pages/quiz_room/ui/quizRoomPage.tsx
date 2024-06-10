@@ -119,7 +119,6 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
     return ()=>  clearInterval(interval)
   },[])
 
-
   // const LeaveThisRoom =async (quizRoomId: string) => {
   //   try {
   //     const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
