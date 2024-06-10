@@ -7,7 +7,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 12px;
-
+  align-items: center;
 `
 const QuizBox = styled.div`
   width: 220px;
@@ -19,8 +19,9 @@ const QuizBox = styled.div`
   margin-bottom: 12px;
   transition: transform 0.3s ease;
     &:hover {
-        transform: scale(1.1);
+        transform: scale(1.03);
     }
+
 `
 const QuizImage = styled.div`
   width: 100%;
@@ -40,8 +41,9 @@ const Number = styled.div`
   justify-content: center;
   font-size: 16px;
   color: white;
-  background-color: #643DD2;
+  background-color: #FD7400;
   border-radius: 50%;
+  margin: 4px;
 `
 
 const DeleteButton = styled(Number)` 
@@ -50,6 +52,7 @@ const DeleteButton = styled(Number)`
   &:hover{
     cursor: pointer;
   }
+  margin: 4px;
 `
 
 const EditQuizButton = styled.div`
