@@ -1,9 +1,11 @@
 export interface UserData{
   nickname:string,
-  position: number,
+  position: number,//사라질 예정
   userId:number,
   isHost:boolean
   score?: number;
+  //id 추가 예정 : number
+  //color 추가 예정 :number
 }
 
 export interface QuizData {

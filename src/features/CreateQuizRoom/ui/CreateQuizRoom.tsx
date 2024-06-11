@@ -112,8 +112,7 @@ const postQuizRoom = async (
       }
     );
     console.log(response.data);
-    router.push(`/quiz/room/${response.data.data.quizRoomId}`);
-    // TODO: 페이지 이동 코드 작성
+    router.push(`/quiz/play/${response.data.data.quizRoomId}/room`);
   } catch (error) {
     console.error(error);
     alert("방에 참가해있습니다!");
@@ -156,8 +155,7 @@ export const CreateQuizRoom = ({ quizId, handleModal }: Props) => {
         }
       );
       console.log(response.data);
-      router.push(`/quiz/room/${response.data.data.quizRoomId}`);
-      // TODO: 페이지 이동 코드 작성
+      router.push(`/quiz/play/${response.data.data.quizRoomId}/room`);
     } catch (error) {
       console.error(error);
       alert('방에 참가해있습니다!');

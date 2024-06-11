@@ -6,174 +6,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { EditQuizSetting } from "@/features/EditQuizSetting/ui/EditQuizSetting";
+import { ChooseQuizEditPageNumber } from "@/features/ChooseQuizEditPageNumber/ui/ChooseQuizEditPageNumber";
+import { EditQuizInfo } from "@/features/EditQuizInfo/ui/EditQuizInfo";
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  align-items: center;
-  min-height: 100vh; // Viewport Height
-  width: 100vw; // Viewport Width
-  min-width: 100vw;
-  background-color: white;
-  color: black;
-`;
-
-const Wrapper = styled.div`
-  width: 100%;
-  max-width: 1440px;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  column-gap: 24px;
-`;
-
-const LeftBox = styled.div`
-  grid-column: 1/3;
-  margin: 0px 6px;
-  display: flex;
-  flex-direction: column;
-`;
-const CenterBox = styled.div`
-  grid-column: 3/10;
-  margin: 0px 6px;
-  display: flex;
-  flex-direction: column;
-`;
-const RightBox = styled.div`
-  grid-column: 10/13;
-  margin: 0px 6px;
-  display: flex;
-  flex-direction: column;
-`;
-const SettingButton = styled.div`
-  width: 100%;
-  height: 60px;
-  border-radius: 50px;
-  background-color: #643dd2;
-  margin-bottom: 12px;
-`;
-
-const StyleInput = styled.input`
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
-  color: black;
-  background-color: white;
-  border: none;
-  text-align: center;
-`;
-
-const TitleInput = styled(StyleInput)`
-  width: 100%;
-  height: 60px;
-  font-weight: bold;
-  margin: 10px 0px;
-  font-size: 28px;
-`;
-
-const QuizInput = styled(StyleInput)`
-  width: 464px;
-  height: 100%;
-  font-size: 28px;
-`;
-
-const QuizContainer = styled.div`
-  width: 100%;
-  height: 250px;
-  display: flex;
-  flex-direction: row;
-  margin: 10px 0px;
-`;
-const SourceInput = styled.div`
-  width: 342px;
-  height: 100%;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
-  background-color: white;
-  margin-right: 20px;
-`;
-
-const AnswerInput = styled(StyleInput)`
-  width: 100%;
-  height: 150px;
-  margin: 10px 0px;
-  font-size: 28px;
-`;
-
-const OtherAnswerInput = styled.div`
-  width: 100%;
-  height: 150px;
-  margin: 10px 0px;
-  font-size: 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
-  color: black;
-  background-color: white;
-  border: none;
-  text-align: center;
-  overflow-y: scroll;
-`;
-
-const AnswerOptionButton = styled.div`
-  width: 100%;
-  height: 32px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  font-size: 30px;
-  text-align: center;
-  &:hover {
-    background-color: #643dd2;
-    color: white;
-  }
-`;
-
-const OptionAnswerInput = styled.input`
-  background-color: white;
-  font-size: 32px;
-  width: calc(100% - 40px);
-  height: 60px;
-  margin-right: 10px;
-  color: black;
-  background-color: white;
-  border: none;
-  text-align: center;
-`;
-
-const DeleteButton = styled.button`
-  color: #643dd2;
-  font-weight: bold;
-  background-color: white;
-  border: none;
-  width: 30px;
-  height: 30px;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-`;
-
-const AnswerWrapper = styled.div`
-  background-color: white;
-  display: flex;
-  align-items: center;
-  width: 100%;
-`;
-
-const ImageInput = styled(StyleInput)``;
-const CreateQuizButton = styled.div`
-  width: 100%;
-  font-weight: bold;
-  text-align: center;
-  border-radius: 12px;
-  font-size: 24px;
-  color: white;
-  padding: 12px 0px;
-  background-color: #643dd2;
-  cursor: pointer;
-`;
 
 type QuizCreateProps = {
   QuizGameId: number;
@@ -199,8 +35,8 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       source: "", // 문제에 사용되는 이미지 URL
       type: "SHORT_ANSWER", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
       sourceType: "IMAGE", // 문제의 소스 타입(QuestionSourceType)
-      timeLimit: 30, // 문제 제한 시간
-      score: 30, // 정답자에게 부여할 점수
+      timeLimit: 10, // 문제 제한 시간
+      score: 10, // 정답자에게 부여할 점수
       answers: [""],
     },
   ]);
@@ -208,11 +44,25 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   const [selectedQuiz, setSelectedQuiz] = useState<any>(0);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [settingPage, setSettingPage] = useState<number>(1);//추후에 추가 설정을 위한 페이지
+  const [ modalOpen, setModalOpen ] = useState<boolean>(false);
 
+  const handleNextPage = () => {
+    setSettingPage((prevPage) => Math.min(prevPage + 1, 3));
+  };
+
+  const handlePreviousPage = () => {
+    setSettingPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+  
   const handleQuizSelect = (index: any) => {
     setSelectedQuiz(index);
     console.log("선택된 퀴즈는" + index);
   };
+
+  const toggleModal = () => {
+    setModalOpen(!modalOpen);
+  }
 
   const handleAddQuiz = () => {
     const newNumber = quizList[quizList.length - 1].number + 1;
@@ -224,8 +74,8 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
         source: "", // 문제에 사용되는 이미지 URL
         type: "SHORT_ANSWER", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
         sourceType: "IMAGE", // 문제의 소스 타입(QuestionSourceType)
-        timeLimit: 30, // 문제 제한 시간
-        score: 30, // 정답자에게 부여할 점수
+        timeLimit: 10, // 문제 제한 시간
+        score: 10, // 정답자에게 부여할 점수
         answers: [""],
       },
     ]);
@@ -260,6 +110,8 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     setQuizList(newQuizList);
   };
 
+  //TODO: 옵션 정답 잘 되는지 확인
+
   const handleDeleteOptionAnswer = (deleteIndex: number) => {
     const newQuizList = quizList.map((quiz: any) => {
       if (quiz.number === selectedQuiz) {
@@ -286,6 +138,37 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     });
     setQuizList(newQuizList);
   };
+
+  const handleEditTimeLimit = (EditValue: number) => {
+    const newQuizList = quizList.map((quiz: any) => {
+      if (quiz.number === selectedQuiz) {
+        return { ...quiz, timeLimit: EditValue };
+      }
+      return quiz;
+    });
+    setQuizList(newQuizList);
+  };
+  
+  const handleEditScore = (EditValue: number) => {
+    const newQuizList = quizList.map((quiz: any) => {
+      if (quiz.number === selectedQuiz) {
+        return { ...quiz, score: EditValue };
+      }
+      return quiz;
+    });
+    setQuizList(newQuizList);
+  };
+
+  const handleEditQuizType = (EditValue: string) => {
+    const newQuizList = quizList.map((quiz: any) => {
+      if (quiz.number === selectedQuiz) {
+        return { ...quiz, type: EditValue };
+      }
+      return quiz;
+    });
+    setQuizList(newQuizList);
+  };
+  
 
   const handleEditMainAnswers = (EditNumber: number, EditValue: any) => {
     const newQuizList = quizList.map((quiz: any) => {
@@ -397,16 +280,20 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       <Header />
       <Wrapper>
         <LeftBox>
-          {/* <SettingButton>
-          </SettingButton> */}
-          <ChooseQuizFromCreatePage
-            quizList={quizList}
-            onQuizSelect={handleQuizSelect}
-            onQuizDelete={handleDeleteQuiz}
-          />
-          <AddQuizFromCreatePage addQuiz={handleAddQuiz} />
+          <SettingButton onClick={toggleModal}>
+            전체 설정
+          </SettingButton>
+          <QuizListContainer>
+            <ChooseQuizFromCreatePage
+              quizList={quizList}
+              onQuizSelect={handleQuizSelect}
+              onQuizDelete={handleDeleteQuiz}
+            />
+            <AddQuizFromCreatePage addQuiz={handleAddQuiz} />
+          </QuizListContainer>
         </LeftBox>
-        <CenterBox>
+
+        <CenterBox> 
           <TitleInput
             placeholder="제목을 입력해주세요"
             value={title}
@@ -465,17 +352,246 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           </OtherAnswerInput>
           {/* TODO: feature로 빼내기 */}
         </CenterBox>
+
         <RightBox>
-          <AnswerInput
-            placeholder="설명을 입력해주세요"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          ></AnswerInput>
-          <CreateQuizButton onClick={handleCreateQuiz}>
-            퀴즈 생성하기
-          </CreateQuizButton>
-        </RightBox>
+            {/* <AnswerInput
+              placeholder="설명을 입력해주세요"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            ></AnswerInput> */}
+            <ChooseQuizEditPageNumber
+              selectedPage={settingPage}
+              onNextPage={handleNextPage}
+              onPreviousPage={handlePreviousPage}
+            ></ChooseQuizEditPageNumber>
+            <EditQuizSetting 
+              EditTitle="문제유형" 
+              EditOption={['MULTIPLE_CHOICE','SHORT_ANSWER','TRUE_FALSE']}
+              Value={quizList[selectedQuiz]?.type}
+              HandleEdit={handleEditQuizType}
+            ></EditQuizSetting>
+            <EditQuizSetting 
+              EditTitle="시간 제한" 
+              EditOption={[10,20,30,40,50]}
+              Value={quizList[selectedQuiz]?.timeLimit}
+              HandleEdit={handleEditTimeLimit}
+            ></EditQuizSetting>
+            <EditQuizSetting 
+              EditTitle="점수" 
+              EditOption={[10,20,30,40,50]}
+              Value={quizList[selectedQuiz]?.score}
+              HandleEdit={handleEditScore}
+            ></EditQuizSetting>
+            {/* <CreateQuizButton onClick={handleCreateQuiz}>
+              퀴즈 생성하기
+            </CreateQuizButton> */}
+          </RightBox>
+          <EditQuizInfo 
+            title={title}
+            editTitle={setTitle}
+            description={description} 
+            editDescription={setDescription}
+            isOpen={modalOpen} 
+            onClose={toggleModal}>
+            <div>
+              ss
+            </div>
+          </EditQuizInfo>
       </Wrapper>
     </Container>
   );
 };
+
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  min-height: 100vh; // Viewport Height
+  width: 100vw; // Viewport Width
+  min-width: 100vw;
+  background-color: white;
+  color: black;
+`;
+
+const Wrapper = styled.div`
+  width: 100%;
+  /* max-width: 1440px; */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  z-index: 1;
+
+`;
+
+const LeftBox = styled.div`
+  width: 244px;
+  margin: 0px 0px;
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+  height: 640px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+`;
+
+const CenterBox = styled.div`
+  width: 830px;
+  margin: 0px 12px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const RightBox = styled.div`
+  width: 342px;
+  margin: 0px 12px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const SettingButton = styled.div`
+  width: 100%;
+  height: 60px;
+  border-radius: 50px;
+  background-color: #FD7400;
+  margin: 10px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const StyleInput = styled.input`
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+  color: black;
+  background-color: white;
+  border: none;
+  text-align: center;
+`;
+
+const TitleInput = styled(StyleInput)`
+  width: 100%;
+  height: 60px;
+  font-weight: bold;
+  margin: 10px 0px;
+  font-size: 28px;
+`;
+
+const QuizInput = styled(StyleInput)`
+  width: 464px;
+  height: 100%;
+  font-size: 28px;
+`;
+
+const QuizContainer = styled.div`
+  width: 100%;
+  height: 250px;
+  display: flex;
+  flex-direction: row;
+  margin: 10px 0px;
+`;
+const SourceInput = styled.div`
+  width: 342px;
+  height: 100%;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+  background-color: white;
+  margin-right: 24px;
+`;
+
+const AnswerInput = styled(StyleInput)`
+  width: 100%;
+  height: 150px;
+  margin: 10px 0px;
+  font-size: 28px;
+`;
+
+const OtherAnswerInput = styled.div`
+  width: 100%;
+  height: 150px;
+  margin: 10px 0px;
+  font-size: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
+  color: black;
+  background-color: white;
+  border: none;
+  text-align: center;
+  overflow-y: scroll;
+`;
+
+const AnswerOptionButton = styled.div`
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  font-size: 30px;
+  text-align: center;
+  &:hover {
+    background-color: #FD7400;
+    color: white;
+  }
+`;
+
+const OptionAnswerInput = styled.input`
+  background-color: white;
+  font-size: 32px;
+  width: calc(100% - 40px);
+  height: 60px;
+  margin-right: 10px;
+  color: black;
+  background-color: white;
+  border: none;
+  text-align: center;
+`;
+
+const DeleteButton = styled.button`
+  color: #643dd2;
+  font-weight: bold;
+  background-color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const AnswerWrapper = styled.div`
+  background-color: white;
+  display: flex;
+  align-items: center;
+  width: 100%;
+`;
+
+const ImageInput = styled(StyleInput)``;
+
+const CreateQuizButton = styled.div`
+  width: 100%;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 12px;
+  font-size: 24px;
+  color: white;
+  padding: 12px 0px;
+  background-color: #FD7400;
+  cursor: pointer;
+`;
+
+const QuizListContainer = styled.div`
+  width: 100%;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
