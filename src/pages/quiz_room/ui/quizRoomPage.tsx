@@ -11,9 +11,10 @@ import axios from 'axios';
 import { useStomp } from "@/entities/socket/lib/SocketProvider";
 import { Client } from '@stomp/stompjs';
 import { SendMessage } from "@/features/SendMessage";
-import { EditQuizRoomInfo } from "@/features/EditQuizRoomInfo/ui/EditQuizRoomInfo";
+import { ViewQuizRoomInfo } from "@/features/ViewQuizRoomInfo/ui/ViewQuizRoomInfo";
 import { QuizData, UserData } from "@/shared/type";
 import { on } from "events";
+import { EditQuizRoomInfo } from "@/features/EditQuizRoomInfo/ui/EditQuizRoomInfo";
 
 const Container = styled.div`
   display: flex;
@@ -102,12 +103,16 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
     "quizTitle": "",
     "maxParticipant": 0,
     "participants": []
-});
+  });
   const [ isConnect,  setIsConnect] = useState<boolean>(false);
   const [ loadingText, setLoadingText ] = useState<string>("Loading")
+  const [ modalOpen, setModalOpen ] = useState<boolean>(false);
+
   //TODO: 백엔드에셔 연결 끊김에 대한 처리가 결정된 이후에 응답에 따라 소켓 연결을 시도할지 결정
 
-
+  const toggleModal = () => {
+    setModalOpen(!modalOpen);
+  }
 
   useEffect(()=>{
     const interval = setInterval(()=>{
@@ -157,7 +162,7 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
         }
       }
     };
-  
+
     joinGame(QuizroomId);
 
     getQuizRoomData(QuizroomId).then((result) => {
@@ -169,6 +174,10 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
       setIsConnect(true);
     });
   }, [connected]);
+
+  useEffect(()=>{
+    console.log(quizData)
+  },[quizData])
   
 //strict 모드이기에 구독을 2번 진행함
 const setSocketConnect = () => {
@@ -243,7 +252,7 @@ const setSocketConnect = () => {
               <FirstBox>
                 <ChatList OpenChatList={null} width={1074} chatList={chatList} ></ChatList>
                 <QuizRoomInfoWrapper>
-                  <EditQuizRoomInfo maxParticipant={quizData.maxParticipant} quizTitle={quizData.quizTitle}></EditQuizRoomInfo>
+                  <ViewQuizRoomInfo OpenModal={toggleModal} maxParticipant={quizData.maxParticipant} quizTitle={quizData.quizTitle}></ViewQuizRoomInfo>
                 </QuizRoomInfoWrapper>
               </FirstBox>
               <SecondBox>
@@ -252,6 +261,12 @@ const setSocketConnect = () => {
               </SecondBox>
             </ChatLayout>
           </UserControllerLayout>
+          <EditQuizRoomInfo
+            quizRoomId={QuizroomId}
+            roomData={quizData}
+            isOpen={modalOpen} 
+            onClose={toggleModal}
+          ></EditQuizRoomInfo>
       </Wrapper>
     </Container>
   );
