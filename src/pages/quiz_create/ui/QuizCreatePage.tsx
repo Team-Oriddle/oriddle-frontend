@@ -216,7 +216,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   //1. isDelete -> false->true
   //2.
 
-  const handleCreateQuiz = async (QuizGameId) => {
+  const handleCreateQuiz = async () => {
     const quizListForm = quizList.map((quiz, index) => {
       return { ...quiz, number: index + 1 };
     });
@@ -413,9 +413,9 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
               Value={quizList[selectedQuiz]?.score}
               HandleEdit={handleEditScore}
             ></EditQuizSetting>
-            {/* <CreateQuizButton onClick={handleCreateQuiz}>
+            <CreateQuizButton onClick={handleCreateQuiz}>
               퀴즈 생성하기
-            </CreateQuizButton> */}
+            </CreateQuizButton>
           </RightBox>
           <EditQuizInfo 
             title={title}

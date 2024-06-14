@@ -196,18 +196,15 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
         ) : (
           <ParentForLoadingUI>
             <Question
-              description={questionData.description}
-              number={questionData.number}
-              type={questionData.type}
-              score={questionData.score}
+              description={questionData?.description}
+              number={questionData?.number}
+              type={questionData?.type}
+              score={questionData?.score}
             />
-            {
-              questionData.sourceType === "image" ?             <QuizSource
-              url={questionData.source}
-              sourceType={questionData.sourceType}
-            /> : "유튜브"
-            }
-
+            <QuizSource
+              url={questionData?.source}
+              sourceType={questionData?.sourceType}
+            /> 
           </ParentForLoadingUI>
         )}
         {

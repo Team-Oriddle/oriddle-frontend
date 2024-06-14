@@ -30,12 +30,14 @@ export const QuizSource = ({ url, sourceType }) => {
   return (
     <Layout>
       {sourceType === "IMAGE" && <Image src={url} alt="Source Image" />}
-      {sourceType === "SOUND" && (
+      {sourceType === "VIDEO" && (
         <Video
-          src={`https://www.youtube.com/embed/tkzYyEp4zB4&t=27s`}
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
+          src={url}
+          title="YouTube video player" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
         />
       )}
     </Layout>
