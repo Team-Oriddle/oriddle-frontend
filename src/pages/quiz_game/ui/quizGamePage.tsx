@@ -201,10 +201,13 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
               type={questionData.type}
               score={questionData.score}
             />
-            <QuizSource
+            {
+              questionData.sourceType === "image" ?             <QuizSource
               url={questionData.source}
               sourceType={questionData.sourceType}
-            />
+            /> : "유튜브"
+            }
+
           </ParentForLoadingUI>
         )}
         {

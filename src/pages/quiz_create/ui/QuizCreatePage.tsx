@@ -9,6 +9,7 @@ import axios from "axios";
 import { EditQuizSetting } from "@/features/EditQuizSetting/ui/EditQuizSetting";
 import { ChooseQuizEditPageNumber } from "@/features/ChooseQuizEditPageNumber/ui/ChooseQuizEditPageNumber";
 import { EditQuizInfo } from "@/features/EditQuizInfo/ui/EditQuizInfo";
+import { EmbedYoutube } from "@/features/EmbedYoutube/ui/EmbedYoutube";
 
 
 type QuizCreateProps = {
@@ -34,7 +35,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       description: "", // 문제 설명
       source: "", // 문제에 사용되는 이미지 URL
       type: "SHORT_ANSWER", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
-      sourceType: "IMAGE", // 문제의 소스 타입(QuestionSourceType)
+      sourceType: "", // 문제의 소스 타입(QuestionSourceType)
       timeLimit: 10, // 문제 제한 시간
       score: 10, // 정답자에게 부여할 점수
       answers: [""],
@@ -46,6 +47,12 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   const [description, setDescription] = useState<string>("");
   const [settingPage, setSettingPage] = useState<number>(1);//추후에 추가 설정을 위한 페이지
   const [ modalOpen, setModalOpen ] = useState<boolean>(false);
+  const [ youtubeModalOpen , setYoutubeModalOpen ] = useState<boolean>(false);
+  const [ youtubeEmbedUrl, setYoutubeEmbedUrl ] = useState<string>("");
+
+  const toggleYoutubeModal = () => {
+    setYoutubeModalOpen(!youtubeModalOpen);
+  }
 
   const handleNextPage = () => {
     setSettingPage((prevPage) => Math.min(prevPage + 1, 3));
@@ -73,7 +80,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
         description: "", // 문제 설명
         source: "", // 문제에 사용되는 이미지 URL
         type: "SHORT_ANSWER", // 문제 타입(QuestionType: MUTILPLE_CHOICE, SHORT_ANSWER, TRUE_FALSE)
-        sourceType: "IMAGE", // 문제의 소스 타입(QuestionSourceType)
+        sourceType: "", // 문제의 소스 타입(QuestionSourceType)
         timeLimit: 10, // 문제 제한 시간
         score: 10, // 정답자에게 부여할 점수
         answers: [""],
@@ -268,12 +275,17 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
         const data = await response.json();
         console.log(data);
         handleEditQuiz(selectedQuiz, "source", data.data.url);
+        handleEditQuiz(selectedQuiz, "sourceType", "IMAGE");
       } catch (error) {
         console.log(error);
       }
     };
     uploadImage();
   }, [img]);
+  
+
+
+
 
   return (
     <Container>
@@ -302,15 +314,35 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           {/* TODO: EditQuiz로 feature 생성 */}
           <QuizContainer>
             <SourceInput>
-              {quizList[selectedQuiz]?.source === "" ? (
-                <ImageInput type="file" onChange={uploadingImage} />
-              ) : (
-                <Image
+              {quizList[selectedQuiz]?.sourceType !== "" ? (
+                quizList[selectedQuiz]?.sourceType === "image" ? (
+                <Image 
                   src={quizList[selectedQuiz]?.source}
                   alt="썸네일"
                   layout="fill"
                   objectFit="cover"
                 />
+                ) : quizList[selectedQuiz]?.sourceType === "VIDEO" ? (
+                  <iframe 
+                    width="350" 
+                    height="250" 
+                    src={quizList[selectedQuiz].source}
+                    title="YouTube video player" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen
+                  ></iframe>
+                ) : (
+                  null
+                  // TODO: 추후에 음악 추가
+                )
+                ) : (
+                <SourceTypeChoose>
+                  <ImageInput type="file" onChange={uploadingImage} />
+                  <YoutubeEmbedButton onClick={toggleYoutubeModal}>유튜브</YoutubeEmbedButton>
+                  {/* TODO: 유튜브 링크추가기능 */}
+                </SourceTypeChoose>
               )}
             </SourceInput>
             <QuizInput
@@ -352,7 +384,6 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           </OtherAnswerInput>
           {/* TODO: feature로 빼내기 */}
         </CenterBox>
-
         <RightBox>
             {/* <AnswerInput
               placeholder="설명을 입력해주세요"
@@ -393,10 +424,14 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
             editDescription={setDescription}
             isOpen={modalOpen} 
             onClose={toggleModal}>
-            <div>
-              ss
-            </div>
           </EditQuizInfo>
+          <EmbedYoutube
+            isOpen={youtubeModalOpen}
+            onClose={toggleYoutubeModal}
+            setSource={handleEditQuiz}
+            selectedQuiz={selectedQuiz}
+          >
+          </EmbedYoutube>
       </Wrapper>
     </Container>
   );
@@ -500,6 +535,10 @@ const SourceInput = styled.div`
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   background-color: white;
   margin-right: 24px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;
 
 const AnswerInput = styled(StyleInput)`
@@ -574,7 +613,10 @@ const AnswerWrapper = styled.div`
   width: 100%;
 `;
 
-const ImageInput = styled(StyleInput)``;
+const ImageInput = styled(StyleInput)`
+  width: 100px;
+  height: 100px;
+`;
 
 const CreateQuizButton = styled.div`
   width: 100%;
@@ -594,4 +636,18 @@ const QuizListContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+`
+
+const SourceTypeChoose = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+`
+
+const YoutubeEmbedButton = styled.div`
+  width: 100px;
+  height: 100px;
+  background-color: black;
+  color: white;
 `
