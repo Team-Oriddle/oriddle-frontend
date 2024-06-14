@@ -1,7 +1,7 @@
 import { use, useEffect, useState } from "react";
 import styled from "styled-components";
 
-export const EmbedYoutube = ({isOpen,  onClose, setSource, selectedQuiz}) => {
+export const EmbedMusic = ({isOpen,  onClose, setSource, selectedQuiz}) => {
   const [ inputYoutubeUrl, setInputYoutubeUrl ] = useState("")
   const [ embedYoutubeUrl, setEmbedYoutubeUrl ] = useState("")
   const [ isSetSource, setIsSetSource ] = useState(false)
@@ -17,9 +17,10 @@ export const EmbedYoutube = ({isOpen,  onClose, setSource, selectedQuiz}) => {
   },[inputYoutubeUrl])
 
 
+  //TODO: 변수명 SOUND로 변경
   useEffect(()=>{
     if(isSetSource) {
-      setSource(selectedQuiz, "sourceType" ,"VIDEO")
+      setSource(selectedQuiz, "sourceType" ,"SOUND")
       setIsSetSource(false)
       setInputYoutubeUrl("")
       onClose()

@@ -26,6 +26,13 @@ const Video = styled.iframe`
   height: 100%;
 `;
 
+
+const Music = styled.iframe`
+  width: 100%;
+  height: 100%;
+  display: none;
+`;
+
 export const QuizSource = ({ url, sourceType }) => {
   return (
     <Layout>
@@ -40,6 +47,16 @@ export const QuizSource = ({ url, sourceType }) => {
           allowfullscreen
         />
       )}
+      {sourceType === "SOUND" &&
+      <Music
+          src={url}
+          title="YouTube video player" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        />}
+
     </Layout>
   );
 };

@@ -10,6 +10,7 @@ import { EditQuizSetting } from "@/features/EditQuizSetting/ui/EditQuizSetting";
 import { ChooseQuizEditPageNumber } from "@/features/ChooseQuizEditPageNumber/ui/ChooseQuizEditPageNumber";
 import { EditQuizInfo } from "@/features/EditQuizInfo/ui/EditQuizInfo";
 import { EmbedYoutube } from "@/features/EmbedYoutube/ui/EmbedYoutube";
+import { EmbedMusic } from "@/features/EmbedMusic/ui/EmbedMusic";
 
 
 type QuizCreateProps = {
@@ -48,7 +49,13 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   const [settingPage, setSettingPage] = useState<number>(1);//추후에 추가 설정을 위한 페이지
   const [ modalOpen, setModalOpen ] = useState<boolean>(false);
   const [ youtubeModalOpen , setYoutubeModalOpen ] = useState<boolean>(false);
+  const [ musicModalOpen , setMusicModalOpen ] = useState<boolean>(false);
+
   const [ youtubeEmbedUrl, setYoutubeEmbedUrl ] = useState<string>("");
+  
+  const toggleMusicModal = () => {
+    setMusicModalOpen(!musicModalOpen);
+  }
 
   const toggleYoutubeModal = () => {
     setYoutubeModalOpen(!youtubeModalOpen);
@@ -341,6 +348,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
                 <SourceTypeChoose>
                   <ImageInput type="file" onChange={uploadingImage} />
                   <YoutubeEmbedButton onClick={toggleYoutubeModal}>유튜브</YoutubeEmbedButton>
+                  <YoutubeEmbedButton onClick={toggleMusicModal}>유튜브</YoutubeEmbedButton>
                   {/* TODO: 유튜브 링크추가기능 */}
                 </SourceTypeChoose>
               )}
@@ -432,6 +440,13 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
             selectedQuiz={selectedQuiz}
           >
           </EmbedYoutube>
+          <EmbedMusic
+            isOpen={musicModalOpen}
+            onClose={toggleMusicModal}
+            setSource={handleEditQuiz}
+            selectedQuiz={selectedQuiz}
+          >
+          </EmbedMusic>
       </Wrapper>
     </Container>
   );
