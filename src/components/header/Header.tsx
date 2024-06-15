@@ -3,7 +3,6 @@ import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import styled from "styled-components";
-import cookie from 'react-cookies';
 
 
 export const Header = () => {
@@ -38,17 +37,14 @@ export const Header = () => {
       <Title onClick={routeToMain}>ORIDDLE</Title>
       {/* TODO: 검색 바 넣기 */}
       <Buttons>
-        {/* TODO: 로그인 이전, 이후의 헤더 항목 업데이트 필요 */}
         {authState.isLoggedIn ? (
           <>
-            <Button onClick={CreateQuiz}>MAKE QUIZ</Button>
-
+            <Button onClick={CreateQuiz}>CREATE</Button>
             <Button onClick={routeToMyPage}>MY PAGE</Button>
             <Button onClick={handleLogout}>LOGOUT</Button>
           </>
         ) : (
           <>
-            <Button onClick={routeToMyPage}>MY PAGE</Button>
             <Button onClick={routeToLogin}>LOGIN</Button>
           </>
         )}
@@ -58,6 +54,8 @@ export const Header = () => {
 };
 
 const Layout = styled.div`
+  width: 100%;
+  max-width:  1440px;
   padding-top: 30px;
   margin-bottom: 30px;
   height: 70px;
@@ -66,7 +64,7 @@ const Layout = styled.div`
   justify-content: space-between;
   align-items: center;
   color: black;
-  width: 1440px;
+
 `;
 
 const Title = styled.h1`
@@ -80,10 +78,8 @@ const Title = styled.h1`
 `;
 
 const Buttons = styled.div`
-  width: 400px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   cursor: pointer;
 `;
 
@@ -96,4 +92,5 @@ const Button = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0px 12px
 `;
