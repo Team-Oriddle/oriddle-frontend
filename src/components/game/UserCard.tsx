@@ -73,6 +73,7 @@ interface UserCardProps {
   usernickname: string;
   score: number;
   chatMessage: string;
+  color: number;
 }
 
 const getUserImage = (userColor) => {
@@ -96,8 +97,6 @@ export const UserCard = ({
   color,
 }: UserCardProps) => {
   const [isVisible, setIsVisible] = useState(false);
-
-
   const [userImage, setUserImage] = useState(null);
 
   useEffect(() => {
