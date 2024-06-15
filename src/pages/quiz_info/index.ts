@@ -1,0 +1,1 @@
+export { QuizInfoPage } from './ui/QuizInfoPage';

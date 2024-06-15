@@ -1,5 +1,5 @@
 "use client";
-import QuizInfoPage from "@/pages/quiz_info/ui/quizInfoPage";
+import { QuizInfoPage } from "@/pages/quiz_info";
 
 type Props = {
   params: {
