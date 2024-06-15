@@ -1,6 +1,5 @@
 import { Header } from "@/components/header/Header";
 import { ViewQuizList } from "@/features/ViewQuizList";
-
 import styled from "styled-components";
 
 const Container = styled.div`

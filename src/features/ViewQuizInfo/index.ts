@@ -1,0 +1,1 @@
+export { ViewQuizInfo } from './ui/ViewQuizInfo';

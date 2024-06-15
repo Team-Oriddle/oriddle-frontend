@@ -1,5 +1,5 @@
 import DefalutButton from "@/components/common/DefalutButton";
-import { QuizInfo } from "@/components/detail/QuizInfo";
+import { ViewQuizInfo } from "@/features/ViewQuizInfo/ui/ViewQuizInfo";
 import Modal from "@/components/game/Modal";
 import { Header } from "@/components/header/Header";
 import { CreateComment } from "@/features/CreateComment/ui/CreateComment";
@@ -67,10 +67,10 @@ const UserEvaluateQuizLayout = styled.div`
 `
 
 type Props = {
-  quizId :number
+  quizId :string
 }
 
-const QuizInfoPage = ({quizId}:Props) => {
+export const QuizInfoPage = ({quizId}:Props) => {
 
   const commentList = [
     {
@@ -90,24 +90,23 @@ const QuizInfoPage = ({quizId}:Props) => {
       <Wrapper>
         <Header></Header>
         {/* //TODO:퀴즈 생성 모달 클릭시 헤더 CSS 변경이 있어야함 */}
-        <QuizInfo quizId={quizId} ></QuizInfo>
+        <ViewQuizInfo quizId={quizId} ></ViewQuizInfo>
         <UserEvaluateQuizLayout>
           <UserEvaluateButtonLayout>
-            <DefalutButton color="" txt="추천 561" ></DefalutButton>
-            <DefalutButton color="보라" txt="신고"></DefalutButton>
+            <DefalutButton color="검정" txt="추천 561" ></DefalutButton>
+            <DefalutButton color="" txt="신고"></DefalutButton>
           </UserEvaluateButtonLayout>
         </UserEvaluateQuizLayout>
         {/* TODO: 댓글은 댓글 관련된 협의 종료된 이후 진행 */}
-        <CreateComment></CreateComment>
+        {/* <CreateComment></CreateComment>
         {commentList.map((comment)=>(
           <CommentLayout key={comment.id}>
             <UserIcon></UserIcon>
             <TextInputLayout>{comment.comment}</TextInputLayout>
           </CommentLayout>
-        ))}
+        ))} */}
       </Wrapper>
     </Layout>
   );
 };
 
-export default QuizInfoPage;

@@ -9,7 +9,7 @@ const ButtonLayout = styled.button<ButtonLayoutType>`
   width: 150px;
   height: 50px;
   border-radius: 50px;
-  border: 1px solid #643dd2;
+  border: 1px solid #000000;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -29,13 +29,13 @@ type ButtonProps = {
 };
 
 // color 값 초기값 설정
-const DefalutButton = ({ color = "보라", txt = "", onClick }: ButtonProps) => {
+const DefalutButton = ({ color = "검정", txt = "", onClick }: ButtonProps) => {
   // 코드 안정성을 위해 let 대신 const 사용으로 변경
   // TODO: Custom Pallette 생성 후 코드 이동
-  const customPurple: string = "#643DD2";
+  const customBlack: string = "#000000";
   const customWhite: string = "#FFFFFF";
-  const bgColor: string = color === "보라" ? customPurple : customWhite;
-  const textColor: string = color === "보라" ? customWhite : customPurple;
+  const bgColor: string = color === "검정" ? customBlack : customWhite;
+  const textColor: string = color === "검정" ? customWhite : customBlack;
 
   return (
     <ButtonLayout bgColor={bgColor} txtColor={textColor} onClick={onClick}>
