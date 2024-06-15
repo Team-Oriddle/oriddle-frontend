@@ -108,6 +108,15 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
   const [ loadingText, setLoadingText ] = useState<string>("Loading")
   const [ modalOpen, setModalOpen ] = useState<boolean>(false);
 
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   //TODO: 백엔드에셔 연결 끊김에 대한 처리가 결정된 이후에 응답에 따라 소켓 연결을 시도할지 결정
 
   const toggleModal = () => {
@@ -235,6 +244,11 @@ const setSocketConnect = () => {
       };
     }
   }, [client]);
+
+  if(width < 760 ){
+    return <Container>모바일은 지원하지 않습니다.</Container>
+  }
+  
   
   return (
     <Container>
@@ -247,7 +261,7 @@ const setSocketConnect = () => {
             <UserList UserList={userData}></UserList>
           }
             <ChatLayout>
-              {userData.length}
+              {width}
               <FirstBox>
                 <ChatList OpenChatList={null} width={1074} chatList={chatList} ></ChatList>
                 <QuizRoomInfoWrapper>
