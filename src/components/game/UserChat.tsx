@@ -26,6 +26,7 @@ export const UserChat = ({ UserList, currentChat }: UserChatProps) => {
         return (
           <UserCard
             key={user.position}
+            color={user.color}
             usernickname={user.nickname}
             score={user.score}
             chatMessage={userChat}
