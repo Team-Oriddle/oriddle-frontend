@@ -1,6 +1,6 @@
 import { ChatList } from "@/components/attend/ChatList";
 import { Header } from "@/components/header/Header";
-import { getQuizRoomData } from "@/entities/quizroom";
+import { getQuizRoomData, startQuizRoom } from "@/entities/quizroom";
 import { StartGameButton } from "@/features/StartGameButton";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -98,6 +98,7 @@ const Bottomwrapper = styled.div`
   width: 90%;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
 `
 
@@ -110,6 +111,19 @@ const StartGameByMobile = styled.div`
   justify-content: center;
   font-size: 16px;
   font-weight: bold;
+`
+
+const MobileButton = styled.div`
+  width: 100px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  background-color: #FD7400;
+  color: white;
+  font-size: 16px;
+  margin-right: 16px;
 `
 
 type QuizRoomProps = {
@@ -268,10 +282,14 @@ const setSocketConnect = () => {
   if(width < 760 ){
     return <Container>
       <MobileHeader/>
-      <ViewUserList_Mobile UserList={userData}/>
+      {
+          userData.length === 0 ? <LoadingUI>{loadingText}</LoadingUI> 
+          :
+          <ViewUserList_Mobile UserList={userData}/>
+        }
       <ViewChatList_Mobile OpenChatList={null} chatList={chatList}/>
       <Bottomwrapper>
-        <StartGameButton roomId={QuizroomId}></StartGameButton>
+        <MobileButton onClick={()=>startQuizRoom(QuizroomId)}>게임 시작</MobileButton>
         <SendMessage_Mobile OpenChatList={null} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage_Mobile>
       </Bottomwrapper>
     </Container>

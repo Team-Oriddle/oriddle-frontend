@@ -10,7 +10,6 @@ const Layout = styled.div`
   color: black;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   border-radius: 10px;
-  margin-right: 12px;
   color: black;
   overflow-y: auto;
   font-size: 16px;

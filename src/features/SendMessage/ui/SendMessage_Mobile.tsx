@@ -76,6 +76,7 @@ const Layout = styled.div`
   height: 40px;
   background-color: white;
   border-radius: 10px;
+  
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   :focus{
     outline: none;

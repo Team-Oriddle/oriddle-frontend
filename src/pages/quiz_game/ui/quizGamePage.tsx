@@ -1,16 +1,22 @@
-import { UserChat } from "@/components/game/UserChat";
 import { Question } from "@/components/game/Question";
 import { QuizSource } from "@/components/game/QuizSource";
 import { Header } from "@/components/header/Header";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Modal from "@/components/game/Modal";
 import { SendMessage } from "@/features/SendMessage/ui/sendMessage";
 import { getQuizRoomData } from "@/entities/quizroom";
-import {   useStomp } from "@/entities/socket/lib/SocketProvider";
-import { ChatList } from "@/components/attend/ChatList";
+import {  useStomp } from "@/entities/socket/lib/SocketProvider";
 import { Answer, ChatData, QuestionData, UserData } from "@/shared/type";
+import { MobileHeader } from "@/components/header/MobileHeader";
+import { SendMessage_Mobile } from "@/features/SendMessage/ui/SendMessage_Mobile";
+import { TimerModal } from "@/shared/TimerModal/ui/TimerModal";
+import { ViewChatList } from "@/features/ViewChatList";
+import { ViewChatList_Mobile } from "@/features/ViewChatList/ui/ViewchatList_Mobile";
+import { Question_Mobile } from "@/components/game/Question_Mobile";
+import { QuizSource_Mobile } from "@/components/game/QuizSource_Mobile";
+import { UserChatInGame_Mobile } from "@/components/game/UserChatInGame_Mobile";
+import { ViewChatInGame } from "@/features/ViewChatInGame";
 
 const Container = styled.div`
   display: flex;
@@ -88,36 +94,9 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   const [ viewChattingLog, setViewChattingLog ]= useState<boolean>(false) 
 
 
-  useEffect(() => {
-    getQuizRoomData(QuizGameId).then((result) => {
-      const participants = result.participants.map((participant) => ({
-        ...participant,
-        score: 0,
-      }));
-      setUserData(participants);
-    });
-    setDoit(true);
-    setSocketConnect();
-  }, []);
+  const [width, setWidth] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLoadingText((prev) => (prev.length < 10 ? prev + "." : "Loading"));
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const timeInterval = setInterval(() => {
-      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
-    return () => clearInterval(timeInterval);
-  }, [isLoading]);
-
-  const {client, connected} = useStomp();
-
-  //TODO: 퀴즈 게임방으로 접속할시 에러 발생함
-  const setSocketConnect = () => {
+    const setSocketConnect = () => {
     client.subscribe(`/topic/quiz-room/${QuizGameId}/join`, (message) => {
       const socketData = JSON.parse(message.body)
       console.log(socketData);
@@ -168,7 +147,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     client.subscribe(`/topic/quiz-room/${QuizGameId}/finish`, (message) => {
       const socketData = JSON.parse(message.body)
       console.log(socketData);
-      router.push(`/quiz-result/${socketData.quizResultId}`);     
+      // router.push(`/quiz-result/${socketData.quizResultId}`);     
     });
     client.subscribe(`/topic/quiz-room/${QuizGameId}/time-out`, (message) => {
       const socketData = JSON.parse(message.body)
@@ -184,6 +163,88 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     //TODO: 구독 해제가 필요함
   }
 
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+
+  useEffect(() => {
+    getQuizRoomData(QuizGameId).then((result) => {
+      const participants = result.participants.map((participant) => ({
+        ...participant,
+        score: 0,
+      }));
+      setUserData(participants);
+    });
+    setSocketConnect();
+  }, [QuizGameId]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLoadingText((prev) => (prev.length < 10 ? prev + "." : "Loading"));
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const timeInterval = setInterval(() => {
+      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timeInterval);
+  }, [isLoading]);
+
+  const {client, connected} = useStomp();
+
+  //TODO: 퀴즈 게임방으로 접속할시 에러 발생함
+
+
+
+  if(width < 760 ){
+    return <Container>
+      <MobileHeader/>
+      {isLoading?(
+        <LoadingUI>
+          {loadingText}
+          <div>{timer}</div>
+        </LoadingUI>
+      ):(
+        <ParentForLoadingUI>
+          <Question_Mobile
+            description={questionData?.description}
+            number={questionData?.number}
+            type={questionData?.type}
+            score={questionData?.score}
+            timeLimit={questionData?.timeLimit}
+          />
+          <QuizSource_Mobile
+            url={questionData?.source}
+            sourceType={questionData?.sourceType}
+          /> 
+        </ParentForLoadingUI>
+      )}
+      <UserChatInGame_Mobile
+        UserList={userData} 
+        currentChat={currentChat} 
+      />
+      <ViewChatList_Mobile
+        OpenChatList={null} 
+        chatList={chatList}
+      />
+      <SendMessage_Mobile OpenChatList={null} placeholder={'채팅을 입력해주세요'} quizGameId={QuizGameId}></SendMessage_Mobile>
+      <TimerModal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
+          <div>정답: {answerData.answer}</div>
+          <div>{answerUser} 님이 정답을 맞추셨습니다</div>
+          <div>(+{answerData.score}점)</div>
+        </TimerModal>
+        <TimerModal isOpen={finishModalOpen} onClose={toggleFinishModal}>
+          <div>정답은 {answerData.answer}입니다</div>
+        </TimerModal>
+    </Container>
+  }
+  
   return (
     <Container>
       <Wrapper>
@@ -200,6 +261,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
               number={questionData?.number}
               type={questionData?.type}
               score={questionData?.score}
+              timeLimit={questionData?.timeLimit}
             />
             <QuizSource
               url={questionData?.source}
@@ -210,13 +272,13 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
         {
           viewChattingLog 
             ? 
-          <ChatList 
+          <ViewChatList
             OpenChatList={()=>setViewChattingLog(false)} 
             width={1440}
             chatList={chatList}
           />
             :
-          <UserChat 
+          <ViewChatInGame
             UserList={userData} 
             currentChat={currentChat} 
           />
@@ -227,14 +289,14 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
           placeholder={"정답을 입력해주세요"} 
           quizGameId={QuizGameId} 
         />
-        <Modal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
+        <TimerModal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
           <div>정답: {answerData.answer}</div>
           <div>{answerUser} 님이 정답을 맞추셨습니다</div>
           <div>(+{answerData.score}점)</div>
-        </Modal>
-        <Modal isOpen={finishModalOpen} onClose={toggleFinishModal}>
+        </TimerModal>
+        <TimerModal isOpen={finishModalOpen} onClose={toggleFinishModal}>
           <div>정답은 {answerData.answer}입니다</div>
-        </Modal>
+        </TimerModal>
       </Wrapper>
     </Container>
   );

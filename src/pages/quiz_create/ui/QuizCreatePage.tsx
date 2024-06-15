@@ -266,29 +266,29 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
 
   const [img, setImg] = useState<any>("");
 
-  useEffect(() => {
-    const formData = new FormData();
-    formData.append("file", img);
-    const uploadImage = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:8080/api/v1/quiz/image`,
-          {
-            method: "POST",
-            credentials: "include",
-            body: formData,
-          }
-        );
-        const data = await response.json();
-        console.log(data);
-        handleEditQuiz(selectedQuiz, "source", data.data.url);
-        handleEditQuiz(selectedQuiz, "sourceType", "IMAGE");
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    uploadImage();
-  }, [img]);
+  // useEffect(() => {
+  //   const formData = new FormData();
+  //   formData.append("file", img);
+  //   const uploadImage = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `http://localhost:8080/api/v1/quiz/image`,
+  //         {
+  //           method: "POST",
+  //           credentials: "include",
+  //           body: formData,
+  //         }
+  //       );
+  //       const data = await response.json();
+  //       console.log(data);
+  //       handleEditQuiz(selectedQuiz, "source", data.data.url);
+  //       handleEditQuiz(selectedQuiz, "sourceType", "IMAGE");
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   uploadImage();
+  // }, [img, selectedQuiz, handleEditQuiz]);
   
 
 
