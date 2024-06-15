@@ -78,15 +78,20 @@ export const ChooseQuizFromCreatePage = ({quizList, onQuizSelect, onQuizDelete}:
           </EditQuizButton>
           <QuizImage>
             {
-              quiz?.source === '' ? 
-              <div>{quiz?.description}</div>
+              quiz?.source === '' ? (
+                quiz?.sourceType === 'IMAGE' ? (
+                  <Image
+                  src={quiz?.source}
+                  alt="썸네일"
+                  layout="fill"
+                  objectFit="cover"
+                />
+                ) : (
+                  null
+                )
+              )
               :           
-              <Image
-                src={quiz?.source}
-                alt="썸네일"
-                layout="fill"
-                objectFit="cover"
-              />
+              <div>유튜브</div>
             }
           </QuizImage>
         </QuizBox>

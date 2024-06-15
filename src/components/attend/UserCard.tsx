@@ -1,4 +1,6 @@
+import Image from "next/image"
 import styled from "styled-components"
+import Duck1 from "../../../public/userImage/Duck1.png"
 
 const Layout = styled.div`
   width: 163px;
@@ -11,9 +13,11 @@ const Layout = styled.div`
 
 `
 
-const UserImage = styled.div`
+const UserImageWrapper = styled.div`
   width: 163px;
   height: 250px;
+  border-radius: 20px;
+  position: relative;
 `
 
 const UserInfo = styled.div`
@@ -26,11 +30,18 @@ const UserInfo = styled.div`
 `
 
 export const UserCard = ({usernickname}:{usernickname:string}) => {
+  
+
   return(
     <Layout>
-      <UserImage>
-        유저 캐릭터 이미지 
-      </UserImage>
+      <UserImageWrapper>
+        <Image
+          src={Duck1}
+          alt='User Image'
+          layout='fill'
+          objectFit='cover'
+        /> 
+      </UserImageWrapper>
       <UserInfo>
         {usernickname}
       </UserInfo>

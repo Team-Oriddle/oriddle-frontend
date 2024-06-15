@@ -251,7 +251,7 @@ const setSocketConnect = () => {
               <FirstBox>
                 <ChatList OpenChatList={null} width={1074} chatList={chatList} ></ChatList>
                 <QuizRoomInfoWrapper>
-                  <ViewQuizRoomInfo OpenModal={toggleModal} maxParticipant={quizData.maxParticipant} quizTitle={quizData.quizTitle}></ViewQuizRoomInfo>
+                  <ViewQuizRoomInfo OpenModal={toggleModal} maxParticipant={quizData?.maxParticipant} quizTitle={quizData?.quizTitle}></ViewQuizRoomInfo>
                 </QuizRoomInfoWrapper>
               </FirstBox>
               <SecondBox>
