@@ -27,7 +27,7 @@ export const UserList = ({UserList}:UserListProps) => {
   return(
     <Layout>
       {UserList.map((user:IUser)=> (
-        <UserCard key={user.position} usernickname={user.nickname}></UserCard>
+        <UserCard key={user.position} usernickname={user.nickname} userColor={user.color}></UserCard>
       ))}
     </Layout>
   )
