@@ -1,6 +1,4 @@
-import { ChatInput } from "@/components/attend/ChatInput";
 import { ChatList } from "@/components/attend/ChatList";
-import { UserList } from "@/components/attend/UserList";
 import { Header } from "@/components/header/Header";
 import { getQuizRoomData } from "@/entities/quizroom";
 import { StartGameButton } from "@/features/StartGameButton";
@@ -15,6 +13,13 @@ import { ViewQuizRoomInfo } from "@/features/ViewQuizRoomInfo/ui/ViewQuizRoomInf
 import { QuizData, UserData } from "@/shared/type";
 import { on } from "events";
 import { EditQuizRoomInfo } from "@/features/EditQuizRoomInfo/ui/EditQuizRoomInfo";
+import { ViewUserList } from "@/features/ViewUserList";
+import { MobileHeader } from "@/components/header/MobileHeader";
+import { ViewUserList_Mobile } from "@/features/ViewUserList/ui/ViewUserList_Mobile";
+import { ViewChatList } from "@/features/ViewChatList";
+import { ViewChatList_Mobile } from "@/features/ViewChatList/ui/ViewchatList_Mobile";
+import { SendMessage_Mobile } from "@/features/SendMessage/ui/SendMessage_Mobile";
+
 
 const Container = styled.div`
   display: flex;
@@ -87,6 +92,24 @@ const SecondBox = styled.div`
 
 const QuizRoomInfoWrapper = styled.div`
   margin-left: 12px;
+`
+
+const Bottomwrapper = styled.div`
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`
+
+const StartGameByMobile = styled.div`
+  width: 30%;
+  height: 70px;
+  background-color: purple;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
 `
 
 type QuizRoomProps = {
@@ -183,9 +206,6 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
     });
   }, [connected]);
 
-  useEffect(()=>{
-    console.log(quizData)
-  },[quizData])
   
 //strict 모드이기에 구독을 2번 진행함
 const setSocketConnect = () => {
@@ -246,7 +266,15 @@ const setSocketConnect = () => {
   }, [client]);
 
   if(width < 760 ){
-    return <Container>모바일은 지원하지 않습니다.</Container>
+    return <Container>
+      <MobileHeader/>
+      <ViewUserList_Mobile UserList={userData}/>
+      <ViewChatList_Mobile OpenChatList={null} chatList={chatList}/>
+      <Bottomwrapper>
+        <StartGameButton roomId={QuizroomId}></StartGameButton>
+        <SendMessage_Mobile OpenChatList={null} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage_Mobile>
+      </Bottomwrapper>
+    </Container>
   }
   
   
@@ -258,12 +286,12 @@ const setSocketConnect = () => {
           {
           userData.length === 0 ? <LoadingUI>{loadingText}</LoadingUI> 
           :
-            <UserList UserList={userData}></UserList>
+            <ViewUserList UserList={userData}></ViewUserList>
           }
             <ChatLayout>
               {width}
               <FirstBox>
-                <ChatList OpenChatList={null} width={1074} chatList={chatList} ></ChatList>
+                <ViewChatList OpenChatList={null} width={1074} chatList={chatList} ></ViewChatList>
                 <QuizRoomInfoWrapper>
                   <ViewQuizRoomInfo OpenModal={toggleModal} maxParticipant={quizData?.maxParticipant} quizTitle={quizData?.quizTitle}></ViewQuizRoomInfo>
                 </QuizRoomInfoWrapper>
