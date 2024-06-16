@@ -12,6 +12,7 @@ import { EmbedMusic } from "@/features/EmbedMusic/ui/EmbedMusic";
 import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage";
 import { postQuiz } from "@/entities/quiz";
 import { AddQuizSource } from "@/features/AddQuizSource";
+import { AddQuizType } from "@/features/AddQuizType";
 
 
 type QuizCreateProps = {
@@ -283,7 +284,6 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
             <AddQuizFromCreatePage addQuiz={handleAddQuiz} />
           </QuizListContainer>
         </LeftBox>
-
         <CenterBox> 
           <TitleInput
             placeholder="제목을 입력해주세요"
@@ -306,33 +306,13 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
               }
             ></QuizInput>
           </QuizContainer>
-          <AnswerInput
-            placeholder="정답을 입력해주세요"
-            value={quizList[selectedQuiz]?.answers[0] ?? ""}
-            onChange={(e) =>
-              handleEditMainAnswers(selectedQuiz, e.target.value)
-            }
-          ></AnswerInput>
-          <OtherAnswerInput>
-            {quizList[selectedQuiz]?.answers
-              .slice(1)
-              .map((answer: any, index: number) => (
-                <AnswerWrapper key={index + 1}>
-                  <OptionAnswerInput
-                    value={answer.content}
-                    onChange={(e) =>
-                      handleEditOptionAnswer(index + 1, e.target.value)
-                    }
-                  />
-                  <DeleteButton onClick={() => handleDeleteOptionAnswer(index + 1)}>
-                    X
-                  </DeleteButton>
-                </AnswerWrapper>
-              )) ?? null}
-            <AnswerOptionButton onClick={handleAddOptionAnswer}>
-              +
-            </AnswerOptionButton>
-          </OtherAnswerInput>
+          <AddQuizType
+            selectedQuiz={quizList[selectedQuiz]}
+            handleEditMainAnswers={handleEditMainAnswers}
+            handleEditOptionAnswer={handleEditOptionAnswer}
+            handleDeleteOptionAnswer={handleDeleteOptionAnswer} 
+            handleAddOptionAnswer={handleAddOptionAnswer}
+          ></AddQuizType>
           {/* TODO: feature로 빼내기 */}
         </CenterBox>
         <RightBox>
@@ -482,89 +462,9 @@ const QuizContainer = styled.div`
   flex-direction: row;
   margin: 10px 0px;
 `;
-const SourceInput = styled.div`
-  width: 342px;
-  height: 100%;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
-  background-color: white;
-  margin-right: 24px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
 
-const AnswerInput = styled(StyleInput)`
-  width: 100%;
-  height: 150px;
-  margin: 10px 0px;
-  font-size: 28px;
-`;
 
-const OtherAnswerInput = styled.div`
-  width: 100%;
-  height: 150px;
-  margin: 10px 0px;
-  font-size: 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
-  color: black;
-  background-color: white;
-  border: none;
-  text-align: center;
-  overflow-y: scroll;
-`;
 
-const AnswerOptionButton = styled.div`
-  width: 100%;
-  padding: 16px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  font-size: 30px;
-  text-align: center;
-  &:hover {
-    background-color: #FD7400;
-    color: white;
-  }
-`;
-
-const OptionAnswerInput = styled.input`
-  background-color: white;
-  font-size: 32px;
-  width: calc(100% - 40px);
-  height: 60px;
-  margin-right: 10px;
-  color: black;
-  background-color: white;
-  border: none;
-  text-align: center;
-`;
-
-const DeleteButton = styled.button`
-  color: #643dd2;
-  font-weight: bold;
-  background-color: white;
-  border: none;
-  width: 30px;
-  height: 30px;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-`;
-
-const AnswerWrapper = styled.div`
-  background-color: white;
-  display: flex;
-  align-items: center;
-  width: 100%;
-`;
 
 const ImageInput = styled(StyleInput)`
   width: 100px;
@@ -591,16 +491,3 @@ const QuizListContainer = styled.div`
   align-items: center;
 `
 
-const SourceTypeChoose = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-`
-
-const YoutubeEmbedButton = styled.div`
-  width: 100px;
-  height: 100px;
-  background-color: black;
-  color: white;
-`
