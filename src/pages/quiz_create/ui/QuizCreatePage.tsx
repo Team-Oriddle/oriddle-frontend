@@ -1,5 +1,4 @@
 import { Header } from "@/components/header/Header";
-import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage/ui/AddQuizFromCreatePage";
 import { ChooseQuizFromCreatePage } from "@/features/ChooseQuizFromCreatePage/ui/ChooseQuizFromCreatePage";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -11,6 +10,8 @@ import { ChooseQuizEditPageNumber } from "@/features/ChooseQuizEditPageNumber/ui
 import { EditQuizInfo } from "@/features/EditQuizInfo/ui/EditQuizInfo";
 import { EmbedYoutube } from "@/features/EmbedYoutube/ui/EmbedYoutube";
 import { EmbedMusic } from "@/features/EmbedMusic/ui/EmbedMusic";
+import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage";
+import { postQuiz } from "@/entities/quiz";
 
 
 type QuizCreateProps = {
@@ -50,8 +51,6 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   const [ modalOpen, setModalOpen ] = useState<boolean>(false);
   const [ youtubeModalOpen , setYoutubeModalOpen ] = useState<boolean>(false);
   const [ musicModalOpen , setMusicModalOpen ] = useState<boolean>(false);
-
-  const [ youtubeEmbedUrl, setYoutubeEmbedUrl ] = useState<string>("");
   
   const toggleMusicModal = () => {
     setMusicModalOpen(!musicModalOpen);
@@ -228,34 +227,10 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       return { ...quiz, number: index + 1 };
     });
 
-    const quizForm = {
-      title: title,
-      description: description,
-      image:
-        "https://orridle.s3.ap-northeast-2.amazonaws.com/quiz-image/0f1a9674-8496-46da-ad64-388afbfe9e97.webp",
-      questions: quizListForm,
-    };
+    postQuiz(title, description, '' , quizListForm,router);
+  }
 
-    try {
-      console.log(quizForm);
-      const response = await axios.post(
-        "http://localhost:8080/api/v1/quiz",
-        quizForm,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response.data.data.quizId);
-      alert("생성되었습니다");
-      router.push(`/quiz/info/${response.data.data.quizId}`);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  
   const uploadingImage = (e: any) => {
     if (!e.target.files) {
       return;
@@ -290,10 +265,6 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     uploadImage();
   }, [img]);
   
-
-
-
-
   return (
     <Container>
       <Header />
