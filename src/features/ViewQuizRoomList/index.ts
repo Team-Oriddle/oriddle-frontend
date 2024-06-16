@@ -1,0 +1,1 @@
+export { ViewQuizRoomList } from './ui/ViewQuizRoomList'

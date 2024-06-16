@@ -41,22 +41,6 @@ export const MobileHeader = () => {
       <Title onClick={handleBack}>&lt; </Title>
       <Title onClick={routeToMain}>ORIDDLE</Title>
       <Title>i</Title>
-
-      {/* <Title onClick={routeToMain}>ORIDDLE</Title>
-      {/* TODO: 검색 바 넣기 */}
-      {/* <Buttons>
-        {authState.isLoggedIn ? (
-          <>
-            <Button onClick={CreateQuiz}>CREATE</Button>
-            <Button onClick={routeToMyPage}>MY PAGE</Button>
-            <Button onClick={handleLogout}>LOGOUT</Button>
-          </>
-        ) : (
-          <>
-            <Button onClick={routeToLogin}>LOGIN</Button>
-          </>
-        )}
-      </Buttons> */}
     </Layout>
   );
 };
@@ -71,7 +55,6 @@ const Layout = styled.div`
   justify-content: space-around;
   align-items: center;
   color: black;
-
 `;
 
 const Title = styled.h1`

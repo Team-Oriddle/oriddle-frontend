@@ -8,9 +8,6 @@ export const EmbedYoutube = ({ isOpen, onClose, setSource, selectedQuiz }) => {
 
   const memoizedSetSource = useCallback(setSource, [setSource]);
 
-  // 유튜브 넣을꺼라고 선택
-  // 유튜브 링크 입력
-  // 링크가 입력되면 
   useEffect(() => {
     if (!inputYoutubeUrl) return;
     setEmbedYoutubeUrl(extractYouTubeID(inputYoutubeUrl));

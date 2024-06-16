@@ -46,10 +46,12 @@ export const ViewQuizList = () => {
 
 
 const Layout = styled.div`
+  margin-top: 400px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: 20;
 `;
 
 const QuizLayout = styled.div`
