@@ -1,5 +1,6 @@
 import styled from "styled-components"
-import { UserCard } from "./UserCard"
+import { ViewUser } from "./ViewUser"
+
 
 const Layout = styled.div`
   min-width: 1074px;
@@ -21,13 +22,18 @@ interface IUser{
   position:number,
   nickname:string,
   isHost:boolean
+  color:number
 }
 
-export const UserList = ({UserList}:UserListProps) => {
+export const ViewUserList = ({UserList}:UserListProps) => {
   return(
     <Layout>
       {UserList.map((user:IUser)=> (
-        <UserCard key={user.position} usernickname={user.nickname} userColor={user.color}></UserCard>
+        <ViewUser
+          key={user.position} 
+          usernickname={user.nickname} 
+          userColor={user.color}
+        ></ViewUser>
       ))}
     </Layout>
   )

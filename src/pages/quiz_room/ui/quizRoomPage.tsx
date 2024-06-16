@@ -1,8 +1,6 @@
-import { ChatInput } from "@/components/attend/ChatInput";
 import { ChatList } from "@/components/attend/ChatList";
-import { UserList } from "@/components/attend/UserList";
 import { Header } from "@/components/header/Header";
-import { getQuizRoomData } from "@/entities/quizroom";
+import { getQuizRoomData, startQuizRoom } from "@/entities/quizroom";
 import { StartGameButton } from "@/features/StartGameButton";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,6 +13,13 @@ import { ViewQuizRoomInfo } from "@/features/ViewQuizRoomInfo/ui/ViewQuizRoomInf
 import { QuizData, UserData } from "@/shared/type";
 import { on } from "events";
 import { EditQuizRoomInfo } from "@/features/EditQuizRoomInfo/ui/EditQuizRoomInfo";
+import { ViewUserList } from "@/features/ViewUserList";
+import { MobileHeader } from "@/components/header/MobileHeader";
+import { ViewUserList_Mobile } from "@/features/ViewUserList/ui/ViewUserList_Mobile";
+import { ViewChatList } from "@/features/ViewChatList";
+import { ViewChatList_Mobile } from "@/features/ViewChatList/ui/ViewchatList_Mobile";
+import { SendMessage_Mobile } from "@/features/SendMessage/ui/SendMessage_Mobile";
+
 
 const Container = styled.div`
   display: flex;
@@ -89,6 +94,38 @@ const QuizRoomInfoWrapper = styled.div`
   margin-left: 12px;
 `
 
+const Bottomwrapper = styled.div`
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`
+
+const StartGameByMobile = styled.div`
+  width: 30%;
+  height: 70px;
+  background-color: purple;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+`
+
+const MobileButton = styled.div`
+  width: 100px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  background-color: #FD7400;
+  color: white;
+  font-size: 16px;
+  margin-right: 16px;
+`
+
 type QuizRoomProps = {
   QuizroomId :string
 }
@@ -107,6 +144,15 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
   const [ isConnect,  setIsConnect] = useState<boolean>(false);
   const [ loadingText, setLoadingText ] = useState<string>("Loading")
   const [ modalOpen, setModalOpen ] = useState<boolean>(false);
+
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   //TODO: 백엔드에셔 연결 끊김에 대한 처리가 결정된 이후에 응답에 따라 소켓 연결을 시도할지 결정
 
@@ -174,9 +220,6 @@ export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
     });
   }, [connected]);
 
-  useEffect(()=>{
-    console.log(quizData)
-  },[quizData])
   
 //strict 모드이기에 구독을 2번 진행함
 const setSocketConnect = () => {
@@ -235,6 +278,23 @@ const setSocketConnect = () => {
       };
     }
   }, [client]);
+
+  if(width < 760 ){
+    return <Container>
+      <MobileHeader/>
+      {
+          userData.length === 0 ? <LoadingUI>{loadingText}</LoadingUI> 
+          :
+          <ViewUserList_Mobile UserList={userData}/>
+        }
+      <ViewChatList_Mobile OpenChatList={null} chatList={chatList}/>
+      <Bottomwrapper>
+        <MobileButton onClick={()=>startQuizRoom(QuizroomId)}>게임 시작</MobileButton>
+        <SendMessage_Mobile OpenChatList={null} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage_Mobile>
+      </Bottomwrapper>
+    </Container>
+  }
+  
   
   return (
     <Container>
@@ -244,12 +304,12 @@ const setSocketConnect = () => {
           {
           userData.length === 0 ? <LoadingUI>{loadingText}</LoadingUI> 
           :
-            <UserList UserList={userData}></UserList>
+            <ViewUserList UserList={userData}></ViewUserList>
           }
             <ChatLayout>
-              {userData.length}
+              {width}
               <FirstBox>
-                <ChatList OpenChatList={null} width={1074} chatList={chatList} ></ChatList>
+                <ViewChatList OpenChatList={null} width={1074} chatList={chatList} ></ViewChatList>
                 <QuizRoomInfoWrapper>
                   <ViewQuizRoomInfo OpenModal={toggleModal} maxParticipant={quizData?.maxParticipant} quizTitle={quizData?.quizTitle}></ViewQuizRoomInfo>
                 </QuizRoomInfoWrapper>

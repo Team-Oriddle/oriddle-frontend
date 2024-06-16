@@ -26,14 +26,14 @@ export const ViewQuizList = () => {
     <Layout>
       {/* <QuizListController>인기순 | 최신순 | 이름순</QuizListController> */}
       <QuizLayout>
-        {quizLists.length > 0 ? (
+        {quizLists?.length > 0 ? (
           quizLists.map((quiz) => (
             <ViewQuizCard
-              key={quiz.quizId}
-              id={quiz.quizId}
-              title={quiz.title}
-              content={quiz.description}
-              imageUrl={quiz.imageUrl}
+              key={quiz?.quizId}
+              id={quiz?.quizId}
+              title={quiz?.title}
+              content={quiz?.description}
+              imageUrl={quiz?.imageUrl}
             />
           ))
         ) : (

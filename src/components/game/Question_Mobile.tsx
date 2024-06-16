@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Layout = styled.div`
-  width: 1440px;
+  width: 90%;
   background-color: white;
-  height: 70px;
+  height: 40px;
   color: black;
-  font-size: 30px;
+  font-size: 16px;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -15,7 +15,7 @@ const Layout = styled.div`
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
 `;
 
-export const Question = ({ timeLimit, description, number, type, score,}) => {
+export const Question_Mobile = ({ timeLimit, description, number, type, score,}) => {
   let typeByKorean = "기타";
   if (type === "SHORT_ANSWER") {
     typeByKorean = "객관식";

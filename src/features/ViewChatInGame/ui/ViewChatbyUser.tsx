@@ -1,13 +1,13 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import Duck1 from '../../../public/userInGame/duck1.png'
-import Duck2 from '../../../public/userInGame/duck2.png'
-import Duck3 from '../../../public/userInGame/duck3.png'
-import Duck4 from '../../../public/userInGame/duck4.png'
-import Duck5 from '../../../public/userInGame/duck5.png'
-import Duck6 from '../../../public/userInGame/duck6.png'
-import Duck7 from '../../../public/userInGame/duck7.png'
-import Duck8 from '../../../public/userInGame/duck8.png'
+import Duck1 from '../../../../public/userIngame/duck1.png';
+import Duck2 from '../../../../public/userIngame/duck2.png';
+import Duck3 from '../../../../public/userIngame/duck3.png';
+import Duck4 from '../../../../public/userIngame/duck4.png';
+import Duck5 from '../../../../public/userIngame/duck5.png';
+import Duck6 from '../../../../public/userIngame/duck6.png';
+import Duck7 from '../../../../public/userIngame/duck7.png';
+import Duck8 from '../../../../public/userIngame/duck8.png';
 import Image from "next/image";
 
 const Layout = styled.div`
@@ -21,7 +21,7 @@ const Layout = styled.div`
   color: white;
 `;
 
-const Chatting = styled.div`
+const Chatting = styled.div< { isVisible: boolean } >`
   width: 100%;
   height: 110px;
   color: black;
@@ -90,7 +90,7 @@ const getUserImage = (userColor) => {
   }
 };
 
-export const UserCard = ({
+export const ViewChatbyUser = ({
   usernickname,
   score,
   chatMessage,

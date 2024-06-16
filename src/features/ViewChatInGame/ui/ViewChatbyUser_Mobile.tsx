@@ -1,27 +1,31 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import Duck1 from '../../../public/userInGame/duck1.png'
-import Duck2 from '../../../public/userInGame/duck2.png'
-import Duck3 from '../../../public/userInGame/duck3.png'
-import Duck4 from '../../../public/userInGame/duck4.png'
-import Duck5 from '../../../public/userInGame/duck5.png'
-import Duck6 from '../../../public/userInGame/duck6.png'
-import Duck7 from '../../../public/userInGame/duck7.png'
-import Duck8 from '../../../public/userInGame/duck8.png'
+import Duck1 from '../../../../public/userIngame/duck1.png';
+import Duck2 from '../../../../public/userIngame/duck2.png';
+import Duck3 from '../../../../public/userIngame/duck3.png';
+import Duck4 from '../../../../public/userIngame/duck4.png';
+import Duck5 from '../../../../public/userIngame/duck5.png';
+import Duck6 from '../../../../public/userIngame/duck6.png';
+import Duck7 from '../../../../public/userIngame/duck7.png';
+import Duck8 from '../../../../public/userIngame/duck8.png';
+
+
 import Image from "next/image";
 
 const Layout = styled.div`
-  width: 159px;
-  height: 350px;
+  width: 90%;
+  height: 70px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   color: white;
+  background-color: white;
+  border-radius: 20px;
 `;
 
-const Chatting = styled.div`
+const Chatting = styled.div< { isVisible: boolean } >`
   width: 100%;
   height: 110px;
   color: black;
@@ -53,14 +57,14 @@ const Chatting = styled.div`
 `;
 
 const UserImageWrapper = styled.div`
-  width: 100%;
-  height: 175px;
+  width: 50%;
+  height: 100%;
   border-radius: 10px;
   position: relative;
 `;
 
 const Text = styled.div`
-  font-size: 20px;
+  font-size: 12px;
   font-weight: medium;
   color: black;
 `;
@@ -68,6 +72,12 @@ const Text = styled.div`
 const StyledImage = styled(Image)`
   border-radius: 20px;
 `;
+
+const TextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 
 interface UserCardProps {
   usernickname: string;
@@ -90,7 +100,7 @@ const getUserImage = (userColor) => {
   }
 };
 
-export const UserCard = ({
+export const ViewChatbyUser_Mobile = ({
   usernickname,
   score,
   chatMessage,
@@ -117,9 +127,6 @@ export const UserCard = ({
 
   return (
     <Layout>
-      <Chatting isVisible={isVisible}>
-        <div>{chatMessage}</div>
-      </Chatting>
       <UserImageWrapper>
       {userImage ? (
           <StyledImage
@@ -132,8 +139,13 @@ export const UserCard = ({
           <div>No Image</div> // Add fallback for no image
         )}
       </UserImageWrapper>
-      <Text>{usernickname}</Text>
-      <Text>{score}점</Text>
+      <TextWrapper>
+        <Text>{usernickname}</Text>
+        <Text>{score}점</Text>
+      </TextWrapper>
+      {/* <Chatting isVisible={isVisible}>
+        <div>{chatMessage}</div>
+      </Chatting> */}
     </Layout>
   );
 };

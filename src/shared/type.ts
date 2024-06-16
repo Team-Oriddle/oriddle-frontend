@@ -4,8 +4,8 @@ export interface UserData{
   userId:number,
   isHost:boolean
   score?: number;
-  //id 추가 예정 : number
-  //color 추가 예정 :number
+  id : number;
+  color :number;
 }
 
 export interface QuizData {

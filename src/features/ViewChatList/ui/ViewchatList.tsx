@@ -2,7 +2,7 @@ import { ChatData } from "@/shared/type";
 import { SetStateAction, useEffect, useRef } from "react";
 import styled from "styled-components";
 
-const Layout = styled.div`
+const Layout = styled.div<{ width: number }>`
   width: ${(props) => props.width}px;
   margin-bottom: 20px;
   height: 300px;
@@ -53,7 +53,7 @@ type ChatListProps = {
   chatList: ChatData[]
 }
 
-export const ChatList = ({ OpenChatList, width, chatList }: ChatListProps) => {
+export const ViewChatList = ({ OpenChatList, width, chatList }: ChatListProps) => {
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {

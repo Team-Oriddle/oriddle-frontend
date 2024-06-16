@@ -28,7 +28,7 @@ const ModalBox = styled.div`
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
-const Modal = ({ isOpen, children, onClose }) => {
+export const TimerModal = ({ isOpen, children, onClose }) => {
   useEffect(() => {
     if (isOpen) {
         const timer = setTimeout(onClose, 5000); 
@@ -46,8 +46,3 @@ if (!isOpen) return null;
         </ModalBackdrop>
     );
 };
-
-export default Modal;
-
-
-//=> 추후에 shared로 이동

@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import { UserCard } from "./UserCard";
 import { ChatData, UserData } from "@/shared/type";
+import { UserCard } from "@/components/game/UserCard";
+import { ViewChatbyUser } from "./ViewChatbyUser";
 
 const Layout = styled.div`
   width: 1440px;
@@ -18,13 +19,13 @@ interface UserChatProps {
   currentChat: ChatData | null;
 }
 
-export const UserChat = ({ UserList, currentChat }: UserChatProps) => {
+export const ViewChatInGame_Mobile = ({ UserList, currentChat }: UserChatProps) => {
   return (
     <Layout>
       {UserList.map((user) => {
         const userChat = currentChat && currentChat.nickname === user.nickname ? currentChat.content : "";
         return (
-          <UserCard
+          <ViewChatbyUser
             key={user.position}
             color={user.color}
             usernickname={user.nickname}
