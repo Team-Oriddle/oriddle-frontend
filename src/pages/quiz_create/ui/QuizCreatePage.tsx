@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import axios from "axios";
 import { EditQuizSetting } from "@/features/EditQuizSetting/ui/EditQuizSetting";
 import { ChooseQuizEditPageNumber } from "@/features/ChooseQuizEditPageNumber/ui/ChooseQuizEditPageNumber";
 import { EditQuizInfo } from "@/features/EditQuizInfo/ui/EditQuizInfo";
@@ -12,6 +11,7 @@ import { EmbedYoutube } from "@/features/EmbedYoutube/ui/EmbedYoutube";
 import { EmbedMusic } from "@/features/EmbedMusic/ui/EmbedMusic";
 import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage";
 import { postQuiz } from "@/entities/quiz";
+import { AddQuizSource } from "@/features/AddQuizSource";
 
 
 type QuizCreateProps = {
@@ -229,6 +229,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
 
     postQuiz(title, description, '' , quizListForm,router);
   }
+  
 
   
   const uploadingImage = (e: any) => {
@@ -291,39 +292,12 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           ></TitleInput>
           {/* TODO: EditQuiz로 feature 생성 */}
           <QuizContainer>
-            <SourceInput>
-              {quizList[selectedQuiz]?.sourceType !== "" ? (
-                quizList[selectedQuiz]?.sourceType === "image" ? (
-                <Image 
-                  src={quizList[selectedQuiz]?.source}
-                  alt="썸네일"
-                  layout="fill"
-                  objectFit="cover"
-                />
-                ) : quizList[selectedQuiz]?.sourceType === "VIDEO" ? (
-                  <iframe 
-                    width="350" 
-                    height="250" 
-                    src={quizList[selectedQuiz].source}
-                    title="YouTube video player" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    allowfullscreen
-                  ></iframe>
-                ) : (
-                  null
-                  // TODO: 추후에 음악 추가
-                )
-                ) : (
-                <SourceTypeChoose>
-                  <ImageInput type="file" onChange={uploadingImage} />
-                  <YoutubeEmbedButton onClick={toggleYoutubeModal}>유튜브</YoutubeEmbedButton>
-                  <YoutubeEmbedButton onClick={toggleMusicModal}>유튜브</YoutubeEmbedButton>
-                  {/* TODO: 유튜브 링크추가기능 */}
-                </SourceTypeChoose>
-              )}
-            </SourceInput>
+            <AddQuizSource
+              selectedQuiz={quizList[selectedQuiz]}
+              toggleMusicModal={toggleMusicModal}
+              toggleYoutubeModal={toggleYoutubeModal}
+              uploadingImage={uploadingImage}
+            />
             <QuizInput
               placeholder="질문을 입력해주세요"
               value={quizList[selectedQuiz]?.description ?? ""}
@@ -350,9 +324,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
                       handleEditOptionAnswer(index + 1, e.target.value)
                     }
                   />
-                  <DeleteButton
-                    onClick={() => handleDeleteOptionAnswer(index + 1)}
-                  >
+                  <DeleteButton onClick={() => handleDeleteOptionAnswer(index + 1)}>
                     X
                   </DeleteButton>
                 </AnswerWrapper>
@@ -364,11 +336,6 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           {/* TODO: feature로 빼내기 */}
         </CenterBox>
         <RightBox>
-            {/* <AnswerInput
-              placeholder="설명을 입력해주세요"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            ></AnswerInput> */}
             <ChooseQuizEditPageNumber
               selectedPage={settingPage}
               onNextPage={handleNextPage}
