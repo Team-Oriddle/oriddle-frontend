@@ -113,7 +113,8 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       if (quiz.number === selectedQuiz) {
         const newAnswers = quiz.answers.map((answer: any, index: any) => {
           if (editNumber === index) {
-            return { ...answer, editValue };
+            console.log(editValue)
+            return editValue;
           }
           return answer;
         });
@@ -197,8 +198,13 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       }
       return quiz;
     });
+    
     setQuizList(newQuizList);
   };
+
+
+
+
 
   const handleDeleteQuiz = (number: number) => {
     const newArray = quizList
@@ -217,6 +223,8 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     setSelectedQuiz(number - 2);
     setQuizList(newArray);
   };
+
+
 
   const [isDelete, setIsDelete] = useState<boolean>(false);
   //0. 버튼을 누르면 selected를 변경하고 isDelete를 변경을해줌
