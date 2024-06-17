@@ -158,7 +158,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     client.subscribe(`/topic/quiz-room/${QuizGameId}/chat`, (message) => {
       const socketData = JSON.parse(message.body);
       setChatList((prevChatList) => [...prevChatList, socketData]);
-      setCurrentChat(socketData);    
+      setCurrentChat(socketData);
     });
     //TODO: 구독 해제가 필요함
   }

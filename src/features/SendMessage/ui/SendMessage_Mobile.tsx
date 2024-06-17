@@ -22,7 +22,9 @@ export const SendMessage_Mobile = ({ OpenChatList, placeholder, quizGameId }: Se
   const [input, setInput] = useState('');
 
   const handleInputChange = (event: any) => {
-    setInput(event.target.value);
+    if (event.target.value.length <= 50) {
+      setInput(event.target.value);    
+    }  
   };
 
   const sendClick = () => {
