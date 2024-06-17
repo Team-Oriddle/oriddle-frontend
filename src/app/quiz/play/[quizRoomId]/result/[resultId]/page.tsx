@@ -2,8 +2,8 @@
 
 import { QuizResultPage } from "@/pages/quiz_result_page";
 
-const QuizResultAppPage = ({ params }: { params: { quizRoomId: string } }) => {
-  return <QuizResultPage slug={params.quizRoomId} />;
+const QuizResultAppPage = ({ params }: { params: { quizRoomId: string,resultId:string } }) => {
+  return <QuizResultPage quizRoomId={params.quizRoomId} resultId={params.resultId} />;
 };
 
 export default QuizResultAppPage;

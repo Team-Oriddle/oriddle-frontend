@@ -98,7 +98,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   const [width, setWidth] = useState(0);
 
   const setSocketConnect = () => {
-    if (client && connected) {
+    if (client) {
       const subscriptions = [];
       try {
         console.log('Subscribing to topic');
@@ -161,7 +161,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
           client.subscribe(`/topic/quiz-room/${QuizGameId}/finish`, (message) => {
             const socketData = JSON.parse(message.body);
             console.log(socketData);
-            router.push(`/quiz/play/${socketData.quizResultId}/result`);
+            router.push(`/quiz/play/${QuizGameId}/result/${socketData.quizResultId}`);
           })
         );
         subscriptions.push(
@@ -172,7 +172,6 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
             toggleFinishModal();
           })
         );
-  
         subscriptions.push(
           client.subscribe(`/topic/quiz-room/${QuizGameId}/chat`, (message) => {
             const socketData = JSON.parse(message.body);
@@ -221,16 +220,18 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
         ...participant,
         score: 0,
       }));
-      getUserData().then((data) => {
-        if(participants.find((participant) => participant.id === data.id)===undefined){
-        }else{
-          alert('방에 참가하고 있지 않습니다!')
-          router.push('/');
-        }
-      }).catch((error) => {
-        alert('유저 정보가 없습니다!')
-        router.push('/');
-      });
+      // getUserData().then((data) => {
+      //   if(participants.find((participant) => participant.id === data.id)===undefined){
+      //   }else{
+      //     alert('방에 참가하고 있지 않습니다!')
+      //     router.push('/');
+      //   }
+      // })
+      // .catch((error) => {
+      //   alert('유저 정보가 없습니다!')
+      //   router.push('/');
+      // });
+      //로그인 이슈로 테스트 불가능
       setUserData(participants);
     });
 
