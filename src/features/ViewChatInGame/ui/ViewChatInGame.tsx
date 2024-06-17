@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { ChatData, UserData } from "@/shared/type";
-import { UserCard } from "@/components/game/UserCard";
 import { ViewChatbyUser } from "./ViewChatbyUser";
+import { useEffect, useState } from "react";
 
 const Layout = styled.div`
   width: 1440px;
@@ -20,17 +20,27 @@ interface UserChatProps {
 }
 
 export const ViewChatInGame = ({ UserList, currentChat }: UserChatProps) => {
+  const [userChats, setUserChats] = useState<{ [key: string]: ChatData[] }>({});
+
+  useEffect(() => {
+    if (currentChat) {
+      setUserChats((prevChats) => {
+        const userChatList = prevChats[currentChat.nickname] || [];
+        return { ...prevChats, [currentChat.nickname]: [...userChatList, currentChat] };
+      });
+    }
+  }, [currentChat]);
+
   return (
     <Layout>
       {UserList.map((user) => {
-        const userChat = currentChat && currentChat.nickname === user.nickname ? currentChat.content : "";
         return (
           <ViewChatbyUser
             key={user.position}
             color={user.color}
             usernickname={user.nickname}
             score={user.score}
-            chatMessage={userChat}
+            chatMessages={userChats[user.nickname] || []}
           />
         );
       })}

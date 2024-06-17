@@ -19,6 +19,8 @@ interface UserChatProps {
 }
 
 export const UserChatInGame = ({ UserList, currentChat }: UserChatProps) => {
+  
+
   return (
     <Layout>
       {UserList.map((user) => {
