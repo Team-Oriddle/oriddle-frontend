@@ -58,6 +58,10 @@ const Container = styled.div`
 const Button = styled.button`
   width: 266px;
   height: 80px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   background-color: #643dd2;
   border-radius: 1000px;
   font-size: 20px;
