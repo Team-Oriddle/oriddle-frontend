@@ -98,7 +98,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   const [width, setWidth] = useState(0);
 
   const setSocketConnect = () => {
-    if (client) {
+    if (client && connected) {
       const subscriptions = [];
       try {
         console.log('Subscribing to topic');
@@ -133,33 +133,61 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
             setQuestionData(socketData);
           })
         );
-        if (answerUser) {
-          setAnswerUser(answerUser.nickname);
-        } else {
-          console.log("사용자가 존재하지 않습니다!");
-        }
-        return updatedUserData;
-      });
-      toggleAnswerModal();
-    });
-    client.subscribe(`/topic/quiz-room/${QuizGameId}/finish`, (message) => {
-      const socketData = JSON.parse(message.body)
-      console.log(socketData);
-      // router.push(`/quiz-result/${socketData.quizResultId}`);     
-    });
-    client.subscribe(`/topic/quiz-room/${QuizGameId}/time-out`, (message) => {
-      const socketData = JSON.parse(message.body)
-      console.log(socketData);
-      setAnswerData(socketData);
-      toggleFinishModal();  
-    });
-    client.subscribe(`/topic/quiz-room/${QuizGameId}/chat`, (message) => {
-      const socketData = JSON.parse(message.body);
-      setChatList((prevChatList) => [...prevChatList, socketData]);
-      setCurrentChat(socketData);
-    });
-    //TODO: 구독 해제가 필요함
-  }
+        subscriptions.push(
+          client.subscribe(`/topic/quiz-room/${QuizGameId}/answer`, (message) => {
+            console.log(userData);
+            const socketData = JSON.parse(message.body);
+            setAnswerData(socketData);
+            setUserData((prevUserData) => {
+              const updatedUserData = prevUserData.map((user) =>
+                user.userId === socketData.userId
+                  ? { ...user, score: user.score + socketData.score }
+                  : user
+              );
+              const answerUser = updatedUserData.find(
+                (user) => user.userId === socketData.userId
+              );
+              if (answerUser) {
+                setAnswerUser(answerUser.nickname);
+              } else {
+                console.log("사용자가 존재하지 않습니다!");
+              }
+              return updatedUserData;
+            });
+            toggleAnswerModal();
+          })
+        );
+        subscriptions.push(
+          client.subscribe(`/topic/quiz-room/${QuizGameId}/finish`, (message) => {
+            const socketData = JSON.parse(message.body);
+            console.log(socketData);
+            router.push(`/quiz/play/${socketData.quizResultId}/result`);
+          })
+        );
+        subscriptions.push(
+          client.subscribe(`/topic/quiz-room/${QuizGameId}/time-out`, (message) => {
+            const socketData = JSON.parse(message.body);
+            console.log(socketData);
+            setAnswerData(socketData);
+            toggleFinishModal();
+          })
+        );
+  
+        subscriptions.push(
+          client.subscribe(`/topic/quiz-room/${QuizGameId}/chat`, (message) => {
+            const socketData = JSON.parse(message.body);
+            setChatList((prevChatList) => [...prevChatList, socketData]);
+            setCurrentChat(socketData);
+          })
+        );
+      } catch (error) {
+        console.error('Failed to subscribe:', error);
+      }
+      return () => {
+        subscriptions.forEach((sub) => sub.unsubscribe());
+      };
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
