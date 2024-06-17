@@ -93,6 +93,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   const [chatList, setChatList] = useState<ChatData[]>([]); //
   const [questionTimer, setQuestionTimer] = useState<number>(30);
   const [ viewChattingLog, setViewChattingLog ]= useState<boolean>(false) 
+  const {client, connected} = useStomp();
 
 
   const [width, setWidth] = useState(0);
@@ -181,7 +182,15 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
       }));
       setUserData(participants);
     });
-    setSocketConnect();
+    if(client){
+      client.onConnect = () =>{
+        setSocketConnect();
+      }
+      client.onStompError = (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      };
+    }
     getUserData().then((result) => {
       if(participants.find((participant) => participant.userId === result.userId)){
       }else{
@@ -190,7 +199,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
       // .catch((error) => {
       //   alert("로그인이 필요합니다");
       // });
-  }, [QuizGameId]);
+  }, [client]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -206,7 +215,6 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     return () => clearInterval(timeInterval);
   }, [isLoading]);
 
-  const {client, connected} = useStomp();
 
   //TODO: 퀴즈 게임방으로 접속할시 에러 발생함
 
