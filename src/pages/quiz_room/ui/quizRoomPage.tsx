@@ -1,4 +1,3 @@
-import { ChatList } from "@/components/attend/ChatList";
 import { Header } from "@/components/header/Header";
 import { getQuizRoomData, startQuizRoom } from "@/entities/quizroom";
 import { StartGameButton } from "@/features/StartGameButton";
@@ -7,18 +6,16 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from 'axios';
 import { useStomp } from "@/entities/socket/lib/SocketProvider";
-import { Client } from '@stomp/stompjs';
 import { SendMessage } from "@/features/SendMessage";
 import { ViewQuizRoomInfo } from "@/features/ViewQuizRoomInfo/ui/ViewQuizRoomInfo";
 import { QuizData, UserData } from "@/shared/type";
-import { on } from "events";
 import { EditQuizRoomInfo } from "@/features/EditQuizRoomInfo/ui/EditQuizRoomInfo";
 import { ViewUserList } from "@/features/ViewUserList";
 import { MobileHeader } from "@/components/header/MobileHeader";
 import { ViewUserList_Mobile } from "@/features/ViewUserList/ui/ViewUserList_Mobile";
 import { ViewChatList } from "@/features/ViewChatList";
-import { ViewChatList_Mobile } from "@/features/ViewChatList/ui/ViewchatList_Mobile";
 import { SendMessage_Mobile } from "@/features/SendMessage/ui/SendMessage_Mobile";
+import { ViewChatList_Mobile } from "@/features/ViewChatList/ui/ViewchatList_Mobile";
 
 
 const Container = styled.div`

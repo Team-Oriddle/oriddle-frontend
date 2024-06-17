@@ -1,0 +1,1 @@
+export { QuizRoomListPage } from './ui/quizRoomListPage';

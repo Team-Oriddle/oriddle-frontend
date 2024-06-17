@@ -32,6 +32,10 @@ export const Header = () => {
     router.push("/quiz/create/1");
   };
 
+  const QuizRoomList = () => {
+    router.push("/quiz/roomlist");
+  };
+
   return (
     <Layout>
       <Title onClick={routeToMain}>ORIDDLE</Title>
@@ -39,6 +43,7 @@ export const Header = () => {
       <Buttons>
         {authState.isLoggedIn ? (
           <>
+            <Button onClick={QuizRoomList}>ROOM</Button>
             <Button onClick={CreateQuiz}>CREATE</Button>
             <Button onClick={routeToMyPage}>MY PAGE</Button>
             <Button onClick={handleLogout}>LOGOUT</Button>
