@@ -9,6 +9,7 @@ import Duck6 from '../../../../public/userIngame/duck6.png';
 import Duck7 from '../../../../public/userIngame/duck7.png';
 import Duck8 from '../../../../public/userIngame/duck8.png';
 import Image from "next/image";
+import { ChatData } from "@/shared/type";
 
 const Layout = styled.div`
   width: 159px;
@@ -36,8 +37,6 @@ const Chatting = styled.div< { isVisible: boolean } >`
   &::after {
     content: "";
     position: absolute;
-    bottom: 0;
-    right: 10px;
     width: 0;
     height: 0;
     border: 15px solid transparent;
@@ -72,7 +71,7 @@ const StyledImage = styled(Image)`
 interface UserCardProps {
   usernickname: string;
   score: number;
-  chatMessage: string;
+  chatMessages: ChatData[];
   color: number;
 }
 
@@ -93,23 +92,25 @@ const getUserImage = (userColor) => {
 export const ViewChatbyUser = ({
   usernickname,
   score,
-  chatMessage,
+  chatMessages,
   color,
 }: UserCardProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [userImage, setUserImage] = useState(null);
+  const [currentMessage, setCurrentMessage] = useState<ChatData | null>(null);
 
   useEffect(() => {
-    console.log(chatMessage);
-    if (chatMessage) {
+    if (chatMessages?.length > 0) {
+      const latestMessage = chatMessages[chatMessages.length - 1];
+      setCurrentMessage(latestMessage);
       setIsVisible(true);
+      console.log(chatMessages)
       const timer = setTimeout(() => {
         setIsVisible(false);
-      }, 5000);
+      }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [chatMessage]);
-
+  }, [chatMessages]);
 
   useEffect(() => {
     setUserImage(getUserImage(color));
@@ -118,7 +119,7 @@ export const ViewChatbyUser = ({
   return (
     <Layout>
       <Chatting isVisible={isVisible}>
-        <div>{chatMessage}</div>
+        <div>{currentMessage?.content}</div>
       </Chatting>
       <UserImageWrapper>
       {userImage ? (
