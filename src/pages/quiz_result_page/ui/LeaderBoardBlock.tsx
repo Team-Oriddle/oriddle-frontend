@@ -25,14 +25,14 @@ import styled from "styled-components";
 //   },
 // };
 
-const LeaderBoardBlock = ({ slug }: { slug: string }) => {
+const LeaderBoardBlock = ({ quizRoomId, resultId }: { quizRoomId: string, resultId:string }) => {
   const [results, setResults] = useState<{ rankingTable: any[] } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [userData] = useAtom(userAtom);
 
   useEffect(() => {
-    const baseUrl = `http://localhost:8080/api/v1/quiz-result/${slug}`;
+    const baseUrl = `http://localhost:8080/api/v1/quiz-result/${resultId}`;
 
     const fetchResult = async () => {
       try {
@@ -47,7 +47,7 @@ const LeaderBoardBlock = ({ slug }: { slug: string }) => {
     };
 
     fetchResult();
-  }, [slug]);
+  }, [quizRoomId]);
 
   if (loading) return <div>로딩중...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -79,7 +79,6 @@ const LeaderBoardBlock = ({ slug }: { slug: string }) => {
       ) : (
         <div>No results found</div>
       )}
-
       {/* 점수 들어가는 곳 */}
     </Container>
   );

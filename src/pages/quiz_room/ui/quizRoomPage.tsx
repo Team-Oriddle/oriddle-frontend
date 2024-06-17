@@ -21,9 +21,10 @@ import { SendMessage_Mobile } from "@/features/SendMessage/ui/SendMessage_Mobile
 
 type QuizRoomProps = {
   QuizroomId :string
+  ResultId: string
 }
 
-export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
+export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
   const router = useRouter();
   const {client, connected} = useStomp();
   const [userData, setUserData] = useState<UserData[]>([]); 

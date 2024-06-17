@@ -3,12 +3,13 @@ import { QuizRoomPage } from "@/pages/quiz_room";
 
 type QuizRoomProps = {
   params: {
-    slug: string;
+    quizRoomId: string;
+    resultId: string;
   }
 }
 
 const AttendPage = ({ params }:QuizRoomProps) => {
-  return <QuizRoomPage  QuizroomId = {params.slug}/>;
+  return <QuizRoomPage  QuizroomId = {params.quizRoomId}/>;
 };
 
 export default AttendPage;
