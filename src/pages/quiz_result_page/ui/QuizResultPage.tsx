@@ -10,30 +10,13 @@ import { useStomp } from "@/entities/socket/lib/SocketProvider";
 // 1. 결과 순위표(LeaderBoardBlock)
 // TODO: 2. 정답 정확도(AnswerAccuracyBlock)
 // TODO: 3. 퀴즈 소요시간(QuizTimeBlock)
-export const QuizResultPage = ({ slug }: { slug: string }) => {
+export const QuizResultPage = ({ quizRoomId, resultId }: { quizRoomId: string, resultId:string }) => {
   const { client, connected } = useStomp();
 
   const setSocketConnect = () => {
     const subscriptions = [
-      client.subscribe(`/topic/quiz-room/${slug}/join`, (message) => {
-        const socketData = JSON.parse(message.body);
-      }),
-      client.subscribe(`/topic/quiz-room/${slug}/leave`, (message) => {
-        const socketData = JSON.parse(message.body);
-      }),
-      client.subscribe(`/topic/quiz-room/${slug}/question`, (message) => {
-      }),
-      client.subscribe(`/topic/quiz-room/${slug}/answer`, (message) => {
-        const socketData = JSON.parse(message.body);
-      }),
-      client.subscribe(`/topic/quiz-room/${slug}/finish`, (message) => {
-        const socketData = JSON.parse(message.body);
-        // router.push(`/quiz-result/${socketData.quizResultId}`);
-      }),
-      client.subscribe(`/topic/quiz-room/${slug}/time-out`, (message) => {
-        const socketData = JSON.parse(message.body);
-      }),
-      client.subscribe(`/topic/quiz-room/${slug}/chat`, (message) => {
+      client.subscribe(`/topic/quiz-room/${quizRoomId}/chat`, (message) => {
+        console.log('chat', message)
       }),
     ];
 
@@ -59,14 +42,14 @@ export const QuizResultPage = ({ slug }: { slug: string }) => {
       <Header />
 
       {/* 1. 순위표 블록 */}
-      <LeaderBoardBlock slug={slug} />
+      <LeaderBoardBlock quizRoomId={quizRoomId} resultId={resultId}  />
 
       {/* TODO: 2. 정답 정확도(AnswerAccuracyBlock) */}
 
       {/* TODO: 3. 퀴즈 소요시간(QuizTimeBlock) */}
 
       {/* 하단 페이지 조작 버튼 */}
-      <ButtonBlock slug={slug} />
+      <ButtonBlock quizRoomId={quizRoomId} />
     </Container>
   );
 };

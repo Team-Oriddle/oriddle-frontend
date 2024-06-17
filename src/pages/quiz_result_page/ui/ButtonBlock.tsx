@@ -2,15 +2,15 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { styled } from "styled-components";
 
-const ButtonBlock = ({ slug }: any) => {
+const ButtonBlock = ({ quizRoomId }: any) => {
   const router = useRouter();
 
   const routeToMainPage = () => {
-    LeaveThisRoom(slug);
+    LeaveThisRoom(quizRoomId);
   };
 
   const TogoRoom = () => {
-    router.push(`/quiz/room/${slug}`);
+    router.push(`/quiz/play/${quizRoomId}/room`);
   };
 
   const LeaveThisRoom = async (quizRoomId: string) => {
