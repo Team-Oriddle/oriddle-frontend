@@ -1,16 +1,18 @@
 import { Header } from "@/components/header/Header";
-import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage/ui/AddQuizFromCreatePage";
 import { ChooseQuizFromCreatePage } from "@/features/ChooseQuizFromCreatePage/ui/ChooseQuizFromCreatePage";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import axios from "axios";
 import { EditQuizSetting } from "@/features/EditQuizSetting/ui/EditQuizSetting";
 import { ChooseQuizEditPageNumber } from "@/features/ChooseQuizEditPageNumber/ui/ChooseQuizEditPageNumber";
 import { EditQuizInfo } from "@/features/EditQuizInfo/ui/EditQuizInfo";
 import { EmbedYoutube } from "@/features/EmbedYoutube/ui/EmbedYoutube";
 import { EmbedMusic } from "@/features/EmbedMusic/ui/EmbedMusic";
+import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage";
+import { postQuiz } from "@/entities/quiz";
+import { AddQuizSource } from "@/features/AddQuizSource";
+import { AddQuizType } from "@/features/AddQuizType";
 
 
 type QuizCreateProps = {
@@ -50,8 +52,6 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   const [ modalOpen, setModalOpen ] = useState<boolean>(false);
   const [ youtubeModalOpen , setYoutubeModalOpen ] = useState<boolean>(false);
   const [ musicModalOpen , setMusicModalOpen ] = useState<boolean>(false);
-
-  const [ youtubeEmbedUrl, setYoutubeEmbedUrl ] = useState<string>("");
   
   const toggleMusicModal = () => {
     setMusicModalOpen(!musicModalOpen);
@@ -228,34 +228,11 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       return { ...quiz, number: index + 1 };
     });
 
-    const quizForm = {
-      title: title,
-      description: description,
-      image:
-        "https://orridle.s3.ap-northeast-2.amazonaws.com/quiz-image/0f1a9674-8496-46da-ad64-388afbfe9e97.webp",
-      questions: quizListForm,
-    };
+    postQuiz(title, description, '' , quizListForm,router);
+  }
+  
 
-    try {
-      console.log(quizForm);
-      const response = await axios.post(
-        "http://localhost:8080/api/v1/quiz",
-        quizForm,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response.data.data.quizId);
-      alert("생성되었습니다");
-      router.push(`/quiz/info/${response.data.data.quizId}`);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  
   const uploadingImage = (e: any) => {
     if (!e.target.files) {
       return;
@@ -290,10 +267,6 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     uploadImage();
   }, [img]);
   
-
-
-
-
   return (
     <Container>
       <Header />
@@ -311,7 +284,6 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
             <AddQuizFromCreatePage addQuiz={handleAddQuiz} />
           </QuizListContainer>
         </LeftBox>
-
         <CenterBox> 
           <TitleInput
             placeholder="제목을 입력해주세요"
@@ -320,39 +292,12 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           ></TitleInput>
           {/* TODO: EditQuiz로 feature 생성 */}
           <QuizContainer>
-            <SourceInput>
-              {quizList[selectedQuiz]?.sourceType !== "" ? (
-                quizList[selectedQuiz]?.sourceType === "image" ? (
-                <Image 
-                  src={quizList[selectedQuiz]?.source}
-                  alt="썸네일"
-                  layout="fill"
-                  objectFit="cover"
-                />
-                ) : quizList[selectedQuiz]?.sourceType === "VIDEO" ? (
-                  <iframe 
-                    width="350" 
-                    height="250" 
-                    src={quizList[selectedQuiz].source}
-                    title="YouTube video player" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    allowfullscreen
-                  ></iframe>
-                ) : (
-                  null
-                  // TODO: 추후에 음악 추가
-                )
-                ) : (
-                <SourceTypeChoose>
-                  <ImageInput type="file" onChange={uploadingImage} />
-                  <YoutubeEmbedButton onClick={toggleYoutubeModal}>유튜브</YoutubeEmbedButton>
-                  <YoutubeEmbedButton onClick={toggleMusicModal}>유튜브</YoutubeEmbedButton>
-                  {/* TODO: 유튜브 링크추가기능 */}
-                </SourceTypeChoose>
-              )}
-            </SourceInput>
+            <AddQuizSource
+              selectedQuiz={quizList[selectedQuiz]}
+              toggleMusicModal={toggleMusicModal}
+              toggleYoutubeModal={toggleYoutubeModal}
+              uploadingImage={uploadingImage}
+            />
             <QuizInput
               placeholder="질문을 입력해주세요"
               value={quizList[selectedQuiz]?.description ?? ""}
@@ -361,43 +306,16 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
               }
             ></QuizInput>
           </QuizContainer>
-          <AnswerInput
-            placeholder="정답을 입력해주세요"
-            value={quizList[selectedQuiz]?.answers[0] ?? ""}
-            onChange={(e) =>
-              handleEditMainAnswers(selectedQuiz, e.target.value)
-            }
-          ></AnswerInput>
-          <OtherAnswerInput>
-            {quizList[selectedQuiz]?.answers
-              .slice(1)
-              .map((answer: any, index: number) => (
-                <AnswerWrapper key={index + 1}>
-                  <OptionAnswerInput
-                    value={answer.content}
-                    onChange={(e) =>
-                      handleEditOptionAnswer(index + 1, e.target.value)
-                    }
-                  />
-                  <DeleteButton
-                    onClick={() => handleDeleteOptionAnswer(index + 1)}
-                  >
-                    X
-                  </DeleteButton>
-                </AnswerWrapper>
-              )) ?? null}
-            <AnswerOptionButton onClick={handleAddOptionAnswer}>
-              +
-            </AnswerOptionButton>
-          </OtherAnswerInput>
+          <AddQuizType
+            selectedQuiz={quizList[selectedQuiz]}
+            handleEditMainAnswers={handleEditMainAnswers}
+            handleEditOptionAnswer={handleEditOptionAnswer}
+            handleDeleteOptionAnswer={handleDeleteOptionAnswer} 
+            handleAddOptionAnswer={handleAddOptionAnswer}
+          ></AddQuizType>
           {/* TODO: feature로 빼내기 */}
         </CenterBox>
         <RightBox>
-            {/* <AnswerInput
-              placeholder="설명을 입력해주세요"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            ></AnswerInput> */}
             <ChooseQuizEditPageNumber
               selectedPage={settingPage}
               onNextPage={handleNextPage}
@@ -544,89 +462,9 @@ const QuizContainer = styled.div`
   flex-direction: row;
   margin: 10px 0px;
 `;
-const SourceInput = styled.div`
-  width: 342px;
-  height: 100%;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
-  background-color: white;
-  margin-right: 24px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
 
-const AnswerInput = styled(StyleInput)`
-  width: 100%;
-  height: 150px;
-  margin: 10px 0px;
-  font-size: 28px;
-`;
 
-const OtherAnswerInput = styled.div`
-  width: 100%;
-  height: 150px;
-  margin: 10px 0px;
-  font-size: 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
-  color: black;
-  background-color: white;
-  border: none;
-  text-align: center;
-  overflow-y: scroll;
-`;
 
-const AnswerOptionButton = styled.div`
-  width: 100%;
-  padding: 16px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  font-size: 30px;
-  text-align: center;
-  &:hover {
-    background-color: #FD7400;
-    color: white;
-  }
-`;
-
-const OptionAnswerInput = styled.input`
-  background-color: white;
-  font-size: 32px;
-  width: calc(100% - 40px);
-  height: 60px;
-  margin-right: 10px;
-  color: black;
-  background-color: white;
-  border: none;
-  text-align: center;
-`;
-
-const DeleteButton = styled.button`
-  color: #643dd2;
-  font-weight: bold;
-  background-color: white;
-  border: none;
-  width: 30px;
-  height: 30px;
-  font-size: 24px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-`;
-
-const AnswerWrapper = styled.div`
-  background-color: white;
-  display: flex;
-  align-items: center;
-  width: 100%;
-`;
 
 const ImageInput = styled(StyleInput)`
   width: 100px;
@@ -653,16 +491,3 @@ const QuizListContainer = styled.div`
   align-items: center;
 `
 
-const SourceTypeChoose = styled.div`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-`
-
-const YoutubeEmbedButton = styled.div`
-  width: 100px;
-  height: 100px;
-  background-color: black;
-  color: white;
-`
