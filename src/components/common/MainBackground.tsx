@@ -1,7 +1,7 @@
 import Image from "next/image";
 import styled from "styled-components";
 
-const MainBackground = ({ overlayText = "테스트 페이지" }) => {
+const MainBackground = ({ overlayText = "테스트 페이지", children }) => {
   return (
     <Container>
       <StyledImage
@@ -39,6 +39,7 @@ const MainBackground = ({ overlayText = "테스트 페이지" }) => {
         style={{ zIndex: 4, transform: "translateY(15%)" }}
         priority
       />
+      <ContentWrapper>{children}</ContentWrapper>
     </Container>
   );
 };
@@ -126,4 +127,9 @@ const OverlayText = styled.div`
     left: 10%;
     transform: translateY(45%);
   }
+`;
+
+const ContentWrapper = styled.div`
+  position: relative;
+  z-index: 5;
 `;
