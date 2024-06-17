@@ -17,6 +17,220 @@ import { ViewChatList } from "@/features/ViewChatList";
 import { SendMessage_Mobile } from "@/features/SendMessage/ui/SendMessage_Mobile";
 import { ViewChatList_Mobile } from "@/features/ViewChatList/ui/ViewchatList_Mobile";
 
+type QuizRoomProps = {
+  QuizroomId :string
+  ResultId: string
+}
+
+export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
+  const router = useRouter();
+  const {client, connected} = useStomp();
+  const [userData, setUserData] = useState<UserData[]>([]); 
+  const [chatList, setChatList] = useState([]); //
+  const [quizData, setQuizData] = useState<QuizData|null>({
+    "roomTitle": "",
+    "quizTitle": "",
+    "maxParticipant": 0,
+    "participants": []
+  });
+  const [ isConnect,  setIsConnect] = useState<boolean>(false);
+  const [ loadingText, setLoadingText ] = useState<string>("Loading")
+  const [ modalOpen, setModalOpen ] = useState<boolean>(false);
+
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+
+  const toggleModal = () => {
+    setModalOpen(!modalOpen);
+  }
+
+  useEffect(()=>{
+    const interval = setInterval(()=>{
+      setLoadingText((prev)=>{
+        if(prev.length < 10) return prev+"."
+        return "Loading"
+      })
+    },500)
+    return ()=>  clearInterval(interval)
+  },[])
+
+  // const LeaveThisRoom =async (quizRoomId: string) => {
+  //   try {
+  //     const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
+  //       withCredentials: true,
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       }
+  //     })
+  //     console.log(response)
+  //     router.push('/')
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+
+  useEffect(() => {
+    // TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
+    const joinGame = async (quizRoomId: string) => {
+      try {
+        const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/join`, {}, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        if (response.status !== 200) {
+          throw new Error(`error! status: ${response.status}`);
+        }
+      } catch (error: any) {
+        console.log(error);
+        if (error.response && error.response.status !== 409) {
+          console.log('401');
+          const redirectEndPoint = encodeURIComponent(`/quiz/play/${quizRoomId}/room`);
+          window.location.href = `http://localhost:8080/api/v1/login/google?redirectEndPoint=${redirectEndPoint}`;
+        }
+      }
+    };
+
+    joinGame(QuizroomId);
+
+    getQuizRoomData(QuizroomId).then((result) => {
+      setQuizData(result);
+      setUserData(result.participants);
+      setIsConnect(true);
+    });
+    setSocketConnect();
+  }, [connected]);
+
+  
+
+//TODO: 백엔드에셔 연결 끊김에 대한 처리가 결정된 이후에 응답에 따라 소켓 연결을 시도할지 결정
+  const setSocketConnect = () => {
+    if (client) {
+      const subscriptions = [];
+      try {
+        subscriptions.push(
+          client.subscribe(`/topic/quiz-room/${QuizroomId}/start`, (message) => {
+            router.push(`/quiz/play/${QuizroomId}/game`);
+          })
+        );
+        subscriptions.push(
+          client.subscribe(`/topic/quiz-room/${QuizroomId}/join`, (message) => {
+            const socketData = JSON.parse(message.body);
+            const newUser = { ...socketData };
+            setUserData((prevUserData) => {
+              const updatedUserData = [...prevUserData, newUser];
+              updatedUserData.sort((a, b) => a.position - b.position);
+              return updatedUserData;
+            });
+          })
+        );
+        subscriptions.push(
+          client.subscribe(`/topic/quiz-room/${QuizroomId}/leave`, (message) => {
+            const socketData = JSON.parse(message.body);
+            const findIndex = socketData.userId;
+            setUserData((prevUserData) => {
+              const updatedUserData = [...prevUserData];
+              const removeUserDataIndex = updatedUserData.findIndex(
+                (player) => player.userId === findIndex
+              );
+              if (removeUserDataIndex !== -1) {
+                updatedUserData.splice(removeUserDataIndex, 1);
+              }
+              return updatedUserData;
+            });
+          })
+        );
+        subscriptions.push(
+          client.subscribe(`/topic/quiz-room/${QuizroomId}/chat`, (message) => {
+            const newChat = JSON.parse(message.body);
+            setChatList((prevChatList) => [...prevChatList, newChat]);
+            console.log(chatList);
+          })
+        );
+      } catch (error) {
+        console.error('Failed to subscribe:', error);
+      }
+      return () => {
+        subscriptions.forEach((sub) => sub.unsubscribe());
+        console.log('unsubscribe');
+        //1. 이새끼 리턴을 안해줌
+      };
+    }
+  };
+
+  useEffect(() => {
+    if(client){
+      client.onConnect = () =>{
+        setSocketConnect();
+      }
+      client.onStompError = (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      };
+    }
+  }, [client]);
+
+  if(width < 760 ){
+    return <Container>
+      <MobileHeader/>
+      {
+          userData.length === 0 ? <LoadingUI>{loadingText}</LoadingUI> 
+          :
+          <ViewUserList_Mobile UserList={userData}/>
+        }
+      <ViewChatList_Mobile OpenChatList={null} chatList={chatList}/>
+      <Bottomwrapper>
+        <MobileButton onClick={()=>startQuizRoom(QuizroomId)}>게임 시작</MobileButton>
+        <SendMessage_Mobile OpenChatList={null} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage_Mobile>
+      </Bottomwrapper>
+    </Container>
+  }
+  
+  
+  return (
+    <Container>
+      <Header/>
+      <Wrapper>
+          <UserControllerLayout>
+          {
+          userData.length === 0 ? <LoadingUI>{loadingText}</LoadingUI> 
+          :
+            <ViewUserList UserList={userData}></ViewUserList>
+          }
+            <ChatLayout>
+              {width}
+              <FirstBox>
+                <ViewChatList OpenChatList={null} width={1074} chatList={chatList} ></ViewChatList>
+                <QuizRoomInfoWrapper>
+                  <ViewQuizRoomInfo OpenModal={toggleModal} maxParticipant={quizData?.maxParticipant} quizTitle={quizData?.quizTitle}></ViewQuizRoomInfo>
+                </QuizRoomInfoWrapper>
+              </FirstBox>
+              <SecondBox>
+                <SendMessage OpenChatList={null} width={1074} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage>
+                <StartGameButton roomId={QuizroomId}></StartGameButton>
+              </SecondBox>
+            </ChatLayout>
+          </UserControllerLayout>
+          <EditQuizRoomInfo
+            quizRoomId={QuizroomId}
+            roomData={quizData}
+            isOpen={modalOpen} 
+            onClose={toggleModal}
+          ></EditQuizRoomInfo>
+      </Wrapper>
+    </Container>
+  );
+};
+
+
 
 const Container = styled.div`
   display: flex;
@@ -122,210 +336,3 @@ const MobileButton = styled.div`
   font-size: 16px;
   margin-right: 16px;
 `
-
-type QuizRoomProps = {
-  QuizroomId :string
-}
-
-export const QuizRoomPage = ({QuizroomId}:QuizRoomProps) => {
-  const router = useRouter();
-  const {client, connected} = useStomp();
-  const [userData, setUserData] = useState<UserData[]>([]); 
-  const [chatList, setChatList] = useState([]); //
-  const [quizData, setQuizData] = useState<QuizData|null>({
-    "roomTitle": "",
-    "quizTitle": "",
-    "maxParticipant": 0,
-    "participants": []
-  });
-  const [ isConnect,  setIsConnect] = useState<boolean>(false);
-  const [ loadingText, setLoadingText ] = useState<string>("Loading")
-  const [ modalOpen, setModalOpen ] = useState<boolean>(false);
-
-  const [width, setWidth] = useState(0);
-
-  useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  //TODO: 백엔드에셔 연결 끊김에 대한 처리가 결정된 이후에 응답에 따라 소켓 연결을 시도할지 결정
-
-  const toggleModal = () => {
-    setModalOpen(!modalOpen);
-  }
-
-  useEffect(()=>{
-    const interval = setInterval(()=>{
-      setLoadingText((prev)=>{
-        if(prev.length < 10) return prev+"."
-        return "Loading"
-      })
-    },500)
-    return ()=>  clearInterval(interval)
-  },[])
-
-  // const LeaveThisRoom =async (quizRoomId: string) => {
-  //   try {
-  //     const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
-  //       withCredentials: true,
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       }
-  //     })
-  //     console.log(response)
-  //     router.push('/')
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-
-  useEffect(() => {
-    // TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
-    const joinGame = async (quizRoomId: string) => {
-      try {
-        const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/join`, {}, {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        if (response.status !== 200) {
-          throw new Error(`error! status: ${response.status}`);
-        }
-      } catch (error: any) {
-        console.log(error);
-        if (error.response && error.response.status !== 409) {
-          console.log('401');
-          const redirectEndPoint = encodeURIComponent(`/quiz/play/${quizRoomId}/room`);
-          window.location.href = `http://localhost:8080/api/v1/login/google?redirectEndPoint=${redirectEndPoint}`;
-        }
-      }
-    };
-
-    joinGame(QuizroomId);
-
-    getQuizRoomData(QuizroomId).then((result) => {
-      console.log("퀴즈 데이터를 불러옴")
-      setQuizData(result);
-      setUserData(result.participants);
-      console.log("사용자 정보를 받아옴");
-      console.log(result.participants);
-      setIsConnect(true);
-    });
-  }, [connected]);
-
-  
-//strict 모드이기에 구독을 2번 진행함
-const setSocketConnect = () => {
-  if (client && connected) {
-    try {
-      console.log('Subscribing to topic');
-      client.subscribe(`/topic/quiz-room/${QuizroomId}/start`, (message) => {
-        console.log(message);
-        router.push(`/quiz/play/${QuizroomId}/game`)
-      });
-
-      client.subscribe(`/topic/quiz-room/${QuizroomId}/join`, (message) => {
-        const socketData = JSON.parse(message.body);
-        const newUser = { ...socketData };
-        setUserData((prevUserData) => {
-          const updatedUserData = [...prevUserData, newUser];
-          updatedUserData.sort((a, b) => a.position - b.position);
-          return updatedUserData;
-        });
-      });
-
-      client.subscribe(`/topic/quiz-room/${QuizroomId}/leave`, (message) => {
-        const socketData = JSON.parse(message.body);
-        const findIndex = socketData.userId;
-        
-        setUserData((prevUserData) => {
-          const updatedUserData = [...prevUserData];
-          const removeUserDataIndex = updatedUserData.findIndex(player => player.userId === findIndex);
-          if (removeUserDataIndex !== -1) {
-            updatedUserData.splice(removeUserDataIndex, 1);
-          }
-          return updatedUserData;
-        });
-      });
-
-      client.subscribe(`/topic/quiz-room/${QuizroomId}/chat`, (message) => {
-        const newChat = JSON.parse(message.body);
-        setChatList((prevChatList) => [...prevChatList, newChat]);
-        console.log(chatList);
-      });
-    } catch (error) {
-      console.error('Failed to subscribe:', error);
-    }
-  }
-}
-
-
-  useEffect(() => {
-    if(client){
-      client.onConnect = () =>{
-        setSocketConnect();
-      }
-      client.onStompError = (frame) => {
-        console.error('Broker reported error: ' + frame.headers['message']);
-        console.error('Additional details: ' + frame.body);
-      };
-    }
-  }, [client]);
-
-  if(width < 760 ){
-    return <Container>
-      <MobileHeader/>
-      {
-          userData.length === 0 ? <LoadingUI>{loadingText}</LoadingUI> 
-          :
-          <ViewUserList_Mobile UserList={userData}/>
-        }
-      <ViewChatList_Mobile OpenChatList={null} chatList={chatList}/>
-      <Bottomwrapper>
-        <MobileButton onClick={()=>startQuizRoom(QuizroomId)}>게임 시작</MobileButton>
-        <SendMessage_Mobile OpenChatList={null} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage_Mobile>
-      </Bottomwrapper>
-    </Container>
-  }
-  
-  
-  return (
-    <Container>
-      <Header/>
-      <Wrapper>
-          <UserControllerLayout>
-          {
-          userData.length === 0 ? <LoadingUI>{loadingText}</LoadingUI> 
-          :
-            <ViewUserList UserList={userData}></ViewUserList>
-          }
-            <ChatLayout>
-              {width}
-              <FirstBox>
-                <ViewChatList OpenChatList={null} width={1074} chatList={chatList} ></ViewChatList>
-                <QuizRoomInfoWrapper>
-                  <ViewQuizRoomInfo OpenModal={toggleModal} maxParticipant={quizData?.maxParticipant} quizTitle={quizData?.quizTitle}></ViewQuizRoomInfo>
-                </QuizRoomInfoWrapper>
-              </FirstBox>
-              <SecondBox>
-                <SendMessage OpenChatList={null} width={1074} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage>
-                <StartGameButton roomId={QuizroomId}></StartGameButton>
-              </SecondBox>
-            </ChatLayout>
-          </UserControllerLayout>
-          <EditQuizRoomInfo
-            quizRoomId={QuizroomId}
-            roomData={quizData}
-            isOpen={modalOpen} 
-            onClose={toggleModal}
-          ></EditQuizRoomInfo>
-      </Wrapper>
-    </Container>
-  );
-};
-
-

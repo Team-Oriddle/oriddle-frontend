@@ -2,15 +2,15 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { styled } from "styled-components";
 
-const ButtonBlock = ({ slug }: any) => {
+const ButtonBlock = ({ quizRoomId }: any) => {
   const router = useRouter();
 
   const routeToMainPage = () => {
-    LeaveThisRoom(slug);
+    LeaveThisRoom(quizRoomId);
   };
 
   const TogoRoom = () => {
-    router.push(`/quiz/room/${slug}`);
+    router.push(`/quiz/play/${quizRoomId}/room`);
   };
 
   const LeaveThisRoom = async (quizRoomId: string) => {
@@ -58,6 +58,10 @@ const Container = styled.div`
 const Button = styled.button`
   width: 266px;
   height: 80px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   background-color: #643dd2;
   border-radius: 1000px;
   font-size: 20px;

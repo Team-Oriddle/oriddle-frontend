@@ -17,6 +17,7 @@ import { Question_Mobile } from "@/components/game/Question_Mobile";
 import { QuizSource_Mobile } from "@/components/game/QuizSource_Mobile";
 import { UserChatInGame_Mobile } from "@/components/game/UserChatInGame_Mobile";
 import { ViewChatInGame } from "@/features/ViewChatInGame";
+import { getUserData } from "@/entities/user";
 
 const Container = styled.div`
   display: flex;
@@ -92,6 +93,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   const [chatList, setChatList] = useState<ChatData[]>([]); //
   const [questionTimer, setQuestionTimer] = useState<number>(30);
   const [ viewChattingLog, setViewChattingLog ]= useState<boolean>(false) 
+  const {client, connected} = useStomp();
 
 
   const [width, setWidth] = useState(0);
@@ -147,7 +149,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     client.subscribe(`/topic/quiz-room/${QuizGameId}/finish`, (message) => {
       const socketData = JSON.parse(message.body)
       console.log(socketData);
-      // router.push(`/quiz-result/${socketData.quizResultId}`);     
+      router.push(`/quiz/play/${QuizGameId}/result/${socketData.quizResultId}`);     
     });
     client.subscribe(`/topic/quiz-room/${QuizGameId}/time-out`, (message) => {
       const socketData = JSON.parse(message.body)
@@ -172,15 +174,32 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
 
 
   useEffect(() => {
+    let participants = [];
     getQuizRoomData(QuizGameId).then((result) => {
-      const participants = result.participants.map((participant) => ({
+      participants = result.participants.map((participant) => ({
         ...participant,
         score: 0,
       }));
       setUserData(participants);
     });
-    setSocketConnect();
-  }, [QuizGameId]);
+    if(client){
+      client.onConnect = () =>{
+        setSocketConnect();
+      }
+      client.onStompError = (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      };
+    }
+    getUserData().then((result) => {
+      if(participants.find((participant) => participant.userId === result.userId)){
+      }else{
+        alert("참가자가 아닙니다");
+      }})
+      // .catch((error) => {
+      //   alert("로그인이 필요합니다");
+      // });
+  }, [client]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -196,7 +215,6 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     return () => clearInterval(timeInterval);
   }, [isLoading]);
 
-  const {client, connected} = useStomp();
 
   //TODO: 퀴즈 게임방으로 접속할시 에러 발생함
 
