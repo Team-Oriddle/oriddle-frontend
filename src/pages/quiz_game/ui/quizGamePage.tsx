@@ -97,97 +97,72 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
 
   const [width, setWidth] = useState(0);
 
-  const setSocketConnect = () => {
-    if (client && connected) {
-      const subscriptions = [];
-      try {
-        console.log('Subscribing to topic');
-        subscriptions.push(
-          client.subscribe(`/topic/quiz-room/${QuizGameId}/join`, (message) => {
-            const socketData = JSON.parse(message.body);
-            console.log(socketData);
-            let newUser = { ...socketData, isHost: false };
-            setUserData((prevUserData) => {
-              const updatedUserData = [...prevUserData, newUser];
-              return updatedUserData.sort((a, b) => a.position - b.position);
-            });
-          })
+    const setSocketConnect = () => {
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/join`, (message) => {
+      const socketData = JSON.parse(message.body)
+      console.log(socketData);
+      let newUser = { ...socketData, isHost: false };
+      setUserData((prevUserData) => {
+        const updatedUserData = [...prevUserData, newUser];
+        return updatedUserData.sort((a, b) => a.position - b.position);
+      });
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/leave`, (message) => {
+      const socketData = JSON.parse(message.body)
+      console.log(socketData);
+      setUserData((prevUserData) => {
+        const updatedUserData = prevUserData.filter(
+          (player) => player.userId !== socketData.userId
         );
-        subscriptions.push(
-          client.subscribe(`/topic/quiz-room/${QuizGameId}/leave`, (message) => {
-            const socketData = JSON.parse(message.body);
-            console.log(socketData);
-            setUserData((prevUserData) => {
-              const updatedUserData = prevUserData.filter(
-                (player) => player.userId !== socketData.userId
-              );
-              return updatedUserData;
-            });
-          })
+        return updatedUserData;
+      });
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/question`, (message) => {
+      setIsLoading(false);
+      const socketData = JSON.parse(message.body)
+      console.log(socketData);
+      setQuestionData(socketData);    
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/answer`, (message) => {
+      console.log(userData);
+      const socketData = JSON.parse(message.body)
+      setAnswerData(socketData);
+      setUserData((prevUserData) => {
+        const updatedUserData = prevUserData.map((user) =>
+          user.userId === socketData.userId
+            ? { ...user, score: user.score + socketData.score }
+            : user
         );
-        subscriptions.push(
-          client.subscribe(`/topic/quiz-room/${QuizGameId}/question`, (message) => {
-            setIsLoading(false);
-            const socketData = JSON.parse(message.body);
-            console.log(socketData);
-            setQuestionData(socketData);
-          })
+        const answerUser = updatedUserData.find(
+          (user) => user.userId === socketData.userId
         );
-        subscriptions.push(
-          client.subscribe(`/topic/quiz-room/${QuizGameId}/answer`, (message) => {
-            console.log(userData);
-            const socketData = JSON.parse(message.body);
-            setAnswerData(socketData);
-            setUserData((prevUserData) => {
-              const updatedUserData = prevUserData.map((user) =>
-                user.userId === socketData.userId
-                  ? { ...user, score: user.score + socketData.score }
-                  : user
-              );
-              const answerUser = updatedUserData.find(
-                (user) => user.userId === socketData.userId
-              );
-              if (answerUser) {
-                setAnswerUser(answerUser.nickname);
-              } else {
-                console.log("사용자가 존재하지 않습니다!");
-              }
-              return updatedUserData;
-            });
-            toggleAnswerModal();
-          })
-        );
-        subscriptions.push(
-          client.subscribe(`/topic/quiz-room/${QuizGameId}/finish`, (message) => {
-            const socketData = JSON.parse(message.body);
-            console.log(socketData);
-            router.push(`/quiz/play/${socketData.quizResultId}/result`);
-          })
-        );
-        subscriptions.push(
-          client.subscribe(`/topic/quiz-room/${QuizGameId}/time-out`, (message) => {
-            const socketData = JSON.parse(message.body);
-            console.log(socketData);
-            setAnswerData(socketData);
-            toggleFinishModal();
-          })
-        );
-  
-        subscriptions.push(
-          client.subscribe(`/topic/quiz-room/${QuizGameId}/chat`, (message) => {
-            const socketData = JSON.parse(message.body);
-            setChatList((prevChatList) => [...prevChatList, socketData]);
-            setCurrentChat(socketData);
-          })
-        );
-      } catch (error) {
-        console.error('Failed to subscribe:', error);
-      }
-      return () => {
-        subscriptions.forEach((sub) => sub.unsubscribe());
-      };
-    }
-  };
+        if (answerUser) {
+          setAnswerUser(answerUser.nickname);
+        } else {
+          console.log("사용자가 존재하지 않습니다!");
+        }
+        return updatedUserData;
+      });
+      toggleAnswerModal();
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/finish`, (message) => {
+      const socketData = JSON.parse(message.body)
+      console.log(socketData);
+      router.push(`/quiz/play/${QuizGameId}/result/${socketData.quizResultId}`);     
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/time-out`, (message) => {
+      const socketData = JSON.parse(message.body)
+      console.log(socketData);
+      setAnswerData(socketData);
+      toggleFinishModal();  
+    });
+    client.subscribe(`/topic/quiz-room/${QuizGameId}/chat`, (message) => {
+      const socketData = JSON.parse(message.body);
+      setChatList((prevChatList) => [...prevChatList, socketData]);
+      setCurrentChat(socketData);
+    });
+    //TODO: 구독 해제가 필요함
+  }
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
@@ -195,6 +170,27 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+
+  useEffect(() => {
+    let participants = [];
+    getQuizRoomData(QuizGameId).then((result) => {
+      participants = result.participants.map((participant) => ({
+        ...participant,
+        score: 0,
+      }));
+      setUserData(participants);
+    });
+    setSocketConnect();
+    getUserData().then((result) => {
+      if(participants.find((participant) => participant.userId === result.userId)){
+      }else{
+        alert("참가자가 아닙니다");
+      }})
+      // .catch((error) => {
+      //   alert("로그인이 필요합니다");
+      // });
+  }, [QuizGameId]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -214,37 +210,6 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
 
   //TODO: 퀴즈 게임방으로 접속할시 에러 발생함
 
-  useEffect(() => {
-    getQuizRoomData(QuizGameId).then((result) => {
-      const participants = result.participants.map((participant) => ({
-        ...participant,
-        score: 0,
-      }));
-      // getUserData().then((data) => {
-      //   if(participants.find((participant) => participant.id === data.id)===undefined){
-      //   }else{
-      //     alert('방에 참가하고 있지 않습니다!')
-      //     router.push('/');
-      //   }
-      // })
-      // .catch((error) => {
-      //   alert('유저 정보가 없습니다!')
-      //   router.push('/');
-      // });
-      //로그인 이슈로 테스트 불가능
-      setUserData(participants);
-    });
-
-    if(client){
-      client.onConnect = () =>{
-        setSocketConnect();
-      }
-      client.onStompError = (frame) => {
-        console.error('Broker reported error: ' + frame.headers['message']);
-        console.error('Additional details: ' + frame.body);
-      };
-    }
-  }, [client]);
 
 
   if(width < 760 ){
