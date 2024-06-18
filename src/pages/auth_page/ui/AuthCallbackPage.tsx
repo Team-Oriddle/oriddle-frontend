@@ -25,8 +25,8 @@ export const AuthCallbackPage = () => {
           throw new Error("Failed to fetch user data");
         }
 
-        const userData = response.data;
-        sessionStorage.setItem("user", JSON.stringify(userData)); // 세션 스토리지에 사용자 데이터 저장
+        const userData = response.data.data;
+        // localStorage.setItem("user", JSON.stringify(userData)); // 세션 스토리지에 사용자 데이터 저장
 
         setAuthState((prevState) => ({
           ...prevState,
@@ -34,9 +34,9 @@ export const AuthCallbackPage = () => {
           user: userData,
         }));
 
-        const redirectUrl = sessionStorage.getItem("redirectUrl");
+        const redirectUrl = localStorage.getItem("redirectUrl");
         if (redirectUrl) {
-          sessionStorage.removeItem("redirectUrl");
+          localStorage.removeItem("redirectUrl");
           router.push(redirectUrl);
         } else {
           router.push("/"); // 로그인 성공 후 홈으로 리디렉션 (기본값)
