@@ -16,6 +16,11 @@ import { ViewUserList_Mobile } from "@/features/ViewUserList/ui/ViewUserList_Mob
 import { ViewChatList } from "@/features/ViewChatList";
 import { SendMessage_Mobile } from "@/features/SendMessage/ui/SendMessage_Mobile";
 import { ViewChatList_Mobile } from "@/features/ViewChatList/ui/ViewchatList_Mobile";
+import { join } from "path";
+import { useAtom } from "jotai";
+import { userAtom } from "@/store/userAtom";
+import { useSocialLogin } from "@/utils/useSocialLogin";
+import { getUserData } from "@/entities/user";
 
 type QuizRoomProps = {
   QuizroomId :string
@@ -36,82 +41,12 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
   const [ isConnect,  setIsConnect] = useState<boolean>(false);
   const [ loadingText, setLoadingText ] = useState<string>("Loading")
   const [ modalOpen, setModalOpen ] = useState<boolean>(false);
+  const [authState, setAuthState] = useAtom(userAtom);
+
 
   const [width, setWidth] = useState(0);
 
-  useEffect(() => {
-    const handleResize = () => setWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-
-  const toggleModal = () => {
-    setModalOpen(!modalOpen);
-  }
-
-  useEffect(()=>{
-    const interval = setInterval(()=>{
-      setLoadingText((prev)=>{
-        if(prev.length < 10) return prev+"."
-        return "Loading"
-      })
-    },500)
-    return ()=>  clearInterval(interval)
-  },[])
-
-  // const LeaveThisRoom =async (quizRoomId: string) => {
-  //   try {
-  //     const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
-  //       withCredentials: true,
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       }
-  //     })
-  //     console.log(response)
-  //     router.push('/')
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-
-  useEffect(() => {
-    // TODO: JoinGame을 feature로 변경해야하는지 추후에 고민
-    const joinGame = async (quizRoomId: string) => {
-      try {
-        const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/join`, {}, {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        if (response.status !== 200) {
-          throw new Error(`error! status: ${response.status}`);
-        }
-      } catch (error: any) {
-        console.log(error);
-        if (error.response && error.response.status !== 409) {
-          console.log('401');
-          const redirectEndPoint = encodeURIComponent(`/quiz/play/${quizRoomId}/room`);
-          window.location.href = `http://localhost:8080/api/v1/login/google?redirectEndPoint=${redirectEndPoint}`;
-        }
-      }
-    };
-
-    joinGame(QuizroomId);
-
-    getQuizRoomData(QuizroomId).then((result) => {
-      setQuizData(result);
-      setUserData(result.participants);
-      setIsConnect(true);
-    });
-    setSocketConnect();
-  }, [connected]);
-
-  
-
-//TODO: 백엔드에셔 연결 끊김에 대한 처리가 결정된 이후에 응답에 따라 소켓 연결을 시도할지 결정
+  //TODO: 백엔드에셔 연결 끊김에 대한 처리가 결정된 이후에 응답에 따라 소켓 연결을 시도할지 결정
   const setSocketConnect = () => {
     if (client) {
       const subscriptions = [];
@@ -165,6 +100,84 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
       };
     }
   };
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+
+  const toggleModal = () => {
+    setModalOpen(!modalOpen);
+  }
+
+  useEffect(()=>{
+    const interval = setInterval(()=>{
+      setLoadingText((prev)=>{
+        if(prev.length < 10) return prev+"."
+        return "Loading"
+      })
+    },500)
+    return ()=>  clearInterval(interval)
+  },[])
+
+  // const LeaveThisRoom =async (quizRoomId: string) => {
+  //   try {
+  //     const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
+  //       withCredentials: true,
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       }
+  //     })
+  //     console.log(response)
+  //     router.push('/')
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+
+  useEffect(() => {
+    const joinGame = async (quizRoomId: string) => {
+      try {
+        const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/join`, {}, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+      } catch (error: any) {
+        console.log(error);
+        if (error.response && error.response.status === 409) {
+        }
+      }
+    };
+
+
+    if(authState.isLoggedIn === false){ 
+      console.log("로그인이 필요합니다")
+      localStorage.setItem("redirectUrl", window.location.href);
+      router.push('/login')
+    }else{
+      console.log('데이터 받아오기')
+      getQuizRoomData(QuizroomId).then((result) => {
+        setQuizData(result);
+        setUserData(result.participants);
+        setIsConnect(true);
+      }).catch((error)=>{{
+        //이 사람은 사용자가 아님
+        if(error.response.status === 404){
+          alert("연결이 끊겼습니다!")
+          router.push('/')
+        }else{
+          alert("방에 참가 할 수 없습니다!")
+          router.push('/')
+        }
+      }});
+    }
+    setSocketConnect();
+  }, [connected]);
 
   useEffect(() => {
     if(client){
