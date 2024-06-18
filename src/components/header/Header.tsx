@@ -18,11 +18,11 @@ export const Header = () => {
   };
 
   const routeToMyPage = () => {
-    alert('준비중입니다.')
-  //   getUserData().then((data) => {
-  //     console.log(data);
-  //   });
-  // };
+    alert('개발중입니다')
+    // getUserData().then((data) => {
+    //   console.log(data);
+    // });
+  };
 
   const routeToLogin = () => {
     router.push("/login");
