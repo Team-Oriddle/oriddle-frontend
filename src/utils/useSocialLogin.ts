@@ -10,7 +10,7 @@ export const useSocialLogin = () => {
   const socialLogin = useCallback(
     (provider: "google" | "facebook") => {
       // 현재 페이지 URL을 세션 스토리지에 저장합니다.
-      sessionStorage.setItem("redirectUrl", window.location.href);
+      localStorage.setItem("redirectUrl", window.location.href);
 
       const redirectEndPoint = "/auth/callback";
       const baseUrl = `http://localhost:8080/api/v1/login/${provider}?redirectEndPoint=${redirectEndPoint}`;

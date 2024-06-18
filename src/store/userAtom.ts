@@ -1,4 +1,6 @@
 import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
+
 
 interface User {
   id: string;
@@ -11,7 +13,13 @@ interface AuthState {
   user?: User;
 }
 
-export const userAtom = atom<AuthState>({
+export const userAtom = atomWithStorage<AuthState>("authState", {
   isLoggedIn: false,
-  user: undefined,
-});
+  user: undefined,  
+})
+
+
+// <AuthState>({
+//   isLoggedIn: false,
+//   user: undefined,
+// });

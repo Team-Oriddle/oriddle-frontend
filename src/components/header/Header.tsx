@@ -1,3 +1,4 @@
+import { getLogout, getUserData } from "@/entities/user";
 import { userAtom } from "@/store/userAtom";
 import { useAtom } from "jotai";
 import { useRouter } from "next/navigation";
@@ -6,7 +7,7 @@ import styled from "styled-components";
 
 
 export const Header = () => {
-  const [authState] = useAtom(userAtom);
+  const [authState, setAuthState] = useAtom(userAtom);
   useEffect(() => {
     console.log(`authState: `, authState);
   }, [authState]);
@@ -17,7 +18,10 @@ export const Header = () => {
   };
 
   const routeToMyPage = () => {
-    alert("My Page로 이동합니다.");
+    alert('개발중입니다')
+    // getUserData().then((data) => {
+    //   console.log(data);
+    // });
   };
 
   const routeToLogin = () => {
@@ -25,7 +29,15 @@ export const Header = () => {
   };
 
   const handleLogout = () => {
-    alert("(개발 중)로그아웃 액션입니다.");
+    // getLogout().then((data) => {
+    //   alert("로그아웃 되었습니다.");
+    // });
+    setAuthState((prevState) => ({
+      ...prevState,
+      isLoggedIn: false,
+      user: undefined,
+    }));
+    window.location.reload();
   };
 
   const CreateQuiz = () => {
@@ -39,6 +51,7 @@ export const Header = () => {
   return (
     <Layout>
       <Title onClick={routeToMain}>ORIDDLE</Title>
+
       {/* TODO: 검색 바 넣기 */}
       <Buttons>
         {authState.isLoggedIn ? (

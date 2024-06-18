@@ -18,6 +18,9 @@ import { QuizSource_Mobile } from "@/components/game/QuizSource_Mobile";
 import { UserChatInGame_Mobile } from "@/components/game/UserChatInGame_Mobile";
 import { ViewChatInGame } from "@/features/ViewChatInGame";
 import { getUserData } from "@/entities/user";
+import { useAtom } from "jotai";
+import { userAtom } from "@/store/userAtom";
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -95,10 +98,15 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   const [ viewChattingLog, setViewChattingLog ]= useState<boolean>(false) 
   const {client, connected} = useStomp();
 
+  const [authState, setAuthState] = useAtom(userAtom);
 
   const [width, setWidth] = useState(0);
 
     const setSocketConnect = () => {
+    if(!client){
+      return console.log('소켓연결 실패');
+    }
+    console.log('소켓연결');
     client.subscribe(`/topic/quiz-room/${QuizGameId}/join`, (message) => {
       const socketData = JSON.parse(message.body)
       console.log(socketData);
@@ -175,13 +183,33 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
 
   useEffect(() => {
     let participants = [];
-    getQuizRoomData(QuizGameId).then((result) => {
-      participants = result.participants.map((participant) => ({
-        ...participant,
-        score: 0,
-      }));
-      setUserData(participants);
-    });
+    getUserData().then((data) => {
+      if(data.code === 'US0001'){
+        getQuizRoomData(QuizGameId).then((result) => {
+          participants = result.participants.map((participant) => ({
+            ...participant,
+            score: 0,
+          }));
+          setUserData(participants);
+        }).catch((error) => {
+          console.log(error);
+          router.push('/');
+        });
+        return;
+      }
+      if(data.code==='GL0003'){
+        if(authState.isLoggedIn === false){
+          console.log('로그인이 필요합니다');
+          localStorage.setItem("redirectUrl", window.location.href);
+          router.push('/login')
+      }}
+    })
+    setSocketConnect();
+  }, [QuizGameId]);
+
+  useEffect(() => {
+    console.log('클라이언트 변동')
+    console.log(client)
     if(client){
       client.onConnect = () =>{
         setSocketConnect();
@@ -191,14 +219,6 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
         console.error('Additional details: ' + frame.body);
       };
     }
-    getUserData().then((result) => {
-      if(participants.find((participant) => participant.userId === result.userId)){
-      }else{
-        alert("참가자가 아닙니다");
-      }})
-      // .catch((error) => {
-      //   alert("로그인이 필요합니다");
-      // });
   }, [client]);
 
   useEffect(() => {
