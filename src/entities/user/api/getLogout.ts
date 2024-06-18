@@ -1,7 +1,7 @@
-export const getUserData = async () => {
+export const getLogout = async () => {
   let UserData;
   try {
-    const response = await fetch(`http://localhost:8080/api/v1/user/info`, {
+    const response = await fetch(`http://localhost:8080/api/v1/logout`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -12,7 +12,7 @@ export const getUserData = async () => {
     UserData = data
     console.log(data);
   } catch (error) {
-    alert('유저 정보가 없습니다!')
+    alert('사용자의 토큰이 유효하지 않습니다')
   }
   return UserData;
 };
