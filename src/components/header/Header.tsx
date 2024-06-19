@@ -51,7 +51,6 @@ export const Header = () => {
   return (
     <Layout>
       <Title onClick={routeToMain}>ORIDDLE</Title>
-
       {/* TODO: 검색 바 넣기 */}
       <Buttons>
         {authState.isLoggedIn ? (

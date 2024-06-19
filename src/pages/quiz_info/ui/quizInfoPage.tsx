@@ -93,8 +93,8 @@ export const QuizInfoPage = ({quizId}:Props) => {
         <ViewQuizInfo quizId={quizId} ></ViewQuizInfo>
         <UserEvaluateQuizLayout>
           <UserEvaluateButtonLayout>
-            <DefalutButton color="검정" txt="추천 561" ></DefalutButton>
-            <DefalutButton color="" txt="신고"></DefalutButton>
+            <DefalutButton onClick={()=>alert("개발중인 기능입니다!")} color="검정" txt="추천" ></DefalutButton>
+            <DefalutButton onClick={()=>alert("개발중인 기능입니다!")} color="" txt="신고"></DefalutButton>
           </UserEvaluateButtonLayout>
         </UserEvaluateQuizLayout>
         {/* TODO: 댓글은 댓글 관련된 협의 종료된 이후 진행 */}
