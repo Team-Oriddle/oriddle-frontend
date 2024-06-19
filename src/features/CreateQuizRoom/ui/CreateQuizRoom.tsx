@@ -34,7 +34,7 @@ export const CreateQuizRoom = ({ quizId, handleModal }: Props) => {
           onChange={(e) => setQuizRoomTitle(e.target.value)}
           placeholder='제목을 입력해주세요'></TextInput>
         {/* TODO: 입력 제한*/}
-        <TextInput type='text' placeholder='비밀번호'></TextInput>
+        {/* <TextInput type='text' placeholder='비밀번호'></TextInput> */}
         {/* TODO: 입력 제한*/}
         <PlayerInput>
           <UserText> 
