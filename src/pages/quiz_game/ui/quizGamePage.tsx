@@ -182,29 +182,29 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
 
 
   useEffect(() => {
-    let participants = [];
     getUserData().then((data) => {
       if(data.code === 'US0001'){
         getQuizRoomData(QuizGameId).then((result) => {
-          participants = result.participants.map((participant) => ({
+          setUserData(result.participants.map((participant) => ({
             ...participant,
             score: 0,
-          }));
-          setUserData(participants);
+          })));
+          setSocketConnect();
         }).catch((error) => {
           console.log(error);
           router.push('/');
         });
-        return;
       }
-      if(data.code==='GL0003'){
-        if(authState.isLoggedIn === false){
-          console.log('로그인이 필요합니다');
-          localStorage.setItem("redirectUrl", window.location.href);
-          router.push('/login')
-      }}
-    })
-    setSocketConnect();
+    }).catch((error) => { 
+      if(error.businessCode === "GL0003"){
+        alert("로그인이 필요합니다!")
+        localStorage.setItem("redirectUrl", window.location.href);
+        router.push('/login')
+      }else{
+        alert("알 수 없는 에러가 발생했습니다!")
+        router.push('/')
+      }
+    });
   }, [QuizGameId]);
 
   useEffect(() => {

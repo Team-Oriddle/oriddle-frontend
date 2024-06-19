@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation"
 import styled from "styled-components"
 
-const Layout = styled.div`
+const Layout = styled.button<{isHost:boolean}>`
   width: 342px;
   height: 70px;
   border-radius: 50px;
@@ -15,13 +15,18 @@ const Layout = styled.div`
   color: white;
   cursor: pointer; 
   margin-left: 24px;
+  &:disabled{
+    background-color: #BDBDBD;
+    cursor: not-allowed;
+  }
 `
 
 type StartGameProps = {
+  isHost:boolean
   roomId :string
 }
 
-export const StartGameButton = ({roomId}:StartGameProps) => {
+export const StartGameButton = ({isHost,roomId}:StartGameProps) => {
   //TODO: API로 로직을 빼내야 하는지 추후에 고민
 
   const PressStartGameButton = async(roomId:string) =>{
@@ -40,7 +45,7 @@ export const StartGameButton = ({roomId}:StartGameProps) => {
   }
   
   return(
-    <Layout onClick={()=>PressStartGameButton(roomId)}  >
+    <Layout disabled={!isHost} onClick={()=>PressStartGameButton(roomId)}  >
       게임 시작
     </Layout>
   )

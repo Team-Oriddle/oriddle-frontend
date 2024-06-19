@@ -22,15 +22,13 @@ export const postQuizRoom = async (
       }),
     });
 
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
+
 
     const data = await response.json();
     console.log(data);
     router.push(`/quiz/play/${data.data.quizRoomId}/room`);
   } catch (error) {
-    console.error(error);
+    return error;
     alert('방에 참가해있습니다!');
   }
 };

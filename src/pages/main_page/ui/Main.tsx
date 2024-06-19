@@ -1,6 +1,7 @@
 import MainBackground from "@/components/common/MainBackground";
 import { Header } from "@/components/header/Header";
 import { ViewQuizList } from "@/features/ViewQuizList";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -18,6 +19,9 @@ const Container = styled.div`
 
 
 export const Main = () => {
+  useEffect (() => {
+    localStorage.removeItem("redirectUrl");
+  }, []);
   return (
     <>
     <Container>

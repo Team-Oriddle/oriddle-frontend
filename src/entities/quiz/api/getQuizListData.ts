@@ -16,7 +16,7 @@ export const getQuizListData = async () => {
     quizRoomData = data.data.quizzes;
     console.log(data.data.quizzes);
   } catch (error) {
-    console.error('Error fetching quiz room data:', error);
+    return error
   }
   return quizRoomData;
 };
