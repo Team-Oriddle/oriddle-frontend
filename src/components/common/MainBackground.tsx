@@ -1,7 +1,7 @@
 import Image from "next/image";
 import styled from "styled-components";
 
-const MainBackground = ({ overlayText = "테스트 페이지" }) => {
+const MainBackground = ({ overlayText = "테스트 페이지", children }) => {
   return (
     <Container>
       <StyledImage
@@ -9,7 +9,7 @@ const MainBackground = ({ overlayText = "테스트 페이지" }) => {
         alt='Next.js'
         width={2199}
         height={205}
-        style={{ zIndex: 1 }}
+        style={{ zIndex: 1, transform: "translateY(15vh)" }}
         priority
       />
       <OverlayWrapper>
@@ -18,7 +18,7 @@ const MainBackground = ({ overlayText = "테스트 페이지" }) => {
           alt='Next.js'
           width={2199}
           height={602}
-          style={{ zIndex: 2 }}
+          style={{ zIndex: 2, transform: "translateY(15vh)" }}
           priority
         />
         <OverlayText>{overlayText}</OverlayText>
@@ -28,7 +28,7 @@ const MainBackground = ({ overlayText = "테스트 페이지" }) => {
         alt='Next.js'
         width={565}
         height={537}
-        style={{ zIndex: 3 }}
+        style={{ zIndex: 3, transform: "translateY(10vh)" }}
         priority
       />
       <StyledImage
@@ -36,9 +36,10 @@ const MainBackground = ({ overlayText = "테스트 페이지" }) => {
         alt='Next.js'
         width={2199}
         height={1013}
-        style={{ zIndex: 4, transform: "translateY(15%)" }}
+        style={{ zIndex: 4, transform: "translateY(30vh)" }}
         priority
       />
+      <ContentWrapper>{children}</ContentWrapper>
     </Container>
   );
 };
@@ -48,20 +49,8 @@ export default MainBackground;
 const Container = styled.div`
   position: relative;
   width: 100vw;
-  height: 100vh;
+  height: auto;
   background: linear-gradient(to bottom, transparent 20vh, #fee1b2 20vh);
-  /* PC일 때 */
-  @media (min-width: 1024px) {
-    margin-top: 20%;
-  }
-  /* 태블릿일 때 */
-  @media (min-width: 768px) and (max-width: 1023px) {
-    margin-top: 15%;
-  }
-  /* 모바일일 때 */
-  @media (max-width: 767px) {
-    margin-top: 15%;
-  }
 `;
 
 const StyledImage = styled(Image)`
@@ -80,19 +69,16 @@ const StyledCharacter = styled(Image)`
   @media (min-width: 1024px) {
     width: 15%;
     left: 70%;
-    transform: translateY(-15%);
   }
   /* 태블릿일 때 */
   @media (min-width: 768px) and (max-width: 1023px) {
     width: 20%;
     left: 70%;
-    transform: translateY(-35%);
   }
   /* 모바일일 때 */
   @media (max-width: 767px) {
     width: 30%;
     left: 60%;
-    transform: translateY(-45%);
   }
 `;
 
@@ -108,22 +94,27 @@ const OverlayText = styled.div`
   text-align: center;
   font-weight: bold;
   z-index: 5;
+  transform: translateY(24vh);
   /* PC일 때 */
   @media (min-width: 1024px) {
     font-size: 3rem;
     left: 15%;
-    transform: translateY(70%);
   }
   /* 태블릿일 때 */
   @media (min-width: 768px) and (max-width: 1023px) {
     font-size: 2rem;
     left: 10%;
-    transform: translateY(90%);
   }
   /* 모바일일 때 */
   @media (max-width: 767px) {
     font-size: 1.2rem;
     left: 10%;
-    transform: translateY(45%);
   }
+`;
+
+const ContentWrapper = styled.div`
+  position: absolute;
+  z-index: 50;
+  top: 20%;
+  width: 100%;
 `;
