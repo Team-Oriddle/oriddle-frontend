@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ViewQuizCard } from './ViewQuizCard';
+import { ViewQuizCard } from "./ViewQuizCard";
 import { useEffect, useState } from "react";
 import { getQuizListData } from "@/entities/quiz";
 //생각해아할 부분 퀴즈 컨트롤러 컴포넌트로 따로 뺴서 valueChange로 관리할것인지
@@ -44,9 +44,8 @@ export const ViewQuizList = () => {
   );
 };
 
-
 const Layout = styled.div`
-  margin-top: 400px;
+  margin-top: 36vh;
   width: 100%;
   display: flex;
   flex-direction: column;
