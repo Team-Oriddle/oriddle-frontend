@@ -4,18 +4,13 @@ import { ViewQuizList } from "@/features/ViewQuizList";
 import styled from "styled-components";
 
 const Container = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  align-items: center;
-  min-height: 100vh;
   width: 100vw;
+  height: 100%;
   min-width: 768px;
   color: black;
-  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 export const Main = () => {
