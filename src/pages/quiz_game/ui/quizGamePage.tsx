@@ -182,33 +182,34 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
 
 
   useEffect(() => {
-    let participants = [];
     getUserData().then((data) => {
       if(data.code === 'US0001'){
         getQuizRoomData(QuizGameId).then((result) => {
-          participants = result.participants.map((participant) => ({
+          setUserData(result.participants.map((participant) => ({
             ...participant,
             score: 0,
-          }));
-          setUserData(participants);
+          })));
+          setSocketConnect();
         }).catch((error) => {
           console.log(error);
           router.push('/');
         });
-        return;
       }
-      if(data.code==='GL0003'){
-        if(authState.isLoggedIn === false){
-          console.log('로그인이 필요합니다');
-          localStorage.setItem("redirectUrl", window.location.href);
-          router.push('/login')
-      }}
-    })
-    setSocketConnect();
+    }).catch((error) => { 
+      if(error.businessCode === "GL0003"){
+        alert("로그인이 필요합니다!")
+        sessionStorage.setItem("redirectUrl", window.location.href);
+        router.push('/login')
+      }else{
+        alert("알 수 없는 에러가 발생했습니다!")
+        router.push('/')
+      }
+    });
   }, [QuizGameId]);
 
   useEffect(() => {
     console.log('클라이언트 변동')
+    console.log(connected)
     console.log(client)
     if(client){
       client.onConnect = () =>{
@@ -237,8 +238,6 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
 
 
   //TODO: 퀴즈 게임방으로 접속할시 에러 발생함
-
-
 
   if(width < 760 ){
     return <Container>

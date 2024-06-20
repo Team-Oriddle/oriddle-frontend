@@ -60,7 +60,7 @@ export const ViewQuizInfo = ({ quizId }: Props) => {
                 <BlackLayout>
                   <TitleText>{title}</TitleText>
                   <ContentText>{description}</ContentText>
-                  <HashTagText>#해쉬태그</HashTagText>
+                  {/* <HashTagText>#해쉬태그</HashTagText> */}
                 </BlackLayout>
               </InfoModal>
               <CreateQuizRoom

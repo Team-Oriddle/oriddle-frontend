@@ -78,7 +78,8 @@ export const ChooseQuizFromCreatePage = ({quizList, onQuizSelect, onQuizDelete}:
           </EditQuizButton>
           <QuizImage>
             {
-              quiz?.source === '' ? (
+              quiz?.source === '' ? null : 
+              (
                 quiz?.sourceType === 'IMAGE' ? (
                   <Image
                   src={quiz?.source}
@@ -87,11 +88,13 @@ export const ChooseQuizFromCreatePage = ({quizList, onQuizSelect, onQuizDelete}:
                   objectFit="cover"
                 />
                 ) : (
-                  null
+                  quiz?.sourceType === 'VIDEO' ? (
+                    <div>비디오</div>
+                  ) : (
+                    <div>음악</div>
+                  )
                 )
               )
-              :           
-              <div>유튜브</div>
             }
           </QuizImage>
         </QuizBox>

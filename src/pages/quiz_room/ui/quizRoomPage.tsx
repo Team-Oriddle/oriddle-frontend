@@ -2,7 +2,7 @@ import { Header } from "@/components/header/Header";
 import { getQuizRoomData, startQuizRoom } from "@/entities/quizroom";
 import { StartGameButton } from "@/features/StartGameButton";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from 'axios';
 import { useStomp } from "@/entities/socket/lib/SocketProvider";
@@ -16,11 +16,11 @@ import { ViewUserList_Mobile } from "@/features/ViewUserList/ui/ViewUserList_Mob
 import { ViewChatList } from "@/features/ViewChatList";
 import { SendMessage_Mobile } from "@/features/SendMessage/ui/SendMessage_Mobile";
 import { ViewChatList_Mobile } from "@/features/ViewChatList/ui/ViewchatList_Mobile";
-import { join } from "path";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/userAtom";
 import { useSocialLogin } from "@/utils/useSocialLogin";
 import { getUserData } from "@/entities/user";
+import { joinGame } from "@/entities/quizroom/api/postjoinGame";
 
 type QuizRoomProps = {
   QuizroomId :string
@@ -123,60 +123,43 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
     return ()=>  clearInterval(interval)
   },[])
 
-  // const LeaveThisRoom =async (quizRoomId: string) => {
-  //   try {
-  //     const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
-  //       withCredentials: true,
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       }
-  //     })
-  //     console.log(response)
-  //     router.push('/')
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
+  const LeaveThisRoom =async (quizRoomId: string) => {
+    try {
+      const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      console.log(response)
+      router.push('/')
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
-    const joinGame = async (quizRoomId: string) => {
-      try {
-        const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/join`, {}, {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-      } catch (error: any) {
-        console.log(error);
-        if (error.response && error.response.status === 409) {
-        }
+    getUserData().then((data) => {// 사용자 정보를 받아옴
+      if(data.code === "US0001"){//로그인 된 경우
+        getQuizRoomData((QuizroomId)).then((result) => {//방 정보를 받아옴
+          setQuizData(result);
+          setUserData(result.participants);
+          setIsConnect(true);
+        }).catch((error) => {
+          alert("방에 참가하고 있지 않습니다!")
+          router.push('/')
+        })
       }
-    };
-
-
-    if(authState.isLoggedIn === false){ 
-      console.log("로그인이 필요합니다")
-      localStorage.setItem("redirectUrl", window.location.href);
-      router.push('/login')
-    }else{
-      console.log('데이터 받아오기')
-      getQuizRoomData(QuizroomId).then((result) => {
-        setQuizData(result);
-        setUserData(result.participants);
-        setIsConnect(true);
-      }).catch((error)=>{{
-        //이 사람은 사용자가 아님
-        if(error.response.status === 404){
-          alert("연결이 끊겼습니다!")
-          router.push('/')
-        }else{
-          alert("방에 참가 할 수 없습니다!")
-          router.push('/')
-        }
-      }});
-    }
-    setSocketConnect();
+    }).catch((error) => {
+      if(error.businessCode === "GL0003"){
+        alert("로그인이 필요합니다!")
+        sessionStorage.setItem("redirectUrl", window.location.href);
+        router.push('/login')
+      }else{
+        alert("알 수 없는 에러가 발생했습니다!")
+        router.push('/')
+      }
+    });
   }, [connected]);
 
   useEffect(() => {
@@ -190,6 +173,16 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
       };
     }
   }, [client]);
+
+  const IsHost = () => {
+    const Userdata = getUserData();
+    const host = quizData?.participants.find((user) => user.isHost === true);
+    if(host.userId === Userdata.user.userId){
+      return true
+    }
+    return false
+  }
+
 
   if(width < 760 ){
     return <Container>
@@ -207,7 +200,6 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
     </Container>
   }
   
-  
   return (
     <Container>
       <Header/>
@@ -219,16 +211,15 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
             <ViewUserList UserList={userData}></ViewUserList>
           }
             <ChatLayout>
-              {width}
               <FirstBox>
                 <ViewChatList OpenChatList={null} width={1074} chatList={chatList} ></ViewChatList>
                 <QuizRoomInfoWrapper>
-                  <ViewQuizRoomInfo OpenModal={toggleModal} maxParticipant={quizData?.maxParticipant} quizTitle={quizData?.quizTitle}></ViewQuizRoomInfo>
+                  <ViewQuizRoomInfo leave={()=>LeaveThisRoom(QuizroomId)}  OpenModal={toggleModal} maxParticipant={quizData?.maxParticipant} quizTitle={quizData?.quizTitle}></ViewQuizRoomInfo>
                 </QuizRoomInfoWrapper>
               </FirstBox>
               <SecondBox>
                 <SendMessage OpenChatList={null} width={1074} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage>
-                <StartGameButton roomId={QuizroomId}></StartGameButton>
+                <StartGameButton  isHost={true} roomId={QuizroomId}></StartGameButton>
               </SecondBox>
             </ChatLayout>
           </UserControllerLayout>

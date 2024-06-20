@@ -17,7 +17,7 @@ export const postQuiz = async (quizTitle,description, image,qustList, router) =>
     console.log(response);
     // router.push(`/quiz/info/${response.data.data.quizId}`);
   } catch (error) {
-    console.error(error);
+    return error;
   }
 }
 //TODO: router가 매개변수로 필요한가 확인

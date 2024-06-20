@@ -1,5 +1,7 @@
 import Image from "next/image";
 import styled from "styled-components";
+import youtube from '../../../../public/youtube.png';
+import Music from '../../../../public/Youtube_Music.png';
 
 
 
@@ -40,8 +42,22 @@ export const AddQuizSource = ({ selectedQuiz, toggleMusicModal, toggleYoutubeMod
           ) : (
             <SourceTypeChoose>
               <ImageInput type="file" onChange={uploadingImage} />
-              <YoutubeEmbedButton onClick={toggleYoutubeModal}>유튜브</YoutubeEmbedButton>
-              <YoutubeEmbedButton onClick={toggleMusicModal}>유튜브</YoutubeEmbedButton>
+              <YoutubeEmbedButton onClick={toggleYoutubeModal}>
+                <StyledImage
+                  src={youtube}
+                  alt="유튜브"
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </YoutubeEmbedButton>
+              <YoutubeEmbedButton onClick={toggleMusicModal}>
+              <StyledImage
+                  src={Music}
+                  alt="유튜브"
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </YoutubeEmbedButton>
             </SourceTypeChoose>
           )}
     </SourceInput>
@@ -86,6 +102,9 @@ const ImageInput = styled(StyleInput)`
 const YoutubeEmbedButton = styled.div`
   width: 100px;
   height: 100px;
-  background-color: black;
+  position: relative;
   color: white;
 `
+const StyledImage = styled(Image)`
+  border-radius: 20px;
+`;

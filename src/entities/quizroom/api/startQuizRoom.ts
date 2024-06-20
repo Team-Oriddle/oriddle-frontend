@@ -8,6 +8,6 @@ export const startQuizRoom = async (roomId: string) => {
       }
     })
   }catch(error:any){
-    alert("게임을 시작할 수 없습니다.")
+    return error;
   }
 };

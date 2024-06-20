@@ -1,65 +1,64 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-export const AddQuizType = ({selectedQuiz, handleEditMainAnswers,handleEditOptionAnswer,handleDeleteOptionAnswer,handleAddOptionAnswer}) => {
-  const [ isAnswerTrue, setIsAnswerTrue ] = useState<boolean>(null);
-  
-  return(
+export const AddQuizType = ({ quizList, quizIndex, selectedQuiz, handleEditMainAnswers, handleEditOptionAnswer, handleDeleteOptionAnswer, handleAddOptionAnswer }) => {
+  const [isAnswerTrue, setIsAnswerTrue] = useState<boolean>(null);
+
+  return (
     <>
       {
-        selectedQuiz.type === "MULTIPLE_CHOICE" ?  (
+        selectedQuiz.type === "MULTIPLE_CHOICE" ? (
           <MutipleChoiceWrapper>
             추후에 객관식을 구현하는 컴포넌트입니다
           </MutipleChoiceWrapper>
-            ) : (
-              selectedQuiz.type === "TRUE_FALSE" ? (
-                <AnswerOXWrapper>
-                  <AnswerOXChoose 
-                    isSelected={isAnswerTrue === true}
-                    onClick={()=>setIsAnswerTrue(true)}
-                  >O</AnswerOXChoose>
-                  <AnswerOXChoose
-                    isSelected={isAnswerTrue === false}
-                    onClick={()=>setIsAnswerTrue(false)}
-                  >X</AnswerOXChoose>
-                </AnswerOXWrapper>
-              ) :(
-                <>
-                  <AnswerInput
-                    placeholder="정답을 입력해주세요"
-                    value={selectedQuiz.answers[0] ?? ""}
-                    onChange={(e) =>
-                      handleEditMainAnswers(selectedQuiz, e.target.value)
-                    }
-                  ></AnswerInput>
-                  <OtherAnswerInput>
-                    {selectedQuiz.answers
-                      .slice(1)
-                        .map((answer: any, index: number) => (
-                        <AnswerWrapper key={index + 1}>
-                        <OptionAnswerInput
-                          value={answer.content}
-                          onChange={(e) =>
-                            handleEditOptionAnswer(index + 1, e.target.value)
-                          }
-                        />
-                        <DeleteButton onClick={() => handleDeleteOptionAnswer(index + 1)}>
-                          X
-                        </DeleteButton>
-                      </AnswerWrapper>
-                    )) ?? null}
-                    <AnswerOptionButton onClick={handleAddOptionAnswer}>
-                      +
-                      </AnswerOptionButton>
-                    </OtherAnswerInput>
-                </>
-              )
-            )
-          }
+        ) : (
+          selectedQuiz.type === "TRUE_FALSE" ? (
+            <AnswerOXWrapper>
+              <AnswerOXChoose
+                isSelected={isAnswerTrue === true}
+                onClick={() => setIsAnswerTrue(true)}
+              >O</AnswerOXChoose>
+              <AnswerOXChoose
+                isSelected={isAnswerTrue === false}
+                onClick={() => setIsAnswerTrue(false)}
+              >X</AnswerOXChoose>
+            </AnswerOXWrapper>
+          ) : (
+            <>
+              <AnswerInput
+                placeholder="정답을 입력해주세요"
+                value={selectedQuiz.answers[0] ?? ""}
+                onChange={(e) =>
+                  handleEditMainAnswers(selectedQuiz.number, e.target.value)
+                }
+              ></AnswerInput>
+              <OtherAnswerInput>
+                {selectedQuiz.answers
+                  .slice(1)
+                  .map((answer: any, index: number) => (
+                    <AnswerWrapper key={index + 1}>
+                      <OptionAnswerInput
+                        value={answer}
+                        onChange={(e) =>
+                          handleEditOptionAnswer(index + 1, e.target.value)
+                        }
+                      />
+                      <DeleteButton onClick={() => handleDeleteOptionAnswer(index + 1)}>
+                        X
+                      </DeleteButton>
+                    </AnswerWrapper>
+                  )) ?? null}
+                <AnswerOptionButton onClick={handleAddOptionAnswer}>
+                  +
+                </AnswerOptionButton>
+              </OtherAnswerInput>
+            </>
+          )
+        )
+      }
     </>
   )
 }
-
 const StyleInput = styled.input`
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   color: black;

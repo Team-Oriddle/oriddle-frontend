@@ -34,9 +34,10 @@ export const AuthCallbackPage = () => {
           user: userData,
         }));
 
-        const redirectUrl = localStorage.getItem("redirectUrl");
+        const redirectUrl = sessionStorage.getItem("redirectUrl");
         if (redirectUrl) {
-          localStorage.removeItem("redirectUrl");
+          
+          sessionStorage.removeItem("redirectUrl");
           router.push(redirectUrl);
         } else {
           router.push("/"); // 로그인 성공 후 홈으로 리디렉션 (기본값)
