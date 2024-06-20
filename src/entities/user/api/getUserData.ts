@@ -10,9 +10,8 @@ export const getUserData = async () => {
     });
     const data = await response.json();
     UserData = data
-    console.log(data);
   } catch (error) {
-    alert('유저 정보가 없습니다!')
+    throw error
   }
   return UserData;
 };

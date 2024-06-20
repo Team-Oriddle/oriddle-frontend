@@ -198,7 +198,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
     }).catch((error) => { 
       if(error.businessCode === "GL0003"){
         alert("로그인이 필요합니다!")
-        localStorage.setItem("redirectUrl", window.location.href);
+        sessionStorage.setItem("redirectUrl", window.location.href);
         router.push('/login')
       }else{
         alert("알 수 없는 에러가 발생했습니다!")
@@ -209,6 +209,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
 
   useEffect(() => {
     console.log('클라이언트 변동')
+    console.log(connected)
     console.log(client)
     if(client){
       client.onConnect = () =>{
@@ -237,8 +238,6 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
 
 
   //TODO: 퀴즈 게임방으로 접속할시 에러 발생함
-
-
 
   if(width < 760 ){
     return <Container>

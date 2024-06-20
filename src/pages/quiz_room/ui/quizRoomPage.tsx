@@ -16,12 +16,10 @@ import { ViewUserList_Mobile } from "@/features/ViewUserList/ui/ViewUserList_Mob
 import { ViewChatList } from "@/features/ViewChatList";
 import { SendMessage_Mobile } from "@/features/SendMessage/ui/SendMessage_Mobile";
 import { ViewChatList_Mobile } from "@/features/ViewChatList/ui/ViewchatList_Mobile";
-import { join } from "path";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/userAtom";
 import { useSocialLogin } from "@/utils/useSocialLogin";
 import { getUserData } from "@/entities/user";
-import { get } from "http";
 import { joinGame } from "@/entities/quizroom/api/postjoinGame";
 
 type QuizRoomProps = {
@@ -147,7 +145,6 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
           setQuizData(result);
           setUserData(result.participants);
           setIsConnect(true);
-          setSocketConnect();
         }).catch((error) => {
           alert("방에 참가하고 있지 않습니다!")
           router.push('/')
@@ -156,7 +153,7 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
     }).catch((error) => {
       if(error.businessCode === "GL0003"){
         alert("로그인이 필요합니다!")
-        localStorage.setItem("redirectUrl", window.location.href);
+        sessionStorage.setItem("redirectUrl", window.location.href);
         router.push('/login')
       }else{
         alert("알 수 없는 에러가 발생했습니다!")
