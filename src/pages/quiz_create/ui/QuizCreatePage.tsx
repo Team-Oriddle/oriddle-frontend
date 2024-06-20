@@ -52,7 +52,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   const [ modalOpen, setModalOpen ] = useState<boolean>(false);
   const [ youtubeModalOpen , setYoutubeModalOpen ] = useState<boolean>(false);
   const [ musicModalOpen , setMusicModalOpen ] = useState<boolean>(false);
-  
+  const [ thumbnail, setThumbnail ] = useState<any>("");
   const toggleMusicModal = () => {
     setMusicModalOpen(!musicModalOpen);
   }
@@ -224,7 +224,31 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     setQuizList(newArray);
   };
 
+  const CreateGamebyGPT =(title, des) => {
+    alert("gpt생성")
+    // try {
+    //   const response = await fetch(
+    //     `http://localhost:8080/api/v1/quiz/gpt`,
+    //     {
+    //       method: "POST",
+    //       credentials: "include",
+    //       body: JSON.stringify({
+    //         title:title,
+    //         description:des
+    //       })
+    //     }
+    //   );
+    //   const data = await response.json();
+    //   setTitle(data.title)
+    //   setDescription(data.description)
+    //   setQuizList(data.questions)
+    //   setThumbnail(data.image)
+    // } catch (error) {
+      //alret("올바르지 않습니다")
+    // }
+    alert("생성되었습니다!")
 
+  }
 
   const [isDelete, setIsDelete] = useState<boolean>(false);
   //0. 버튼을 누르면 selected를 변경하고 isDelete를 변경을해줌
@@ -236,7 +260,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       return { ...quiz, number: index + 1 };
     });
 
-    postQuiz(title, description, '' , quizListForm,router);
+    postQuiz(title, description, thumbnail , quizListForm,router);
   }
   
 
@@ -315,6 +339,8 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
             ></QuizInput>
           </QuizContainer>
           <AddQuizType
+            quizList={quizList}
+            quizIndex={selectedQuiz}
             selectedQuiz={quizList[selectedQuiz]}
             handleEditMainAnswers={handleEditMainAnswers}
             handleEditOptionAnswer={handleEditOptionAnswer}
@@ -357,7 +383,11 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
             description={description} 
             editDescription={setDescription}
             isOpen={modalOpen} 
-            onClose={toggleModal}>
+            onClose={toggleModal}
+            handlethumbnail={setThumbnail}
+            thumbnail={thumbnail}
+            gpt={CreateGamebyGPT}
+            >
           </EditQuizInfo>
           <EmbedYoutube
             isOpen={youtubeModalOpen}

@@ -4,13 +4,15 @@ type QuizRoomInfoProps ={
   OpenModal:() => void,
   maxParticipant:number,
   quizTitle:string
+  leave:() => void
 }
 
-export const ViewQuizRoomInfo = ({OpenModal, maxParticipant, quizTitle}) =>{
+export const ViewQuizRoomInfo = ({OpenModal, maxParticipant, quizTitle,leave}) =>{
   return(
     <Layout>
       <Header>
         <HeaderItem>
+          <div onClick={leave}>나가기</div>
           퀴즈 방 정보
           <div onClick={OpenModal}>설정</div>
           {/* TODO: 유저가 방장인 경우에만 버튼이 able하게 */}
@@ -35,7 +37,7 @@ const Layout = styled.div`
 `
 
 const Header = styled.div`
-  width:100%;
+  width: 100%;
   height: 50px;
   font-size: 22px;
   display: flex;
@@ -46,7 +48,6 @@ const Header = styled.div`
   border-top-left-radius:10px;
   border-top-right-radius:10px;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.1));
-  padding-left: 100px;
 
 `
 
@@ -67,7 +68,8 @@ const Text = styled.div`
 `
 
 const HeaderItem = styled.div`
-  width: 210px;
+  width: 100%;
+  padding: 0px 32px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

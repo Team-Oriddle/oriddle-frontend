@@ -123,20 +123,20 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
     return ()=>  clearInterval(interval)
   },[])
 
-  // const LeaveThisRoom =async (quizRoomId: string) => {
-  //   try {
-  //     const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
-  //       withCredentials: true,
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       }
-  //     })
-  //     console.log(response)
-  //     router.push('/')
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
+  const LeaveThisRoom =async (quizRoomId: string) => {
+    try {
+      const response = await axios.post(`http://localhost:8080/api/v1/quiz-room/${quizRoomId}/leave`,{},{
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      console.log(response)
+      router.push('/')
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     getUserData().then((data) => {// 사용자 정보를 받아옴
@@ -214,12 +214,12 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
               <FirstBox>
                 <ViewChatList OpenChatList={null} width={1074} chatList={chatList} ></ViewChatList>
                 <QuizRoomInfoWrapper>
-                  <ViewQuizRoomInfo  OpenModal={toggleModal} maxParticipant={quizData?.maxParticipant} quizTitle={quizData?.quizTitle}></ViewQuizRoomInfo>
+                  <ViewQuizRoomInfo leave={()=>LeaveThisRoom(QuizroomId)}  OpenModal={toggleModal} maxParticipant={quizData?.maxParticipant} quizTitle={quizData?.quizTitle}></ViewQuizRoomInfo>
                 </QuizRoomInfoWrapper>
               </FirstBox>
               <SecondBox>
                 <SendMessage OpenChatList={null} width={1074} placeholder={'채팅을 입력해주세요'} quizGameId={QuizroomId}></SendMessage>
-                <StartGameButton isHost={IsHost}  roomId={QuizroomId}></StartGameButton>
+                <StartGameButton  isHost={true} roomId={QuizroomId}></StartGameButton>
               </SecondBox>
             </ChatLayout>
           </UserControllerLayout>
