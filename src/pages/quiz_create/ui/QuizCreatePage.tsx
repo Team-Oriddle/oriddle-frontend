@@ -14,7 +14,6 @@ import { postQuiz } from "@/entities/quiz";
 import { AddQuizSource } from "@/features/AddQuizSource";
 import { AddQuizType } from "@/features/AddQuizType";
 
-
 type QuizCreateProps = {
   QuizGameId: number;
 };
@@ -48,18 +47,18 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   const [selectedQuiz, setSelectedQuiz] = useState<any>(0);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [settingPage, setSettingPage] = useState<number>(1);//추후에 추가 설정을 위한 페이지
-  const [ modalOpen, setModalOpen ] = useState<boolean>(false);
-  const [ youtubeModalOpen , setYoutubeModalOpen ] = useState<boolean>(false);
-  const [ musicModalOpen , setMusicModalOpen ] = useState<boolean>(false);
-  const [ thumbnail, setThumbnail ] = useState<any>("");
+  const [settingPage, setSettingPage] = useState<number>(1); //추후에 추가 설정을 위한 페이지
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [youtubeModalOpen, setYoutubeModalOpen] = useState<boolean>(false);
+  const [musicModalOpen, setMusicModalOpen] = useState<boolean>(false);
+  const [thumbnail, setThumbnail] = useState<any>("");
   const toggleMusicModal = () => {
     setMusicModalOpen(!musicModalOpen);
-  }
+  };
 
   const toggleYoutubeModal = () => {
     setYoutubeModalOpen(!youtubeModalOpen);
-  }
+  };
 
   const handleNextPage = () => {
     setSettingPage((prevPage) => Math.min(prevPage + 1, 3));
@@ -68,7 +67,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   const handlePreviousPage = () => {
     setSettingPage((prevPage) => Math.max(prevPage - 1, 1));
   };
-  
+
   const handleQuizSelect = (index: any) => {
     setSelectedQuiz(index);
     console.log("선택된 퀴즈는" + index);
@@ -76,7 +75,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);
-  }
+  };
 
   const handleAddQuiz = () => {
     const newNumber = quizList[quizList.length - 1].number + 1;
@@ -113,7 +112,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       if (quiz.number === selectedQuiz) {
         const newAnswers = quiz.answers.map((answer: any, index: any) => {
           if (editNumber === index) {
-            console.log(editValue)
+            console.log(editValue);
             return editValue;
           }
           return answer;
@@ -163,7 +162,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     });
     setQuizList(newQuizList);
   };
-  
+
   const handleEditScore = (EditValue: number) => {
     const newQuizList = quizList.map((quiz: any) => {
       if (quiz.number === selectedQuiz) {
@@ -183,7 +182,6 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     });
     setQuizList(newQuizList);
   };
-  
 
   const handleEditMainAnswers = (EditNumber: number, EditValue: any) => {
     const newQuizList = quizList.map((quiz: any) => {
@@ -198,13 +196,9 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       }
       return quiz;
     });
-    
+
     setQuizList(newQuizList);
   };
-
-
-
-
 
   const handleDeleteQuiz = (number: number) => {
     const newArray = quizList
@@ -224,31 +218,34 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     setQuizList(newArray);
   };
 
-  const CreateGamebyGPT =(title, des) => {
-    alert("gpt생성")
-    // try {
-    //   const response = await fetch(
-    //     `http://localhost:8080/api/v1/quiz/gpt`,
-    //     {
-    //       method: "POST",
-    //       credentials: "include",
-    //       body: JSON.stringify({
-    //         title:title,
-    //         description:des
-    //       })
-    //     }
-    //   );
-    //   const data = await response.json();
-    //   setTitle(data.title)
-    //   setDescription(data.description)
-    //   setQuizList(data.questions)
-    //   setThumbnail(data.image)
-    // } catch (error) {
-      //alret("올바르지 않습니다")
-    // }
-    alert("생성되었습니다!")
+  const CreateGamebyGPT = async (title, des) => {
+    // alert("gpt생성")
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/quiz/gpt`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: title,
+          description: des,
+        }),
+      });
 
-  }
+      const data = await response.json();
+      setTitle(data.data.title);
+      setDescription(data.data.description);
+      data.data.questions.forEach((item) => {
+        item.number -= 1;
+      });
+      setQuizList(data.data.questions);
+      setThumbnail(data.data.image);
+    } catch (error) {
+      alret("올바르지 않습니다");
+    }
+    alert("생성되었습니다!");
+  };
 
   const [isDelete, setIsDelete] = useState<boolean>(false);
   //0. 버튼을 누르면 selected를 변경하고 isDelete를 변경을해줌
@@ -260,11 +257,9 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       return { ...quiz, number: index + 1 };
     });
 
-    postQuiz(title, description, thumbnail , quizListForm,router);
-  }
-  
+    postQuiz(title, description, thumbnail, quizListForm, router);
+  };
 
-  
   const uploadingImage = (e: any) => {
     if (!e.target.files) {
       return;
@@ -298,15 +293,13 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     };
     uploadImage();
   }, [img]);
-  
+
   return (
     <Container>
       <Header />
       <Wrapper>
         <LeftBox>
-          <SettingButton onClick={toggleModal}>
-            전체 설정
-          </SettingButton>
+          <SettingButton onClick={toggleModal}>전체 설정</SettingButton>
           <QuizListContainer>
             <ChooseQuizFromCreatePage
               quizList={quizList}
@@ -316,7 +309,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
             <AddQuizFromCreatePage addQuiz={handleAddQuiz} />
           </QuizListContainer>
         </LeftBox>
-        <CenterBox> 
+        <CenterBox>
           <TitleInput
             placeholder="제목을 입력해주세요"
             value={title}
@@ -344,70 +337,66 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
             selectedQuiz={quizList[selectedQuiz]}
             handleEditMainAnswers={handleEditMainAnswers}
             handleEditOptionAnswer={handleEditOptionAnswer}
-            handleDeleteOptionAnswer={handleDeleteOptionAnswer} 
+            handleDeleteOptionAnswer={handleDeleteOptionAnswer}
             handleAddOptionAnswer={handleAddOptionAnswer}
           ></AddQuizType>
           {/* TODO: feature로 빼내기 */}
         </CenterBox>
         <RightBox>
-            <ChooseQuizEditPageNumber
-              selectedPage={settingPage}
-              onNextPage={handleNextPage}
-              onPreviousPage={handlePreviousPage}
-            ></ChooseQuizEditPageNumber>
-            <EditQuizSetting 
-              EditTitle="문제유형" 
-              EditOption={['MULTIPLE_CHOICE','SHORT_ANSWER','TRUE_FALSE']}
-              Value={quizList[selectedQuiz]?.type}
-              HandleEdit={handleEditQuizType}
-            ></EditQuizSetting>
-            <EditQuizSetting 
-              EditTitle="시간 제한" 
-              EditOption={[10,20,30,40,50]}
-              Value={quizList[selectedQuiz]?.timeLimit}
-              HandleEdit={handleEditTimeLimit}
-            ></EditQuizSetting>
-            <EditQuizSetting 
-              EditTitle="점수" 
-              EditOption={[10,20,30,40,50]}
-              Value={quizList[selectedQuiz]?.score}
-              HandleEdit={handleEditScore}
-            ></EditQuizSetting>
-            <CreateQuizButton onClick={handleCreateQuiz}>
-              퀴즈 생성하기
-            </CreateQuizButton>
-          </RightBox>
-          <EditQuizInfo 
-            title={title}
-            editTitle={setTitle}
-            description={description} 
-            editDescription={setDescription}
-            isOpen={modalOpen} 
-            onClose={toggleModal}
-            handlethumbnail={setThumbnail}
-            thumbnail={thumbnail}
-            gpt={CreateGamebyGPT}
-            >
-          </EditQuizInfo>
-          <EmbedYoutube
-            isOpen={youtubeModalOpen}
-            onClose={toggleYoutubeModal}
-            setSource={handleEditQuiz}
-            selectedQuiz={selectedQuiz}
-          >
-          </EmbedYoutube>
-          <EmbedMusic
-            isOpen={musicModalOpen}
-            onClose={toggleMusicModal}
-            setSource={handleEditQuiz}
-            selectedQuiz={selectedQuiz}
-          >
-          </EmbedMusic>
+          <ChooseQuizEditPageNumber
+            selectedPage={settingPage}
+            onNextPage={handleNextPage}
+            onPreviousPage={handlePreviousPage}
+          ></ChooseQuizEditPageNumber>
+          <EditQuizSetting
+            EditTitle="문제유형"
+            EditOption={["MULTIPLE_CHOICE", "SHORT_ANSWER", "TRUE_FALSE"]}
+            Value={quizList[selectedQuiz]?.type}
+            HandleEdit={handleEditQuizType}
+          ></EditQuizSetting>
+          <EditQuizSetting
+            EditTitle="시간 제한"
+            EditOption={[10, 20, 30, 40, 50]}
+            Value={quizList[selectedQuiz]?.timeLimit}
+            HandleEdit={handleEditTimeLimit}
+          ></EditQuizSetting>
+          <EditQuizSetting
+            EditTitle="점수"
+            EditOption={[10, 20, 30, 40, 50]}
+            Value={quizList[selectedQuiz]?.score}
+            HandleEdit={handleEditScore}
+          ></EditQuizSetting>
+          <CreateQuizButton onClick={handleCreateQuiz}>
+            퀴즈 생성하기
+          </CreateQuizButton>
+        </RightBox>
+        <EditQuizInfo
+          title={title}
+          editTitle={setTitle}
+          description={description}
+          editDescription={setDescription}
+          isOpen={modalOpen}
+          onClose={toggleModal}
+          handlethumbnail={setThumbnail}
+          thumbnail={thumbnail}
+          gpt={CreateGamebyGPT}
+        ></EditQuizInfo>
+        <EmbedYoutube
+          isOpen={youtubeModalOpen}
+          onClose={toggleYoutubeModal}
+          setSource={handleEditQuiz}
+          selectedQuiz={selectedQuiz}
+        ></EmbedYoutube>
+        <EmbedMusic
+          isOpen={musicModalOpen}
+          onClose={toggleMusicModal}
+          setSource={handleEditQuiz}
+          selectedQuiz={selectedQuiz}
+        ></EmbedMusic>
       </Wrapper>
     </Container>
   );
 };
-
 
 const Container = styled.div`
   display: flex;
@@ -428,7 +417,6 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   z-index: 1;
-
 `;
 
 const LeftBox = styled.div`
@@ -436,7 +424,7 @@ const LeftBox = styled.div`
   margin: 0px 0px;
   display: flex;
   flex-direction: column;
-  align-items:center;
+  align-items: center;
   height: 640px;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -460,7 +448,7 @@ const SettingButton = styled.div`
   width: 100%;
   height: 60px;
   border-radius: 50px;
-  background-color: #FD7400;
+  background-color: #fd7400;
   margin: 10px;
   color: white;
   font-size: 20px;
@@ -501,9 +489,6 @@ const QuizContainer = styled.div`
   margin: 10px 0px;
 `;
 
-
-
-
 const ImageInput = styled(StyleInput)`
   width: 100px;
   height: 100px;
@@ -517,7 +502,7 @@ const CreateQuizButton = styled.div`
   font-size: 24px;
   color: white;
   padding: 12px 0px;
-  background-color: #FD7400;
+  background-color: #fd7400;
   cursor: pointer;
 `;
 
@@ -527,5 +512,4 @@ const QuizListContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`
-
+`;

@@ -1,64 +1,72 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-export const AddQuizType = ({ quizList, quizIndex, selectedQuiz, handleEditMainAnswers, handleEditOptionAnswer, handleDeleteOptionAnswer, handleAddOptionAnswer }) => {
+export const AddQuizType = ({
+  quizList,
+  quizIndex,
+  selectedQuiz,
+  handleEditMainAnswers,
+  handleEditOptionAnswer,
+  handleDeleteOptionAnswer,
+  handleAddOptionAnswer,
+}) => {
   const [isAnswerTrue, setIsAnswerTrue] = useState<boolean>(null);
 
   return (
     <>
-      {
-        selectedQuiz.type === "MULTIPLE_CHOICE" ? (
-          <MutipleChoiceWrapper>
-            추후에 객관식을 구현하는 컴포넌트입니다
-          </MutipleChoiceWrapper>
-        ) : (
-          selectedQuiz.type === "TRUE_FALSE" ? (
-            <AnswerOXWrapper>
-              <AnswerOXChoose
-                isSelected={isAnswerTrue === true}
-                onClick={() => setIsAnswerTrue(true)}
-              >O</AnswerOXChoose>
-              <AnswerOXChoose
-                isSelected={isAnswerTrue === false}
-                onClick={() => setIsAnswerTrue(false)}
-              >X</AnswerOXChoose>
-            </AnswerOXWrapper>
-          ) : (
-            <>
-              <AnswerInput
-                placeholder="정답을 입력해주세요"
-                value={selectedQuiz.answers[0] ?? ""}
-                onChange={(e) =>
-                  handleEditMainAnswers(selectedQuiz.number, e.target.value)
-                }
-              ></AnswerInput>
-              <OtherAnswerInput>
-                {selectedQuiz.answers
-                  .slice(1)
-                  .map((answer: any, index: number) => (
-                    <AnswerWrapper key={index + 1}>
-                      <OptionAnswerInput
-                        value={answer}
-                        onChange={(e) =>
-                          handleEditOptionAnswer(index + 1, e.target.value)
-                        }
-                      />
-                      <DeleteButton onClick={() => handleDeleteOptionAnswer(index + 1)}>
-                        X
-                      </DeleteButton>
-                    </AnswerWrapper>
-                  )) ?? null}
-                <AnswerOptionButton onClick={handleAddOptionAnswer}>
-                  +
-                </AnswerOptionButton>
-              </OtherAnswerInput>
-            </>
-          )
-        )
-      }
+      {selectedQuiz?.type === "MULTIPLE_CHOICE" ? (
+        <MutipleChoiceWrapper>
+          추후에 객관식을 구현하는 컴포넌트입니다
+        </MutipleChoiceWrapper>
+      ) : selectedQuiz.type === "TRUE_FALSE" ? (
+        <AnswerOXWrapper>
+          <AnswerOXChoose
+            isSelected={isAnswerTrue === true}
+            onClick={() => setIsAnswerTrue(true)}
+          >
+            O
+          </AnswerOXChoose>
+          <AnswerOXChoose
+            isSelected={isAnswerTrue === false}
+            onClick={() => setIsAnswerTrue(false)}
+          >
+            X
+          </AnswerOXChoose>
+        </AnswerOXWrapper>
+      ) : (
+        <>
+          <AnswerInput
+            placeholder="정답을 입력해주세요"
+            value={selectedQuiz.answers[0] ?? ""}
+            onChange={(e) =>
+              handleEditMainAnswers(selectedQuiz.number, e.target.value)
+            }
+          ></AnswerInput>
+          <OtherAnswerInput>
+            {selectedQuiz.answers.slice(1).map((answer: any, index: number) => (
+              <AnswerWrapper key={index + 1}>
+                <OptionAnswerInput
+                  value={answer}
+                  onChange={(e) =>
+                    handleEditOptionAnswer(index + 1, e.target.value)
+                  }
+                />
+                <DeleteButton
+                  onClick={() => handleDeleteOptionAnswer(index + 1)}
+                >
+                  X
+                </DeleteButton>
+              </AnswerWrapper>
+            )) ?? null}
+            <AnswerOptionButton onClick={handleAddOptionAnswer}>
+              +
+            </AnswerOptionButton>
+          </OtherAnswerInput>
+        </>
+      )}
     </>
-  )
-}
+  );
+};
 const StyleInput = styled.input`
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   color: black;
@@ -81,26 +89,26 @@ const AnswerOXWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   margin: 10px 0px;
-`
+`;
 
-const AnswerOXChoose = styled.div<{isSelected: boolean}>`
+const AnswerOXChoose = styled.div<{ isSelected: boolean }>`
   width: 400px;
   height: 300px;
-  background-color:${(props) => (props.isSelected ? "#FD7400" : "white")};
+  background-color: ${(props) => (props.isSelected ? "#FD7400" : "white")};
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   font-size: 200px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  color:${(props) => (props.isSelected ? "white" : "#FD7400")};
-  &:hover{
-    background-color: #FD7400;
+  color: ${(props) => (props.isSelected ? "white" : "#FD7400")};
+  &:hover {
+    background-color: #fd7400;
     color: white;
   }
-`
+`;
 
-const OtherAnswerInput = styled.div `
+const OtherAnswerInput = styled.div`
   width: 100%;
   height: 150px;
   margin: 10px 0px;
@@ -114,7 +122,7 @@ const OtherAnswerInput = styled.div `
   border: none;
   text-align: center;
   overflow-y: scroll;
-`
+`;
 
 const AnswerOptionButton = styled.div`
   width: 100%;
@@ -127,7 +135,7 @@ const AnswerOptionButton = styled.div`
   font-size: 30px;
   text-align: center;
   &:hover {
-    background-color: #FD7400;
+    background-color: #fd7400;
     color: white;
   }
 `;
@@ -166,9 +174,8 @@ const AnswerWrapper = styled.div`
 `;
 
 const MutipleChoiceWrapper = styled.div`
-  width :100%;
+  width: 100%;
   height: 400px;
   background-color: white;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
-
-`
+`;

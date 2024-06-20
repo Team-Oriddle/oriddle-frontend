@@ -1,16 +1,26 @@
-import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 
-export const EditQuizInfo = ({ title, editTitle, description, editDescription, isOpen, children, onClose, thumbnail, handlethumbnail,gpt }) => {
-
+export const EditQuizInfo = ({
+  title,
+  editTitle,
+  description,
+  editDescription,
+  isOpen,
+  children,
+  onClose,
+  thumbnail,
+  handlethumbnail,
+  gpt,
+}) => {
   const uploadingImage = (e) => {
     if (!e.target.files) {
       return;
     }
 
     const formData = new FormData();
-    formData.append('image', e.target.files[0]); // 이미지 파일을 FormData에 추가
+    formData.append("image", e.target.files[0]); // 이미지 파일을 FormData에 추가
 
     const uploadImage = async () => {
       try {
@@ -37,7 +47,7 @@ export const EditQuizInfo = ({ title, editTitle, description, editDescription, i
 
   return (
     <ModalBackdrop onClick={onClose}>
-      <ModalBox onClick={e => e.stopPropagation()}>
+      <ModalBox onClick={(e) => e.stopPropagation()}>
         <ImageInputContainer>
           {thumbnail === "" ? (
             <ImageInput type="file" onChange={uploadingImage} />
@@ -51,18 +61,18 @@ export const EditQuizInfo = ({ title, editTitle, description, editDescription, i
           )}
         </ImageInputContainer>
         <InfoInputContainer>
-          <TitleInput 
-            onChange={(e) => editTitle(e.target.value)} 
-            value={title} 
+          <TitleInput
+            onChange={(e) => editTitle(e.target.value)}
+            value={title}
             placeholder="제목을 입력해주세요"
           />
-          <DescriptionInput 
-            onChange={(e) => editDescription(e.target.value)} 
-            value={description} 
+          <DescriptionInput
+            onChange={(e) => editDescription(e.target.value)}
+            value={description}
             placeholder="설명을 입력해주세요"
           />
           <OtherSetting>
-            <div onClick={()=>gpt(title,description)}>GPT로 만들기 </div>
+            <div onClick={() => gpt(title, description)}>GPT로 만들기 </div>
             <SButton onClick={onClose}>다음</SButton>
           </OtherSetting>
         </InfoInputContainer>
@@ -96,6 +106,7 @@ const ImageInputContainer = styled.div`
   margin: 10px;
   background-color: white;
   border-radius: 20px;
+  position: relative;
 `;
 
 const InfoInputContainer = styled.div`
@@ -130,7 +141,7 @@ const TitleInput = styled.input`
   border: none;
   color: black;
   ::placeholder {
-    color: #C0C0C0;
+    color: #c0c0c0;
   }
 `;
 
@@ -145,7 +156,7 @@ const DescriptionInput = styled.textarea`
   resize: none;
   color: black;
   ::placeholder {
-    color: #C0C0C0;
+    color: #c0c0c0;
   }
 `;
 
@@ -162,7 +173,7 @@ const SButton = styled.button`
   height: 50px;
   font-size: 20px;
   color: white;
-  background-color: #FD7400;
+  background-color: #fd7400;
   text-align: center;
   border-radius: 50px;
 `;
