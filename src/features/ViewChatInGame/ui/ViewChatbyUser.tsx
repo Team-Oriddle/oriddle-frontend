@@ -1,13 +1,13 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import Duck1 from '../../../../public/userIngame/duck1.png';
-import Duck2 from '../../../../public/userIngame/duck2.png';
-import Duck3 from '../../../../public/userIngame/duck3.png';
-import Duck4 from '../../../../public/userIngame/duck4.png';
-import Duck5 from '../../../../public/userIngame/duck5.png';
-import Duck6 from '../../../../public/userIngame/duck6.png';
-import Duck7 from '../../../../public/userIngame/duck7.png';
-import Duck8 from '../../../../public/userIngame/duck8.png';
+import Duck1 from 'public/userIngame/duck1.png';
+import Duck2 from 'public/userIngame/duck2.png';
+import Duck3 from 'public/userIngame/duck3.png';
+import Duck4 from 'public/userIngame/duck4.png';
+import Duck5 from 'public/userIngame/duck5.png';
+import Duck6 from 'public/userIngame/duck6.png';
+import Duck7 from 'public/userIngame/duck7.png';
+import Duck8 from 'public/userIngame/duck8.png';
 import Image from "next/image";
 import { ChatData } from "@/shared/type";
 

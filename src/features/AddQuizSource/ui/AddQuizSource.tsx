@@ -1,7 +1,7 @@
 import Image from "next/image";
 import styled from "styled-components";
-import youtube from '../../../../public/youtube.png';
-import Music from '../../../../public/Youtube_Music.png';
+import youtube from 'public/youtube.png';
+import Music from 'public/Youtube_Music.png';
 
 
 
