@@ -33,7 +33,7 @@ const IntroBlock = () => {
           <br /> <br />
           친구들과 덕덕한 퀴즈 탐험을 시작해 보세요!
         </Content>
-        <Button onClick={goToMainPage}>퀴즈 시작하기</Button>
+        <Button onClick={goToMainPage}>   퀴즈 시작하기</Button>
       </IntroBlockRight>
     </Container>
   );
@@ -83,6 +83,10 @@ const Button = styled.button`
   height: 72px;
   background-color: #643dd2;
   border-radius: 1000px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   font-size: 20px;
   font-weight: bold;
   color: white;

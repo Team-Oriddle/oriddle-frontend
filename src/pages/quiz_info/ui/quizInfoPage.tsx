@@ -1,10 +1,10 @@
 import DefalutButton from "@/components/common/DefalutButton";
 import { ViewQuizInfo } from "@/features/ViewQuizInfo/ui/ViewQuizInfo";
-import Modal from "@/components/game/Modal";
 import { Header } from "@/components/header/Header";
 import { CreateComment } from "@/features/CreateComment/ui/CreateComment";
 import { useState } from "react";
 import styled from "styled-components";
+import { Button } from "oriddle-design-system";
 
 const Layout = styled.div`
   display: flex;
@@ -93,8 +93,8 @@ export const QuizInfoPage = ({quizId}:Props) => {
         <ViewQuizInfo quizId={quizId} ></ViewQuizInfo>
         <UserEvaluateQuizLayout>
           <UserEvaluateButtonLayout>
-            <DefalutButton onClick={()=>alert("개발중인 기능입니다!")} color="검정" txt="추천" ></DefalutButton>
-            <DefalutButton onClick={()=>alert("개발중인 기능입니다!")} color="" txt="신고"></DefalutButton>
+            <Button color='Black' size='medium' onClick={()=>alert("개발중인 기능입니다!")}>추천</Button>
+            <Button color='Black' size='medium' onClick={()=>alert("개발중인 기능입니다!")}>신고</Button>
           </UserEvaluateButtonLayout>
         </UserEvaluateQuizLayout>
         {/* TODO: 댓글은 댓글 관련된 협의 종료된 이후 진행 */}
