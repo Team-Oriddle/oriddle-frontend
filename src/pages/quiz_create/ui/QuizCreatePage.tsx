@@ -13,6 +13,7 @@ import { AddQuizFromCreatePage } from "@/features/AddQuizFromCreatePage";
 import { postQuiz } from "@/entities/quiz";
 import { AddQuizSource } from "@/features/AddQuizSource";
 import { AddQuizType } from "@/features/AddQuizType";
+import MainBackground from "@/components/common/MainBackground";
 
 type QuizCreateProps = {
   QuizGameId: number;
@@ -295,8 +296,9 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   }, [img]);
 
   return (
-    <Container>
-      <Header />
+    <>
+      <MainBackground overlayText="">
+      <Container>
       <Wrapper>
         <LeftBox>
           <SettingButton onClick={toggleModal}>전체 설정</SettingButton>
@@ -394,7 +396,10 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           selectedQuiz={selectedQuiz}
         ></EmbedMusic>
       </Wrapper>
-    </Container>
+      </Container>
+      </MainBackground>
+    </>
+    
   );
 };
 
@@ -406,7 +411,6 @@ const Container = styled.div`
   min-height: 100vh; // Viewport Height
   width: 100vw; // Viewport Width
   min-width: 100vw;
-  background-color: white;
   color: black;
 `;
 

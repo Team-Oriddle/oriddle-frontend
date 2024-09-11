@@ -5,16 +5,17 @@ import { CreateComment } from "@/features/CreateComment/ui/CreateComment";
 import { useState } from "react";
 import styled from "styled-components";
 import { Button } from "oriddle-design-system";
+import MainBackground from "@/components/common/MainBackground";
 
 const Layout = styled.div`
+  width: 100vw; // Viewport Width
+  height: 100%;
+  min-width: 768px;
+  color: black;
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  /* justify-content: start; */
   align-items: center;
-  min-height: 100vh; // Viewport Height
-  width: 100vw; // Viewport Width
-  min-width: 100vw;
-  background-color: white;
   color: black;
 `
 const Wrapper = styled.div`
@@ -86,27 +87,30 @@ export const QuizInfoPage = ({quizId}:Props) => {
   ]
 
   return (
-    <Layout>
-      <Wrapper>
-        <Header></Header>
-        {/* //TODO:퀴즈 생성 모달 클릭시 헤더 CSS 변경이 있어야함 */}
-        <ViewQuizInfo quizId={quizId} ></ViewQuizInfo>
-        <UserEvaluateQuizLayout>
-          <UserEvaluateButtonLayout>
+    <>
+      <MainBackground overlayText="">
+        <Layout>
+        <Wrapper>
+          {/* //TODO:퀴즈 생성 모달 클릭시 헤더 CSS 변경이 있어야함 */}
+          <ViewQuizInfo quizId={quizId} ></ViewQuizInfo>
+          <UserEvaluateQuizLayout>
+            <UserEvaluateButtonLayout>
             <Button color='Black' size='medium' onClick={()=>alert("개발중인 기능입니다!")}>추천</Button>
             <Button color='Black' size='medium' onClick={()=>alert("개발중인 기능입니다!")}>신고</Button>
-          </UserEvaluateButtonLayout>
-        </UserEvaluateQuizLayout>
-        {/* TODO: 댓글은 댓글 관련된 협의 종료된 이후 진행 */}
-        {/* <CreateComment></CreateComment>
-        {commentList.map((comment)=>(
-          <CommentLayout key={comment.id}>
-            <UserIcon></UserIcon>
-            <TextInputLayout>{comment.comment}</TextInputLayout>
-          </CommentLayout>
-        ))} */}
-      </Wrapper>
-    </Layout>
+            </UserEvaluateButtonLayout>
+          </UserEvaluateQuizLayout>
+          {/* TODO: 댓글은 댓글 관련된 협의 종료된 이후 진행 */}
+          {/* <CreateComment></CreateComment>
+          {commentList.map((comment)=>(
+            <CommentLayout key={comment.id}>
+              <UserIcon></UserIcon>
+              <TextInputLayout>{comment.comment}</TextInputLayout>
+            </CommentLayout>
+          ))} */}
+          </Wrapper>
+        </Layout>
+      </MainBackground>
+    </>
   );
 };
 

@@ -21,6 +21,7 @@ import { userAtom } from "@/store/userAtom";
 import { useSocialLogin } from "@/utils/useSocialLogin";
 import { getUserData } from "@/entities/user";
 import { joinGame } from "@/entities/quizroom/api/postjoinGame";
+import MainBackground from "@/components/common/MainBackground";
 
 type QuizRoomProps = {
   QuizroomId :string
@@ -201,7 +202,9 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
   }
   
   return (
-    <Container>
+    <>
+      <MainBackground overlayText="">
+      <Container>
       <Header/>
       <Wrapper>
           <UserControllerLayout>
@@ -231,6 +234,9 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
           ></EditQuizRoomInfo>
       </Wrapper>
     </Container>
+
+      </MainBackground>
+    </>
   );
 };
 
@@ -244,7 +250,6 @@ const Container = styled.div`
   min-height: 100vh; // Viewport Height
   width: 100vw; // Viewport Width
   min-width: 100vw;
-  background-color: white;
 `
 const Wrapper = styled.div`
   width: 100%;

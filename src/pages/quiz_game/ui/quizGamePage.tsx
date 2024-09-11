@@ -21,6 +21,7 @@ import { getUserData } from "@/entities/user";
 import { useAtom } from "jotai";
 import { userAtom } from "@/store/userAtom";
 import axios from "axios";
+import MainBackground from "@/components/common/MainBackground";
 
 const Container = styled.div`
   display: flex;
@@ -29,7 +30,6 @@ const Container = styled.div`
   align-items: center;
   min-height: 100vh;
   width: 100vw;
-  background-color: white;
   color: black;
 `;
 
@@ -283,58 +283,63 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
   }
   
   return (
-    <Container>
-      <Wrapper>
-        <Header />
-        {isLoading ? (
-          <LoadingUI>
-            {loadingText}
-            <div>{timer}</div>
-          </LoadingUI>
-        ) : (
-          <ParentForLoadingUI>
-            <Question
-              description={questionData?.description}
-              number={questionData?.number}
-              type={questionData?.type}
-              score={questionData?.score}
-              timeLimit={questionData?.timeLimit}
+    <>
+      <MainBackground overlayText="">
+        <Container>
+        <Wrapper>
+          <Header />
+          {isLoading ? (
+            <LoadingUI>
+              {loadingText}
+              <div>{timer}</div>
+            </LoadingUI>
+          ) : (
+            <ParentForLoadingUI>
+              <Question
+                description={questionData?.description}
+                number={questionData?.number}
+                type={questionData?.type}
+                score={questionData?.score}
+                timeLimit={questionData?.timeLimit}
+              />
+              <QuizSource
+                url={questionData?.source}
+                sourceType={questionData?.sourceType}
+              /> 
+            </ParentForLoadingUI>
+          )}
+          {
+            viewChattingLog 
+              ? 
+            <ViewChatList
+              OpenChatList={()=>setViewChattingLog(false)} 
+              width={1440}
+              chatList={chatList}
             />
-            <QuizSource
-              url={questionData?.source}
-              sourceType={questionData?.sourceType}
-            /> 
-          </ParentForLoadingUI>
-        )}
-        {
-          viewChattingLog 
-            ? 
-          <ViewChatList
-            OpenChatList={()=>setViewChattingLog(false)} 
-            width={1440}
-            chatList={chatList}
+              :
+            <ViewChatInGame
+              UserList={userData} 
+              currentChat={currentChat} 
+            />
+          }
+          <SendMessage 
+            OpenChatList={()=>setViewChattingLog(true)} 
+            width={1440} 
+            placeholder={"정답을 입력해주세요"} 
+            quizGameId={QuizGameId} 
           />
-            :
-          <ViewChatInGame
-            UserList={userData} 
-            currentChat={currentChat} 
-          />
-        }
-        <SendMessage 
-          OpenChatList={()=>setViewChattingLog(true)} 
-          width={1440} 
-          placeholder={"정답을 입력해주세요"} 
-          quizGameId={QuizGameId} 
-        />
-        <TimerModal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
-          <div>정답: {answerData.answer}</div>
-          <div>{answerUser} 님이 정답을 맞추셨습니다</div>
-          <div>(+{answerData.score}점)</div>
-        </TimerModal>
-        <TimerModal isOpen={finishModalOpen} onClose={toggleFinishModal}>
-          <div>정답은 {answerData.answer}입니다</div>
-        </TimerModal>
-      </Wrapper>
-    </Container>
+          <TimerModal isOpen={answerModalOpen} onClose={toggleAnswerModal}>
+            <div>정답: {answerData.answer}</div>
+            <div>{answerUser} 님이 정답을 맞추셨습니다</div>
+            <div>(+{answerData.score}점)</div>
+          </TimerModal>
+          <TimerModal isOpen={finishModalOpen} onClose={toggleFinishModal}>
+            <div>정답은 {answerData.answer}입니다</div>
+          </TimerModal>
+        </Wrapper>
+      </Container>
+      </MainBackground>
+    </>
+    
   );
 };
