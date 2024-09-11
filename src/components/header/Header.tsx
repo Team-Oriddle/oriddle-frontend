@@ -49,26 +49,37 @@ export const Header = () => {
   };
 
   return (
-    <Layout>
-      <Title onClick={routeToMain}>ORIDDLE</Title>
-      {/* TODO: 검색 바 넣기 */}
-      <Buttons>
-        {authState.isLoggedIn ? (
-          <>
-            <Button onClick={QuizRoomList}>ROOM</Button>
-            <Button onClick={CreateQuiz}>CREATE</Button>
-            <Button onClick={routeToMyPage}>MY PAGE</Button>
-            <Button onClick={handleLogout}>LOGOUT</Button>
-          </>
-        ) : (
-          <>
-            <Button onClick={routeToLogin}>LOGIN</Button>
-          </>
-        )}
-      </Buttons>
-    </Layout>
+    <HeaderLayout>
+      <Layout>
+        <Title onClick={routeToMain}>ORIDDLE</Title>
+        {/* TODO: 검색 바 넣기 */}
+        <Buttons>
+          {authState.isLoggedIn ? (
+            <>
+              <Button onClick={QuizRoomList}>ROOM</Button>
+              <Button onClick={CreateQuiz}>CREATE</Button>
+              <Button onClick={routeToMyPage}>MY PAGE</Button>
+              <Button onClick={handleLogout}>LOGOUT</Button>
+            </>
+          ) : (
+            <>
+              <Button onClick={routeToLogin}>LOGIN</Button>
+            </>
+          )}
+        </Buttons>
+      </Layout>
+    </HeaderLayout>
+
   );
 };
+
+
+const HeaderLayout = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 
 const Layout = styled.div`
   width: 100%;

@@ -1,15 +1,17 @@
 import Image from "next/image";
 import styled from "styled-components";
+import { Header } from "../header/Header";
 
 const MainBackground = ({ overlayText = "테스트 페이지", children }) => {
   return (
     <Container>
+      <Header></Header>
       <StyledImage
         src='/main/main_t_sand.png'
         alt='Next.js'
         width={2199}
         height={205}
-        style={{ zIndex: 1, transform: "translateY(15vh)" }}
+        style={{ zIndex: 1, transform: "translateY(10vh)" }}
         priority
       />
       <OverlayWrapper>
@@ -18,10 +20,16 @@ const MainBackground = ({ overlayText = "테스트 페이지", children }) => {
           alt='Next.js'
           width={2199}
           height={602}
-          style={{ zIndex: 2, transform: "translateY(15vh)" }}
+          style={{ zIndex: 2, transform: "translateY(5vh)" }}
           priority
         />
-        <OverlayText>{overlayText}</OverlayText>
+        <OverlayText
+          style={{
+            zIndex: 3,
+            fontSize: "4em",
+            color: "white",
+            transform: "translateY(15vh)",}}
+        >{overlayText}</OverlayText>
       </OverlayWrapper>
       <StyledCharacter
         src='/main/main_spinks_d.png'
@@ -34,8 +42,8 @@ const MainBackground = ({ overlayText = "테스트 페이지", children }) => {
       <StyledImage
         src='/main/main_sand.png'
         alt='Next.js'
-        width={2199}
-        height={1013}
+        width={1399}
+        height={300}
         style={{ zIndex: 4, transform: "translateY(30vh)" }}
         priority
       />
@@ -49,7 +57,7 @@ export default MainBackground;
 const Container = styled.div`
   position: relative;
   width: 100vw;
-  height: auto;
+  height: 70vh;
   background: linear-gradient(to bottom, transparent 20vh, #fee1b2 20vh);
 `;
 

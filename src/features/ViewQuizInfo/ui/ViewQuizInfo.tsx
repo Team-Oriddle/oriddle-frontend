@@ -95,7 +95,6 @@ const QuizImg = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: white;
   position: relative;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
     @media (max-width: 1440px) {
