@@ -50,7 +50,6 @@ const Container = styled.div`
   justify-content: center;
   width: 100%;
   height: 100%;
-  background-color: white;
   margin-top: 20px;
   gap: 20px;
 `;

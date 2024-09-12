@@ -11,7 +11,6 @@ const Layout = styled.div`
   flex-direction: row;
   justify-content: space-evenly;
   gap: 10px;
-  background-color: white;
 `;
 
 interface UserChatProps {

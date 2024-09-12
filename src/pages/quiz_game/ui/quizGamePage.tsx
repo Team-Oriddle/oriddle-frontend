@@ -130,7 +130,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
       setIsLoading(false);
       const socketData = JSON.parse(message.body)
       console.log(socketData);
-      setQuestionData(socketData);    
+      setQuestionData(socketData); 
     });
     client.subscribe(`/topic/quiz-room/${QuizGameId}/answer`, (message) => {
       console.log(userData);
@@ -287,8 +287,7 @@ export const QuizGamePage = ({ QuizGameId }: QuizGameProps) => {
       <MainBackground overlayText="">
         <Container>
         <Wrapper>
-          <Header />
-          {isLoading ? (
+          {isLoading ?   (
             <LoadingUI>
               {loadingText}
               <div>{timer}</div>

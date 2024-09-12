@@ -205,7 +205,6 @@ export const QuizRoomPage = ({QuizroomId,ResultId}:QuizRoomProps) => {
     <>
       <MainBackground overlayText="">
       <Container>
-      <Header/>
       <Wrapper>
           <UserControllerLayout>
           {

@@ -27,14 +27,14 @@ export const Question = ({ timeLimit, description, number, type, score,}) => {
 
   useEffect(() => {
     setQuestionTimer(timeLimit); 
-  }, [timeLimit]);
+  }, [number]);
 
   useEffect(() => {
     const questionTimeInterval = setInterval(() => {
       setQuestionTimer((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(questionTimeInterval);
-  }, [number]);
+  }, [number, timeLimit]);
 
   return (
     <Layout>

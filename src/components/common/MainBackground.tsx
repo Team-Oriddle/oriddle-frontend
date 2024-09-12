@@ -10,7 +10,7 @@ const MainBackground = ({ overlayText = "테스트 페이지", children }) => {
         src='/main/main_t_sand.png'
         alt='Next.js'
         width={2199}
-        height={205}
+        height={602}
         style={{ zIndex: 1, transform: "translateY(10vh)" }}
         priority
       />
@@ -57,14 +57,15 @@ export default MainBackground;
 const Container = styled.div`
   position: relative;
   width: 100vw;
-  height: 70vh;
+  height: 100vh;
+  overflow: scroll;
   background: linear-gradient(to bottom, transparent 20vh, #fee1b2 20vh);
 `;
 
 const StyledImage = styled(Image)`
   position: absolute;
   width: 100%;
-  height: auto;
+  height: 70vh;
   top: 0;
   left: 0;
 `;

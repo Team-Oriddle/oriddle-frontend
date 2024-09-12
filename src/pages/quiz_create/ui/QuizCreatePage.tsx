@@ -140,7 +140,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     setQuizList(newQuizList);
   };
 
-  const handleEditQuiz = (
+  const handleEditQuiz = (  
     EditNumber: number,
     EditObject: string,
     EditValue: any
@@ -220,7 +220,6 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
   };
 
   const CreateGamebyGPT = async (title, des) => {
-    // alert("gpt생성")
     try {
       const response = await fetch(`http://localhost:8080/api/v1/quiz/gpt`, {
         method: "POST",
@@ -243,7 +242,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
       setQuizList(data.data.questions);
       setThumbnail(data.data.image);
     } catch (error) {
-      alret("올바르지 않습니다");
+      alert("올바르지 않습니다");
     }
     alert("생성되었습니다!");
   };
@@ -267,6 +266,7 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
     }
     console.log(e.target.files[0].name);
     setImg(e.target.files[0]);
+    handleEditQuiz(selectedQuiz, "sourceType", "IMAGE");
   };
 
   const [img, setImg] = useState<any>("");
@@ -285,9 +285,9 @@ export const QuizCreatePage = ({ QuizGameId }: QuizCreateProps) => {
           }
         );
         const data = await response.json();
-        console.log(data);
+        console.log(data.data.url);
+        console.log('등록 되냐');
         handleEditQuiz(selectedQuiz, "source", data.data.url);
-        handleEditQuiz(selectedQuiz, "sourceType", "IMAGE");
       } catch (error) {
         console.log(error);
       }

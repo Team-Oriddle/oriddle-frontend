@@ -4,6 +4,7 @@ import ButtonBlock from "./ButtonBlock";
 import LeaderBoardBlock from "./LeaderBoardBlock";
 import { useEffect, useState } from "react";
 import { useStomp } from "@/entities/socket/lib/SocketProvider";
+import MainBackground from "@/components/common/MainBackground";
 
 // 퀴즈 결과 페이지는 결과 표시를 위한 여러 스위칭 블록을 지니고 있습니다.
 // 이 블록의 순서는 기획 단계이며, 변경될 수 있습니다.
@@ -38,19 +39,22 @@ export const QuizResultPage = ({ quizRoomId, resultId }: { quizRoomId: string, r
   }, [client]);
 
   return (
-    <Container>
-      <Header />
+    <>
+      <MainBackground overlayText="">
+        <Container>
+          {/* 1. 순위표 블록 */}
+          <LeaderBoardBlock quizRoomId={quizRoomId} resultId={resultId}  />
 
-      {/* 1. 순위표 블록 */}
-      <LeaderBoardBlock quizRoomId={quizRoomId} resultId={resultId}  />
+          {/* TODO: 2. 정답 정확도(AnswerAccuracyBlock) */}
 
-      {/* TODO: 2. 정답 정확도(AnswerAccuracyBlock) */}
+          {/* TODO: 3. 퀴즈 소요시간(QuizTimeBlock) */}
 
-      {/* TODO: 3. 퀴즈 소요시간(QuizTimeBlock) */}
+          {/* 하단 페이지 조작 버튼 */}
+          <ButtonBlock quizRoomId={quizRoomId} />
+        </Container>
+      </MainBackground>
+    </>
 
-      {/* 하단 페이지 조작 버튼 */}
-      <ButtonBlock quizRoomId={quizRoomId} />
-    </Container>
   );
 };
 
@@ -59,7 +63,6 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: start;
-  background-color: white;
   min-height: 100vh;
 `;
 

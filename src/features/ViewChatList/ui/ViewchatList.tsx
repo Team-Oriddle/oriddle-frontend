@@ -6,7 +6,6 @@ const Layout = styled.div<{ width: number }>`
   width: ${(props) => props.width}px;
   margin-bottom: 20px;
   height: 300px;
-  background-color: white;
   color: black;
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   border-radius: 10px;

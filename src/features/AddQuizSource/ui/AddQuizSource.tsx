@@ -8,7 +8,7 @@ import Music from 'public/Youtube_Music.png';
 export const AddQuizSource = ({ selectedQuiz, toggleMusicModal, toggleYoutubeModal, uploadingImage }) => {
   return(
     <SourceInput>
-      {selectedQuiz?.sourceType !== "" ? (
+      {selectedQuiz?.source !== "" ? (
         selectedQuiz?.sourceType === "IMAGE" ? (
           <Image
             src={selectedQuiz?.source}
@@ -82,9 +82,6 @@ const SourceTypeChoose = styled.div`
   flex-direction: row;
   justify-content: space-around;
 `
-
-
-
 const StyleInput = styled.input`
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.25));
   color: black;
